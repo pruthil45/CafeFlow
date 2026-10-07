@@ -44,7 +44,7 @@ const NAV_SECTIONS = [
   {
     title: 'Communication',
     items: [
-      { label: 'Notifications', icon: Bell, path: '/admin/notifications', badge: 3, chevron: true },
+      { label: 'Notifications', icon: Bell, path: '/admin/notifications', badge: 12, chevron: true },
     ],
   },
   {

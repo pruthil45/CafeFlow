@@ -158,8 +158,8 @@ export default function AdminCafes() {
         </div>
       )}
 
-      {/* Header */}
-      <div className="admin-page-header">
+      {/* Header — Button on Left underneath subtitle matching Image 1 */}
+      <div className="admin-cafes-header">
         <div>
           <h1 className="admin-page-title">Cafés</h1>
           <p className="admin-page-subtitle">
@@ -167,7 +167,7 @@ export default function AdminCafes() {
           </p>
         </div>
         <button
-          className="admin-btn-primary"
+          className="admin-btn-primary admin-btn-create-cafe"
           onClick={() => setShowCreateWizard(true)}
           id="btn-create-cafe"
         >

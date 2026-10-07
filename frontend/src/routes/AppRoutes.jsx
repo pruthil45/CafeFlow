@@ -16,6 +16,9 @@ import AdminCustomers from '../pages/Admin/Customers/AdminCustomers'
 import AdminPlatformAnalytics from '../pages/Admin/PlatformAnalytics/AdminPlatformAnalytics'
 import AdminCafeAnalytics from '../pages/Admin/CafeAnalytics/AdminCafeAnalytics'
 import AdminStaffOverview from '../pages/Admin/StaffOverview/AdminStaffOverview'
+import AdminNotifications from '../pages/Admin/Notifications/Notifications'
+import AdminAuditLogs from '../pages/Admin/AuditLogs/AuditLogs'
+import AdminSettings from '../pages/Admin/Settings/Settings'
 
 export default function AppRoutes() {
   return (
@@ -42,6 +45,9 @@ export default function AppRoutes() {
         <Route path="platform-analytics" element={<AdminPlatformAnalytics />} />
         <Route path="cafe-analytics" element={<AdminCafeAnalytics />} />
         <Route path="staff-overview" element={<AdminStaffOverview />} />
+        <Route path="notifications" element={<AdminNotifications />} />
+        <Route path="audit-logs" element={<AdminAuditLogs />} />
+        <Route path="settings" element={<AdminSettings />} />
         {/* Placeholder fallbacks to Dashboard */}
         <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
       </Route>

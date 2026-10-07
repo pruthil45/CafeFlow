@@ -51,7 +51,6 @@ export default function AdminPlatformAnalytics() {
 
   // Filters state
   const [dateRange, setDateRange] = useState('30d');
-  const [selectedCafeFilter, setSelectedCafeFilter] = useState('all');
   const [selectedCityFilter, setSelectedCityFilter] = useState('all');
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -72,6 +71,21 @@ export default function AdminPlatformAnalytics() {
     };
   }, [multiplier]);
 
+  // Dynamic filtered tables by city
+  const filteredTopCafes = useMemo(() => {
+    if (selectedCityFilter === 'all') return TOP_PERFORMING_CAFES;
+    return TOP_PERFORMING_CAFES.filter((c) =>
+      c.location?.toLowerCase().includes(selectedCityFilter.toLowerCase())
+    );
+  }, [selectedCityFilter]);
+
+  const filteredCafePerformance = useMemo(() => {
+    if (selectedCityFilter === 'all') return CAFE_PERFORMANCE_TABLE;
+    return CAFE_PERFORMANCE_TABLE.filter((c) =>
+      c.location?.toLowerCase().includes(selectedCityFilter.toLowerCase())
+    );
+  }, [selectedCityFilter]);
+
   // Export mock report
   const handleExportReport = () => {
     setToastMessage('Exporting Platform Analytics Report (PDF / CSV)...');
@@ -90,14 +104,43 @@ export default function AdminPlatformAnalytics() {
         </div>
       )}
 
-      {/* Header */}
+      {/* Header — Aligned exactly to Image 2 */}
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Platform Analytics</h1>
           <p className="admin-page-subtitle">
             Overview of all cafés across your platform
           </p>
+
+          {/* Styled Pill Filter Dropdowns directly underneath subtitle */}
+          <div className="admin-platform-filters">
+            <select
+              className="admin-filter-select"
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+              id="filter-date-range"
+            >
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="3m">Last 3 Months</option>
+              <option value="1y">This Year</option>
+            </select>
+
+            <select
+              className="admin-filter-select"
+              value={selectedCityFilter}
+              onChange={(e) => setSelectedCityFilter(e.target.value)}
+              id="filter-city"
+            >
+              <option value="all">All Cities</option>
+              <option value="Vadodara">Vadodara</option>
+              <option value="Ahmedabad">Ahmedabad</option>
+              <option value="Surat">Surat</option>
+              <option value="Rajkot">Rajkot</option>
+            </select>
+          </div>
         </div>
+
         <button
           className="admin-btn-outline"
           onClick={handleExportReport}
@@ -106,47 +149,6 @@ export default function AdminPlatformAnalytics() {
           <Download size={16} />
           Export Report
         </button>
-      </div>
-
-      {/* Global Filters Toolbar */}
-      <div className="admin-filter-bar" style={{ marginBottom: 24 }}>
-        <div className="admin-filters-group">
-          <select
-            className="admin-filter-select"
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-          >
-            <option value="7d">Last 7 Days</option>
-            <option value="30d">Last 30 Days</option>
-            <option value="3m">Last 3 Months</option>
-            <option value="1y">This Year</option>
-          </select>
-
-          <select
-            className="admin-filter-select"
-            value={selectedCafeFilter}
-            onChange={(e) => setSelectedCafeFilter(e.target.value)}
-          >
-            <option value="all">All Cafés</option>
-            <option value="CAF-001">Café Aroma</option>
-            <option value="CAF-002">Brew & Bites</option>
-            <option value="CAF-003">The Daily Grind</option>
-            <option value="CAF-004">Café Nova</option>
-            <option value="CAF-005">Urban Beans</option>
-          </select>
-
-          <select
-            className="admin-filter-select"
-            value={selectedCityFilter}
-            onChange={(e) => setSelectedCityFilter(e.target.value)}
-          >
-            <option value="all">All Cities</option>
-            <option value="Vadodara">Vadodara</option>
-            <option value="Ahmedabad">Ahmedabad</option>
-            <option value="Surat">Surat</option>
-            <option value="Rajkot">Rajkot</option>
-          </select>
-        </div>
       </div>
 
       {/* Top Section: KPI Grid + Platform Growth Card */}
@@ -424,7 +426,7 @@ export default function AdminPlatformAnalytics() {
               </tr>
             </thead>
             <tbody>
-              {TOP_PERFORMING_CAFES.map((cafe) => (
+              {filteredTopCafes.map((cafe) => (
                 <tr
                   key={cafe.id}
                   style={{ cursor: 'pointer' }}
@@ -469,7 +471,7 @@ export default function AdminPlatformAnalytics() {
               </tr>
             </thead>
             <tbody>
-              {CAFE_PERFORMANCE_TABLE.map((row) => (
+              {filteredCafePerformance.map((row) => (
                 <tr
                   key={row.id}
                   style={{ cursor: 'pointer' }}

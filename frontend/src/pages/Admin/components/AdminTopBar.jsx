@@ -66,9 +66,14 @@ export default function AdminTopBar({ onMenuToggle }) {
         </button>
 
         {/* Notifications */}
-        <button className="admin-topbar__notification-btn" id="admin-notifications-btn" aria-label="Notifications">
+        <button
+          className="admin-topbar__notification-btn"
+          id="admin-notifications-btn"
+          aria-label="Notifications"
+          onClick={() => navigate('/admin/notifications')}
+        >
           <Bell size={18} />
-          <span className="admin-topbar__notification-badge">3</span>
+          <span className="admin-topbar__notification-badge">12</span>
         </button>
 
         {/* Profile */}
