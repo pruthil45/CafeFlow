@@ -1573,4 +1573,34 @@ export const ADMIN_SETTINGS_DATA = {
   },
 };
 
+export function getStoredCafes() {
+  try {
+    const saved = localStorage.getItem('cafeflow_admin_cafes');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return [...parsed, ...CAFES.filter((c) => !parsed.some((p) => p.id === c.id))];
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load saved cafes', e);
+  }
+  return CAFES;
+}
+
+export function saveNewCafe(cafe) {
+  try {
+    const saved = localStorage.getItem('cafeflow_admin_cafes');
+    let list = [];
+    if (saved) {
+      list = JSON.parse(saved);
+    }
+    list = [cafe, ...list.filter((c) => c.id !== cafe.id)];
+    localStorage.setItem('cafeflow_admin_cafes', JSON.stringify(list));
+  } catch (e) {
+    console.error('Failed to save cafe', e);
+  }
+}
+
+
 

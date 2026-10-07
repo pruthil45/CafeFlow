@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Store,
@@ -58,6 +58,7 @@ const NAV_SECTIONS = [
 
 export default function AdminSidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     sessionStorage.removeItem('cafeflow_admin_auth');
@@ -98,27 +99,31 @@ export default function AdminSidebar({ isOpen, onClose }) {
           {NAV_SECTIONS.map((section) => (
             <div className="admin-sidebar__section" key={section.title}>
               <div className="admin-sidebar__section-title">{section.title}</div>
-              {section.items.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
-                  }
-                  onClick={onClose}
-                >
-                  <span className="admin-sidebar__link-icon">
-                    <item.icon size={18} />
-                  </span>
-                  <span className="admin-sidebar__link-text">{item.label}</span>
-                  {item.badge && (
-                    <span className="admin-sidebar__link-badge">{item.badge}</span>
-                  )}
-                  {item.chevron && (
-                    <ChevronRight size={14} className="admin-sidebar__link-chevron" />
-                  )}
-                </NavLink>
-              ))}
+              {section.items.map((item) => {
+                const isItemActive =
+                  location.pathname === item.path ||
+                  (item.path === '/admin/cafes' && location.pathname.startsWith('/admin/cafes'));
+
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={`admin-sidebar__link ${isItemActive ? 'admin-sidebar__link--active' : ''}`}
+                    onClick={onClose}
+                  >
+                    <span className="admin-sidebar__link-icon">
+                      <item.icon size={18} />
+                    </span>
+                    <span className="admin-sidebar__link-text">{item.label}</span>
+                    {item.badge && (
+                      <span className="admin-sidebar__link-badge">{item.badge}</span>
+                    )}
+                    {item.chevron && (
+                      <ChevronRight size={14} className="admin-sidebar__link-chevron" />
+                    )}
+                  </NavLink>
+                );
+              })}
             </div>
           ))}
         </nav>

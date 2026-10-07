@@ -11,6 +11,7 @@ import Pricing from '../pages/Pricing/Pricing'
 import AdminLayout from '../pages/Admin/AdminLayout'
 import AdminDashboard from '../pages/Admin/Dashboard/AdminDashboard'
 import AdminCafes from '../pages/Admin/Cafes/AdminCafes'
+import CreateCafeWizard from '../pages/Admin/Cafes/CreateCafeWizard/CreateCafeWizard'
 import AdminOwners from '../pages/Admin/Owners/AdminOwners'
 import AdminCustomers from '../pages/Admin/Customers/AdminCustomers'
 import AdminPlatformAnalytics from '../pages/Admin/PlatformAnalytics/AdminPlatformAnalytics'
@@ -40,6 +41,7 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="cafes" element={<AdminCafes />} />
+        <Route path="cafes/create" element={<CreateCafeWizard />} />
         <Route path="owners" element={<AdminOwners />} />
         <Route path="customers" element={<AdminCustomers />} />
         <Route path="platform-analytics" element={<AdminPlatformAnalytics />} />

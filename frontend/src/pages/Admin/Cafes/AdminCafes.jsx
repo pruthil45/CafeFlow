@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Plus,
   Search,
@@ -37,14 +37,16 @@ import {
   formatINR,
   formatNumber,
   getOwnerById,
+  getStoredCafes,
 } from '../../../data/adminMockData';
 import '../Admin.css';
 
 export default function AdminCafes() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // State
-  const [cafesList, setCafesList] = useState(CAFES);
+  const [cafesList, setCafesList] = useState(getStoredCafes);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState('all');
@@ -54,12 +56,21 @@ export default function AdminCafes() {
   const [selectedCafe, setSelectedCafe] = useState(null);
   const [detailTab, setDetailTab] = useState('overview');
   const [actionMenuId, setActionMenuId] = useState(null);
-  const [showCreateWizard, setShowCreateWizard] = useState(false);
   const [deleteConfirmCafe, setDeleteConfirmCafe] = useState(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const actionMenuRef = useRef(null);
+
+  // Sync latest cafes from storage on mount or navigation
+  useEffect(() => {
+    const list = getStoredCafes();
+    setCafesList(list);
+    if (location.state?.newCafe) {
+      setSelectedCafe(location.state.newCafe);
+      setToastMessage(location.state.message || `Café "${location.state.newCafe.name}" created successfully!`);
+    }
+  }, [location.state]);
 
   // Close action menu on click outside
   useEffect(() => {
@@ -163,16 +174,16 @@ export default function AdminCafes() {
         <div>
           <h1 className="admin-page-title">Cafés</h1>
           <p className="admin-page-subtitle">
-            Manage all cafés on your platform
+            Manage all cafés registered on the CaféFlow platform.
           </p>
         </div>
         <button
           className="admin-btn-primary admin-btn-create-cafe"
-          onClick={() => setShowCreateWizard(true)}
+          onClick={() => navigate('/admin/cafes/create')}
           id="btn-create-cafe"
         >
           <Plus size={18} />
-          Create New Café
+          Create Café
         </button>
       </div>
 
@@ -895,18 +906,6 @@ export default function AdminCafes() {
         )}
       </div>
 
-      {/* CREATE NEW CAFÉ WIZARD (4 Steps Modal) */}
-      {showCreateWizard && (
-        <CreateCafeWizard
-          onClose={() => setShowCreateWizard(false)}
-          onSuccess={(newCafe) => {
-            setCafesList([newCafe, ...cafesList]);
-            setShowCreateWizard(false);
-            setToastMessage(`Café "${newCafe.name}" created successfully!`);
-          }}
-        />
-      )}
-
       {/* DELETE CONFIRMATION DIALOG */}
       {deleteConfirmCafe && (
         <div className="admin-modal-overlay">
@@ -991,530 +990,3 @@ export default function AdminCafes() {
   );
 }
 
-/**
- * Multi-Step Create New Café Wizard (Steps 1-4)
- */
-function CreateCafeWizard({ onClose, onSuccess }) {
-  const [step, setStep] = useState(1);
-
-  // Step 1: Café Information
-  const [cafeName, setCafeName] = useState('');
-  const [cuisine, setCuisine] = useState('Café & Bakery');
-  const [description, setDescription] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('Vadodara');
-  const [state, setState] = useState('Gujarat');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [website, setWebsite] = useState('');
-
-  // Step 2: Owner Information
-  const [ownerMode, setOwnerMode] = useState('create'); // 'create' | 'assign'
-  const [ownerName, setOwnerName] = useState('');
-  const [ownerPhone, setOwnerPhone] = useState('');
-  const [ownerEmail, setOwnerEmail] = useState('');
-  const [assignedOwnerId, setAssignedOwnerId] = useState('OWN-001');
-
-  // Step 3: Initial Setup (Tables & QR)
-  const [tablesList, setTablesList] = useState([
-    { number: 1, type: 'Indoor (2 Seater)', capacity: 2, status: 'Active' },
-    { number: 2, type: 'Indoor (4 Seater)', capacity: 4, status: 'Active' },
-    { number: 3, type: 'Outdoor Terrace', capacity: 4, status: 'Active' },
-  ]);
-  const [newTableNum, setNewTableNum] = useState(4);
-  const [newTableType, setNewTableType] = useState('Indoor (4 Seater)');
-
-  // Form Validation
-  const [error, setError] = useState('');
-
-  const handleNextStep1 = () => {
-    if (!cafeName.trim()) {
-      setError('Please enter the Café Name.');
-      return;
-    }
-    if (!address.trim()) {
-      setError('Please enter the Address.');
-      return;
-    }
-    setError('');
-    setStep(2);
-  };
-
-  const handleNextStep2 = () => {
-    if (ownerMode === 'create') {
-      if (!ownerName.trim() || !ownerPhone.trim()) {
-        setError('Please enter Owner Name and Phone Number.');
-        return;
-      }
-    }
-    setError('');
-    setStep(3);
-  };
-
-  const handleAddTable = () => {
-    setTablesList([
-      ...tablesList,
-      {
-        number: newTableNum,
-        type: newTableType,
-        capacity: newTableType.includes('2') ? 2 : 4,
-        status: 'Active',
-      },
-    ]);
-    setNewTableNum((prev) => prev + 1);
-  };
-
-  const handleRemoveTable = (idx) => {
-    setTablesList(tablesList.filter((_, i) => i !== idx));
-  };
-
-  const handleFinalSubmit = () => {
-    const newId = `CAF-${String(Math.floor(Math.random() * 900) + 100)}`;
-    const createdCafe = {
-      id: newId,
-      name: cafeName,
-      logo: null,
-      location: `${city}, ${state}`,
-      city,
-      state,
-      address,
-      cuisine,
-      description: description || 'Artisanal coffee and fresh gourmet eats.',
-      phone: phone || '+91 98765 00000',
-      email: email || `${cafeName.toLowerCase().replace(/\s+/g, '')}@gmail.com`,
-      website: website || `https://${cafeName.toLowerCase().replace(/\s+/g, '')}.in`,
-      tables: tablesList.length,
-      status: 'active',
-      orders: 0,
-      revenue: 0,
-      staff: 2,
-      createdAt: 'Just now',
-      createdDate: new Date().toISOString(),
-      color: '#D4A04A',
-      ownerId: ownerMode === 'create' ? 'OWN-NEW' : assignedOwnerId,
-    };
-
-    onSuccess(createdCafe);
-  };
-
-  return (
-    <div className="admin-modal-overlay">
-      <div className="admin-wizard-card">
-        {/* Wizard Header */}
-        <div className="admin-wizard-header">
-          <div>
-            <h2 className="admin-wizard-title">Create New Café</h2>
-            <p className="admin-wizard-sub">
-              Step {step} of 4 —{' '}
-              {step === 1 && 'Café Information'}
-              {step === 2 && 'Owner Information'}
-              {step === 3 && 'Initial Setup'}
-              {step === 4 && 'Review & Create'}
-            </p>
-          </div>
-          <button className="admin-drawer-close" onClick={onClose}>
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Step Indicators */}
-        <div className="admin-wizard-stepper">
-          {[
-            { num: 1, label: 'Café Info' },
-            { num: 2, label: 'Owner' },
-            { num: 3, label: 'Setup' },
-            { num: 4, label: 'Review' },
-          ].map(({ num, label }) => (
-            <div
-              key={num}
-              className={`admin-wizard-step ${step >= num ? 'admin-wizard-step--active' : ''}`}
-            >
-              <div className="admin-wizard-step__circle">
-                {step > num ? <Check size={14} /> : num}
-              </div>
-              <span className="admin-wizard-step__label">{label}</span>
-            </div>
-          ))}
-        </div>
-
-        {error && <div className="admin-form-error">{error}</div>}
-
-        {/* Body */}
-        <div className="admin-wizard-body">
-          {/* STEP 1: CAFÉ INFO */}
-          {step === 1 && (
-            <div className="admin-wizard-form-grid">
-              <div className="admin-form-field admin-form-field--full">
-                <label className="admin-form-label">Café Name *</label>
-                <input
-                  type="text"
-                  className="admin-form-input"
-                  placeholder="e.g. Café Velvet"
-                  value={cafeName}
-                  onChange={(e) => setCafeName(e.target.value)}
-                  autoFocus
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">Cuisine / Type</label>
-                <input
-                  type="text"
-                  className="admin-form-input"
-                  placeholder="e.g. Specialty Coffee & Bistro"
-                  value={cuisine}
-                  onChange={(e) => setCuisine(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">Contact Phone</label>
-                <input
-                  type="text"
-                  className="admin-form-input"
-                  placeholder="+91 98765 43210"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field admin-form-field--full">
-                <label className="admin-form-label">Address *</label>
-                <input
-                  type="text"
-                  className="admin-form-input"
-                  placeholder="Street address, building, landmark"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">City</label>
-                <input
-                  type="text"
-                  className="admin-form-input"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">State</label>
-                <input
-                  type="text"
-                  className="admin-form-input"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">Email Address</label>
-                <input
-                  type="email"
-                  className="admin-form-input"
-                  placeholder="contact@cafe.in"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label className="admin-form-label">Website</label>
-                <input
-                  type="url"
-                  className="admin-form-input"
-                  placeholder="https://mycafe.in"
-                  value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-field admin-form-field--full">
-                <label className="admin-form-label">Short Description</label>
-                <textarea
-                  className="admin-form-textarea"
-                  rows={2}
-                  placeholder="Highlight key ambience, roasts, or specialties..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: OWNER INFO */}
-          {step === 2 && (
-            <div>
-              <div className="admin-toggle-group" style={{ marginBottom: 20 }}>
-                <button
-                  type="button"
-                  className={`admin-toggle-btn ${ownerMode === 'create' ? 'admin-toggle-btn--active' : ''}`}
-                  onClick={() => setOwnerMode('create')}
-                >
-                  Create New Owner
-                </button>
-                <button
-                  type="button"
-                  className={`admin-toggle-btn ${ownerMode === 'assign' ? 'admin-toggle-btn--active' : ''}`}
-                  onClick={() => setOwnerMode('assign')}
-                >
-                  Assign Existing Owner
-                </button>
-              </div>
-
-              {ownerMode === 'create' ? (
-                <div className="admin-wizard-form-grid">
-                  <div className="admin-form-field admin-form-field--full">
-                    <label className="admin-form-label">Owner Full Name *</label>
-                    <input
-                      type="text"
-                      className="admin-form-input"
-                      placeholder="e.g. Vikram Joshi"
-                      value={ownerName}
-                      onChange={(e) => setOwnerName(e.target.value)}
-                      autoFocus
-                    />
-                  </div>
-                  <div className="admin-form-field">
-                    <label className="admin-form-label">Mobile Number *</label>
-                    <input
-                      type="tel"
-                      className="admin-form-input"
-                      placeholder="+91 98765 00000"
-                      value={ownerPhone}
-                      onChange={(e) => setOwnerPhone(e.target.value)}
-                    />
-                  </div>
-                  <div className="admin-form-field">
-                    <label className="admin-form-label">Email Address</label>
-                    <input
-                      type="email"
-                      className="admin-form-input"
-                      placeholder="owner@gmail.com"
-                      value={ownerEmail}
-                      onChange={(e) => setOwnerEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="admin-form-field admin-form-field--full">
-                    <div className="admin-callout-info">
-                      <CheckCircle2 size={16} />
-                      <span>
-                        Owner credentials will be provisioned directly in the system.
-                        Owner can sign in with this mobile number via OTP.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="admin-form-field admin-form-field--full">
-                  <label className="admin-form-label">Select Existing Owner</label>
-                  <select
-                    className="admin-form-input"
-                    value={assignedOwnerId}
-                    onChange={(e) => setAssignedOwnerId(e.target.value)}
-                  >
-                    {OWNERS.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.name} ({o.phone}) — {o.location}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* STEP 3: INITIAL SETUP */}
-          {step === 3 && (
-            <div>
-              <div className="admin-wizard-section-title">
-                Table &amp; QR Setup
-              </div>
-              <p className="admin-text-muted" style={{ marginBottom: 14 }}>
-                Configure seating arrangement and QR code endpoints for this café.
-              </p>
-
-              <div className="admin-table-setup-row">
-                <input
-                  type="number"
-                  className="admin-form-input"
-                  style={{ width: 100 }}
-                  placeholder="Table #"
-                  value={newTableNum}
-                  onChange={(e) => setNewTableNum(Number(e.target.value))}
-                />
-                <select
-                  className="admin-form-input"
-                  style={{ flex: 1 }}
-                  value={newTableType}
-                  onChange={(e) => setNewTableType(e.target.value)}
-                >
-                  <option value="Indoor (2 Seater)">Indoor (2 Seater)</option>
-                  <option value="Indoor (4 Seater)">Indoor (4 Seater)</option>
-                  <option value="Outdoor Terrace">Outdoor Terrace</option>
-                  <option value="VIP Booth">VIP Booth (6 Seater)</option>
-                </select>
-                <button
-                  type="button"
-                  className="admin-btn-outline"
-                  onClick={handleAddTable}
-                >
-                  <Plus size={16} /> Add Table
-                </button>
-              </div>
-
-              <div className="admin-tables-list-chips">
-                {tablesList.map((t, idx) => (
-                  <div key={idx} className="admin-table-chip">
-                    <QrCode size={14} />
-                    <span>
-                      Table {t.number}: {t.type}
-                    </span>
-                    <button
-                      type="button"
-                      className="admin-chip-delete"
-                      onClick={() => handleRemoveTable(idx)}
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="admin-wizard-section-title" style={{ marginTop: 24 }}>
-                Platform Configurations
-              </div>
-              <div className="admin-checkbox-list">
-                <label className="admin-checkbox-item">
-                  <input type="checkbox" defaultChecked />
-                  <span>Generate unique printable QR sheets for all tables</span>
-                </label>
-                <label className="admin-checkbox-item">
-                  <input type="checkbox" defaultChecked />
-                  <span>Enable direct customer digital ordering via web app</span>
-                </label>
-                <label className="admin-checkbox-item">
-                  <input type="checkbox" defaultChecked />
-                  <span>Enable standard GST tax rules (5% Restaurant GST)</span>
-                </label>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: REVIEW & CREATE */}
-          {step === 4 && (
-            <div className="admin-review-summary">
-              <div className="admin-review-card">
-                <h4 className="admin-review-card__title">
-                  <Store size={16} /> Café Information
-                </h4>
-                <div className="admin-review-row">
-                  <span>Name:</span> <strong>{cafeName}</strong>
-                </div>
-                <div className="admin-review-row">
-                  <span>Location:</span> <strong>{city}, {state}</strong>
-                </div>
-                <div className="admin-review-row">
-                  <span>Cuisine:</span> <strong>{cuisine}</strong>
-                </div>
-                <div className="admin-review-row">
-                  <span>Contact:</span> <strong>{phone || 'Not provided'}</strong>
-                </div>
-              </div>
-
-              <div className="admin-review-card">
-                <h4 className="admin-review-card__title">
-                  <Users size={16} /> Owner Assignment
-                </h4>
-                {ownerMode === 'create' ? (
-                  <>
-                    <div className="admin-review-row">
-                      <span>Owner:</span> <strong>{ownerName} (New Account)</strong>
-                    </div>
-                    <div className="admin-review-row">
-                      <span>Phone:</span> <strong>{ownerPhone}</strong>
-                    </div>
-                  </>
-                ) : (
-                  <div className="admin-review-row">
-                    <span>Owner:</span>{' '}
-                    <strong>{getOwnerById(assignedOwnerId)?.name}</strong>
-                  </div>
-                )}
-              </div>
-
-              <div className="admin-review-card">
-                <h4 className="admin-review-card__title">
-                  <QrCode size={16} /> Initial Configuration
-                </h4>
-                <div className="admin-review-row">
-                  <span>Tables:</span> <strong>{tablesList.length} configured</strong>
-                </div>
-                <div className="admin-review-row">
-                  <span>Status on creation:</span>{' '}
-                  <span className="admin-status-pill admin-status-pill--active">
-                    Active
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Wizard Footer Controls */}
-        <div className="admin-wizard-footer">
-          {step > 1 ? (
-            <button
-              type="button"
-              className="admin-btn-outline"
-              onClick={() => {
-                setError('');
-                setStep(step - 1);
-              }}
-            >
-              Back
-            </button>
-          ) : (
-            <button type="button" className="admin-btn-outline" onClick={onClose}>
-              Cancel
-            </button>
-          )}
-
-          {step === 1 && (
-            <button type="button" className="admin-btn-primary" onClick={handleNextStep1}>
-              Continue to Owner <ArrowRight size={16} />
-            </button>
-          )}
-
-          {step === 2 && (
-            <button type="button" className="admin-btn-primary" onClick={handleNextStep2}>
-              Continue to Setup <ArrowRight size={16} />
-            </button>
-          )}
-
-          {step === 3 && (
-            <button
-              type="button"
-              className="admin-btn-primary"
-              onClick={() => setStep(4)}
-            >
-              Review Details <ArrowRight size={16} />
-            </button>
-          )}
-
-          {step === 4 && (
-            <button
-              type="button"
-              className="admin-btn-primary"
-              onClick={handleFinalSubmit}
-            >
-              <Check size={16} /> Create Café
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
