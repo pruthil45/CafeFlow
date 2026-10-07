@@ -19,6 +19,7 @@ export default function LoginSignup() {
   const [phone, setPhone] = useState('9876543210')
   const [userProfile, setUserProfile] = useState(null)
   const [verifiedSuccess, setVerifiedSuccess] = useState(false)
+  const [toastMessage, setToastMessage] = useState('Login successful! Welcome to CaféFlow.')
 
   // Transition handlers
   const handleContinueFromLogin = (phoneNumber) => {
@@ -38,11 +39,56 @@ export default function LoginSignup() {
     setAuthState(prevState || 'login')
   }
 
-  const handleVerifySuccess = () => {
+  // One-click Demo Admin Login
+  const handleDemoAdminLogin = () => {
+    const adminPhone = '9876543210'
+    sessionStorage.setItem(
+      'cafeflow_admin_auth',
+      JSON.stringify({
+        authenticated: true,
+        role: 'admin',
+        name: 'Super Admin',
+        phone: '+91 98765 43210',
+        email: 'admin@cafeflow.in',
+        loginTime: new Date().toISOString(),
+      })
+    )
+    setToastMessage('Admin verified! Welcome to CaféFlow Admin Portal.')
     setVerifiedSuccess(true)
     setTimeout(() => {
-      navigate('/')
-    }, 1500)
+      navigate('/admin/dashboard')
+    }, 800)
+  }
+
+  // Verification handler (shared for Admin and regular users)
+  const handleVerifySuccess = () => {
+    const raw = (phone || '').replace(/\D/g, '')
+    const isAdmin = raw === '9876543210' || raw === '9876500001' || raw === '9999988888'
+
+    if (isAdmin) {
+      sessionStorage.setItem(
+        'cafeflow_admin_auth',
+        JSON.stringify({
+          authenticated: true,
+          role: 'admin',
+          name: 'Super Admin',
+          phone: `+91 ${raw.slice(0, 5)} ${raw.slice(5)}`,
+          email: 'admin@cafeflow.in',
+          loginTime: new Date().toISOString(),
+        })
+      )
+      setToastMessage('Admin OTP verified! Entering Admin Portal...')
+      setVerifiedSuccess(true)
+      setTimeout(() => {
+        navigate('/admin/dashboard')
+      }, 900)
+    } else {
+      setToastMessage('Login successful! Welcome to CaféFlow.')
+      setVerifiedSuccess(true)
+      setTimeout(() => {
+        navigate('/')
+      }, 1400)
+    }
   }
 
   return (
@@ -115,6 +161,7 @@ export default function LoginSignup() {
               setPrevState('login')
               setAuthState('signup')
             }}
+            onDemoAdminLogin={handleDemoAdminLogin}
           />
         )}
 
@@ -160,7 +207,7 @@ export default function LoginSignup() {
             gap: '8px',
           }}
         >
-          <span style={{ color: '#4ade80' }}>✓</span> Login successful! Welcome to CaféFlow.
+          <span style={{ color: '#4ade80' }}>✓</span> {toastMessage}
         </div>
       )}
     </div>
