@@ -1,0 +1,782 @@
+/* ==========================================================================
+   CaféFlow — Owner Learn More Page Styles (/for-businesses/owners)
+   Direct recreation of the Owner Reference Design:
+   - Cinematic café hero with smiling café owner in apron
+   - Large laptop dashboard mockup with real stats, charts, orders
+   - 5-item translucent bottom feature strip
+   - Overlapping white/cream container with 2 major columns:
+     * 12 Powerful Feature cards for Café Owners
+     * "How It Works in Your Café" 7-step flow + Table 5 multi-customer billing demo
+   ========================================================================== */
+
+.owner-page {
+  background-color: #f7f4ef;
+  color: #1a1614;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
+.owner-hero {
+  position: relative;
+  min-height: 90vh;
+  padding: 120px 48px 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #0c0907;
+  overflow: hidden;
+}
+
+.owner-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.owner-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  opacity: 0.5;
+  filter: contrast(1.1) brightness(0.95);
+}
+
+.owner-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    rgba(12, 8, 6, 0.95) 0%,
+    rgba(14, 9, 6, 0.88) 42%,
+    rgba(16, 10, 7, 0.58) 75%,
+    rgba(12, 8, 6, 0.78) 100%
+  );
+}
+
+.owner-hero__container {
+  position: relative;
+  z-index: 10;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.95fr 1.35fr;
+  gap: 40px;
+  align-items: center;
+}
+
+/* Left Hero Content */
+.owner-hero__text {
+  color: #ffffff;
+}
+
+.owner-hero__eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #d4a04a;
+  margin-bottom: 16px;
+}
+
+.owner-hero__title {
+  font-size: 3.8rem;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0 0 20px;
+}
+
+.owner-hero__title .gold {
+  color: #d4a04a;
+}
+
+.owner-hero__desc {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0 0 32px;
+  max-width: 500px;
+}
+
+.owner-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.owner-hero__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #d4a04a 0%, #b58028 100%);
+  color: #1a0e0a;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 20px rgba(212, 160, 74, 0.35);
+  text-decoration: none;
+}
+
+.owner-hero__btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(212, 160, 74, 0.5);
+}
+
+.owner-hero__btn-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  padding: 13px 26px;
+  border-radius: 999px;
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.owner-hero__btn-demo:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.owner-hero__play-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1a0e0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  padding-left: 2px;
+}
+
+/* Right Hero Visual (Owner Dashboard Laptop Mockup) */
+.owner-hero__visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.owner-hero__doodle {
+  position: absolute;
+  top: -30px;
+  right: -10px;
+  font-family: 'Caveat', cursive, 'Segoe Script', sans-serif;
+  font-size: 1.35rem;
+  color: #e6b86e;
+  line-height: 1.2;
+  text-align: right;
+  transform: rotate(6deg);
+  pointer-events: none;
+  z-index: 25;
+}
+
+/* Laptop Frame */
+.owner-laptop {
+  width: 100%;
+  max-width: 660px;
+  position: relative;
+  perspective: 1200px;
+}
+
+.owner-laptop__screen {
+  background: #0f0d0c;
+  border-radius: 18px 18px 0 0;
+  padding: 10px 10px 0;
+  box-shadow:
+    0 25px 60px -10px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.owner-laptop__inner {
+  background: #ffffff;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  height: 380px;
+  display: flex;
+  font-size: 0.75rem;
+}
+
+.owner-laptop__base {
+  width: 108%;
+  margin-left: -4%;
+  height: 14px;
+  background: linear-gradient(180deg, #3d342e 0%, #1e1916 100%);
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.owner-laptop__notch {
+  width: 70px;
+  height: 4px;
+  background: #14100d;
+  margin: 0 auto;
+  border-radius: 0 0 4px 4px;
+}
+
+/* Inside Dashboard UI */
+.dash-sidebar {
+  width: 110px;
+  background: #14100d;
+  color: #ffffff;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.dash-sidebar__brand {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #d4a04a;
+  padding: 4px 6px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 4px;
+}
+
+.dash-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.dash-nav-item--active {
+  background: #d4a04a;
+  color: #1a0e0a;
+  font-weight: 700;
+}
+
+.dash-main {
+  flex: 1;
+  background: #fbf9f6;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+/* Top bar inside dashboard */
+.dash-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ebe4dc;
+  padding-bottom: 6px;
+}
+
+.dash-topbar__title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1a1410;
+}
+
+.dash-topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #4a3e35;
+}
+
+/* Stat Cards Row */
+.dash-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.dash-stat-box {
+  background: #ffffff;
+  border: 1px solid #ebe4dc;
+  border-radius: 8px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-stat-box__label {
+  font-size: 0.6rem;
+  color: #7d6e63;
+}
+
+.dash-stat-box__val {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #1a1410;
+  margin: 2px 0;
+}
+
+.dash-stat-box__change {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* Charts & Tables Row */
+.dash-charts-row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr;
+  gap: 8px;
+}
+
+.dash-chart-card {
+  background: #ffffff;
+  border: 1px solid #ebe4dc;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-card-header {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1a1410;
+  margin-bottom: 6px;
+}
+
+/* Sales SVG mini chart */
+.dash-sales-svg {
+  width: 100%;
+  height: 70px;
+}
+
+/* Donut circle mini */
+.dash-donut-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 4px 0;
+}
+
+.dash-donut-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: conic-gradient(#10b981 0% 45%, #f59e0b 45% 70%, #3b82f6 70% 88%, #ef4444 88% 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-donut-center {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   Hero Bottom Strip (5 Items)
+   ========================================================================== */
+.owner-hero__strip {
+  position: relative;
+  z-index: 10;
+  max-width: 1440px;
+  width: 100%;
+  margin: 40px auto 0;
+  background: rgba(18, 12, 10, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 16px 28px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.owner-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+}
+
+.owner-strip-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(212, 160, 74, 0.15);
+  color: #d4a04a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-strip-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-strip-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.owner-strip-sub {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   Section 2: Overlapping White / Cream Container
+   Split into 2 Columns:
+   1) Powerful Features for Café Owners (12 Cards)
+   2) How It Works in Your Café (7 Steps + Table 5 Multi-Customer Billing Demo)
+   ========================================================================== */
+.owner-overlap-section {
+  position: relative;
+  z-index: 30;
+  margin-top: -60px;
+  padding: 0 32px 60px;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.owner-overlap-card {
+  background: #ffffff;
+  border-radius: 36px;
+  box-shadow: 0 20px 60px -15px rgba(25, 15, 8, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+/* Left Column: 12 Feature Cards */
+.owner-features-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-col-header {
+  margin-bottom: 24px;
+}
+
+.owner-col-title {
+  font-size: 1.95rem;
+  font-weight: 800;
+  color: #1a1410;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.owner-col-title .orange {
+  color: #983b16;
+}
+
+.owner-col-sub {
+  font-size: 0.92rem;
+  color: #63574e;
+  margin: 0;
+}
+
+.owner-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.owner-feature-card {
+  background: #fdfaf6;
+  border: 1px solid #ebdccc;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.owner-feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(152, 59, 22, 0.08);
+  border-color: #d4a04a;
+}
+
+.owner-feat-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-feat-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-feat-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a1410;
+  line-height: 1.2;
+}
+
+.owner-feat-desc {
+  font-size: 0.72rem;
+  color: #6d5e53;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+/* Right Column: Workflow + Table 5 Example */
+.owner-workflow-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 7 Steps Horizontal Bar */
+.owner-flow-steps {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.owner-flow-step {
+  background: #fbf8f5;
+  border: 1px solid #ede3d8;
+  border-radius: 12px;
+  padding: 10px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.owner-flow-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.owner-flow-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1a1410;
+  line-height: 1.1;
+}
+
+.owner-flow-desc {
+  font-size: 0.58rem;
+  color: #7d6e63;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+/* Multi-Customer Table 5 Billing Box */
+.owner-example-box {
+  background: #fbf9f6;
+  border: 1.5px solid #ebd9c8;
+  border-radius: 22px;
+  padding: 20px;
+  margin-top: auto;
+}
+
+.owner-example-header {
+  margin-bottom: 14px;
+}
+
+.owner-example-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1a1410;
+  margin: 0 0 2px;
+}
+
+.owner-example-sub {
+  font-size: 0.78rem;
+  color: #63574e;
+  margin: 0;
+}
+
+.owner-example-content {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.owner-example-qr-card {
+  background: #2b1a12;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.owner-example-table-tag {
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.owner-example-qr-mini {
+  width: 70px;
+  height: 70px;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.owner-customers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.owner-customer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #ebdccc;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+}
+
+.owner-cust-person {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #1a1410;
+}
+
+.owner-cust-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ecdcd0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.owner-cust-order {
+  color: #6d5e53;
+  font-size: 0.72rem;
+}
+
+.owner-cust-bill {
+  font-weight: 800;
+  color: #983b16;
+}
+
+.owner-cust-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.owner-cust-badge--paid {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.owner-cust-badge--active {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .owner-hero__container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .owner-hero__desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .owner-hero__actions {
+    justify-content: center;
+  }
+  .owner-hero__strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .owner-overlap-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .owner-hero {
+    padding: 90px 20px 60px;
+  }
+  .owner-hero__title {
+    font-size: 2.6rem;
+  }
+  .owner-hero__strip {
+    grid-template-columns: 1fr;
+  }
+  .owner-features-grid {
+    grid-template-columns: 1fr;
+  }
+  .owner-overlap-section {
+    padding: 0 16px 40px;
+    margin-top: -30px;
+  }
+  .owner-overlap-card {
+    padding: 24px 16px;
+    border-radius: 24px;
+  }
+  .owner-example-content {
+    grid-template-columns: 1fr;
+  }
+}
