@@ -9,6 +9,7 @@ import {
   User,
   Settings,
   LogOut,
+  Store,
 } from 'lucide-react';
 
 export default function AdminTopBar({ onMenuToggle }) {
@@ -52,7 +53,7 @@ export default function AdminTopBar({ onMenuToggle }) {
         <input
           type="text"
           className="admin-topbar__search-input"
-          placeholder="Search cafés, owners, orders, customers..."
+          placeholder="Search cafés, owners, orders..."
           id="admin-global-search"
         />
       </div>
@@ -95,6 +96,11 @@ export default function AdminTopBar({ onMenuToggle }) {
               <button className="admin-topbar__dropdown-item" onClick={() => { setShowProfileMenu(false); navigate('/admin/settings'); }}>
                 <Settings size={16} />
                 Settings
+              </button>
+              <div className="admin-topbar__dropdown-divider" />
+              <button className="admin-topbar__dropdown-item" onClick={() => { setShowProfileMenu(false); navigate('/owner/dashboard'); }}>
+                <Store size={16} color="#c47d2e" />
+                <span>Switch to Owner Portal</span>
               </button>
               <div className="admin-topbar__dropdown-divider" />
               <button className="admin-topbar__dropdown-item admin-topbar__dropdown-item--danger" onClick={handleLogout}>

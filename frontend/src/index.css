@@ -32,15 +32,15 @@
   --medium-gray: #6b625a;
   --dark-gray: #3a3530;
 
-  /* Role colors */
+  /* Role colors — Unified CaféFlow Warm Palette */
   --role-admin: #d4a04a;
-  --role-admin-bg: rgba(212, 160, 74, 0.12);
-  --role-owner: #4a8fd4;
-  --role-owner-bg: rgba(74, 143, 212, 0.12);
-  --role-staff: #4aaa6a;
-  --role-staff-bg: rgba(74, 170, 106, 0.12);
-  --role-customer: #9a6ad4;
-  --role-customer-bg: rgba(154, 106, 212, 0.12);
+  --role-admin-bg: rgba(212, 160, 74, 0.14);
+  --role-owner: #c47d2e;
+  --role-owner-bg: rgba(196, 125, 46, 0.14);
+  --role-staff: #a06a38;
+  --role-staff-bg: rgba(160, 106, 56, 0.14);
+  --role-customer: #c75b2a;
+  --role-customer-bg: rgba(199, 91, 42, 0.14);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

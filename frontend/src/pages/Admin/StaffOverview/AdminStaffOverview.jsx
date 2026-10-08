@@ -182,11 +182,9 @@ export default function AdminStaffOverview() {
     <div className="admin-staff-overview">
       {/* Page Header */}
       <div className="admin-page-header">
-        <div className="admin-page-header__top">
-          <div>
-            <h1 className="admin-page-header__title">Staff Overview</h1>
-            <p className="admin-page-header__subtitle">View all staff members across your café platform.</p>
-          </div>
+        <div>
+          <h1 className="admin-page-title">Staff Overview</h1>
+          <p className="admin-page-subtitle">View all staff members across your café platform.</p>
         </div>
       </div>
 

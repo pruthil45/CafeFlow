@@ -165,7 +165,7 @@ export default function AdminDashboard() {
         </div>
         <button
           className="admin-btn-primary"
-          onClick={() => navigate('/admin/cafes')}
+          onClick={() => navigate('/admin/cafes/create')}
           id="create-cafe-btn"
         >
           <Plus size={18} />
@@ -320,46 +320,48 @@ export default function AdminDashboard() {
               View All <ArrowRight size={14} />
             </button>
           </div>
-          <table className="admin-cafe-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Café Name</th>
-                <th>Orders</th>
-                <th>Revenue</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {CAFES.map((cafe, i) => (
-                <tr key={cafe.id}>
-                  <td>{i + 1}</td>
-                  <td>
-                    <div className="admin-cafe-table__name-cell">
-                      <div className="admin-cafe-table__logo" style={{ background: cafe.color }}>
-                        {cafe.name.charAt(0)}
-                      </div>
-                      <span className="admin-cafe-table__name">{cafe.name}</span>
-                    </div>
-                  </td>
-                  <td>{formatNumber(cafe.orders)}</td>
-                  <td>{formatINR(cafe.revenue)}</td>
-                  <td>
-                    <span className={`admin-badge admin-badge--${cafe.status}`}>
-                      <span className="admin-badge__dot" />
-                      {cafe.status === 'active' ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td>
-                    <button className="admin-table__action-btn" aria-label="More actions">
-                      <MoreHorizontal size={16} />
-                    </button>
-                  </td>
+          <div className="admin-table-container">
+            <table className="admin-cafe-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Café Name</th>
+                  <th>Orders</th>
+                  <th>Revenue</th>
+                  <th>Status</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {CAFES.map((cafe, i) => (
+                  <tr key={cafe.id}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <div className="admin-cafe-table__name-cell">
+                        <div className="admin-cafe-table__logo" style={{ background: cafe.color }}>
+                          {cafe.name.charAt(0)}
+                        </div>
+                        <span className="admin-cafe-table__name">{cafe.name}</span>
+                      </div>
+                    </td>
+                    <td>{formatNumber(cafe.orders)}</td>
+                    <td>{formatINR(cafe.revenue)}</td>
+                    <td>
+                      <span className={`admin-badge admin-badge--${cafe.status}`}>
+                        <span className="admin-badge__dot" />
+                        {cafe.status === 'active' ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td>
+                      <button className="admin-table__action-btn" aria-label="More actions">
+                        <MoreHorizontal size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Recent Activity */}

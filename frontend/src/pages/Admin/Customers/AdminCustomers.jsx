@@ -631,7 +631,7 @@ export default function AdminCustomers() {
                   </div>
                   <div>
                     <div className="admin-metric-label">Last Visit</div>
-                    <div className="admin-metric-value">{cust.lastVisit.split(' ')[0]}</div>
+                    <div className="admin-metric-value">{cust.lastVisit}</div>
                   </div>
                   <div>
                     <div className="admin-metric-label">Type</div>

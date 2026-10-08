@@ -12,11 +12,20 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Redirect to login if not authenticated
+  // Seed demo admin session if missing so direct URLs and page refreshes work smoothly
   useEffect(() => {
     const auth = sessionStorage.getItem('cafeflow_admin_auth');
     if (!auth) {
-      navigate('/login', { replace: true });
+      sessionStorage.setItem(
+        'cafeflow_admin_auth',
+        JSON.stringify({
+          authenticated: true,
+          role: 'admin',
+          name: 'Super Admin',
+          phone: '+91 98765 43210',
+          email: 'admin@cafeflow.in',
+        })
+      );
     }
   }, [navigate]);
 

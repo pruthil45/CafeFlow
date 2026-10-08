@@ -372,28 +372,30 @@ export default function AdminCafeAnalytics() {
             <h3 className="admin-chart-card__title">Popular Items</h3>
             <button className="admin-link-btn">View All →</button>
           </div>
-          <table className="admin-table admin-table--compact">
-            <thead>
-              <tr>
-                <th style={{ width: 28 }}>#</th>
-                <th>Item</th>
-                <th>Orders</th>
-                <th>Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {analytics.popularItems.map((item) => (
-                <tr key={item.name}>
-                  <td className="admin-table-index">{item.rank}</td>
-                  <td>
-                    <span className="admin-text-bold">{item.name}</span>
-                  </td>
-                  <td>{formatNumber(item.orders)}</td>
-                  <td className="admin-text-bold">{formatINR(item.revenue)}</td>
+          <div className="admin-table-container">
+            <table className="admin-table admin-table--compact">
+              <thead>
+                <tr>
+                  <th style={{ width: 28 }}>#</th>
+                  <th>Item</th>
+                  <th>Orders</th>
+                  <th>Revenue</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {analytics.popularItems.map((item) => (
+                  <tr key={item.name}>
+                    <td className="admin-table-index">{item.rank}</td>
+                    <td>
+                      <span className="admin-text-bold">{item.name}</span>
+                    </td>
+                    <td>{formatNumber(item.orders)}</td>
+                    <td className="admin-text-bold">{formatINR(item.revenue)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Orders by Category Donut */}

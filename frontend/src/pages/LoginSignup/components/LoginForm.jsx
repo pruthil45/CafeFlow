@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRight, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowRight, ShieldCheck, Sparkles, Store } from 'lucide-react'
 import CenterBranding from './CenterBranding'
 import PhoneInput from './PhoneInput'
 
@@ -9,6 +9,7 @@ export default function LoginForm({
   onContinue = () => {},
   onSwitchToSignup = () => {},
   onDemoAdminLogin = () => {},
+  onDemoOwnerLogin = () => {},
 }) {
   const [error, setError] = useState('')
 
@@ -60,16 +61,31 @@ export default function LoginForm({
         </button>
       </form>
 
-      {/* Demo Admin Login Section */}
+      {/* Demo Portals Section */}
       <div className="auth-admin-demo-card">
         <div className="auth-admin-demo-card__header">
           <ShieldCheck size={16} className="auth-admin-demo-card__icon" />
-          <span>Administrator Access</span>
+          <span>Quick Demo Access</span>
         </div>
         <p className="auth-admin-demo-card__sub">
-          Admins log in with registered phone &amp; OTP (no password needed).
+          Instant one-click access to test CaféFlow portals without waiting for OTP:
         </p>
         <div className="auth-admin-demo-card__actions">
+          <button
+            type="button"
+            className="auth-btn-admin-demo"
+            onClick={onDemoOwnerLogin}
+            id="demo-owner-login-btn"
+            style={{
+              background: 'linear-gradient(135deg, #c47d2e, #8c4a23)',
+              color: '#fff',
+              borderColor: '#fae0cd',
+              marginBottom: '6px',
+            }}
+          >
+            <Store size={14} />
+            <span>☕ Demo Café Owner Portal (The Daily Bean)</span>
+          </button>
           <button
             type="button"
             className="auth-btn-admin-demo"
@@ -77,15 +93,7 @@ export default function LoginForm({
             id="demo-admin-login-btn"
           >
             <Sparkles size={14} />
-            <span>⚡ Demo Admin Login (One-Click)</span>
-          </button>
-          <button
-            type="button"
-            className="auth-admin-fill-btn"
-            onClick={() => handlePhoneChange('9876543210')}
-            id="admin-fill-phone-btn"
-          >
-            Or fill admin no: <strong>9876543210</strong>
+            <span>⚡ Demo Admin Portal (Super Admin)</span>
           </button>
         </div>
       </div>

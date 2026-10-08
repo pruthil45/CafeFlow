@@ -416,37 +416,39 @@ export default function AdminPlatformAnalytics() {
               View All →
             </button>
           </div>
-          <table className="admin-table admin-table--compact">
-            <thead>
-              <tr>
-                <th style={{ width: 30 }}>#</th>
-                <th>Café Name</th>
-                <th>Revenue</th>
-                <th>Orders</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTopCafes.map((cafe) => (
-                <tr
-                  key={cafe.id}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => navigate(`/admin/cafe-analytics?cafe=${cafe.id}`)}
-                >
-                  <td className="admin-table-index">{cafe.rank}</td>
-                  <td>
-                    <div className="admin-entity-cell">
-                      <div className="admin-cafe-badge admin-cafe-badge--small">
-                        {cafe.name.charAt(0)}
-                      </div>
-                      <span className="admin-text-bold">{cafe.name}</span>
-                    </div>
-                  </td>
-                  <td className="admin-text-bold">{formatINR(cafe.revenue)}</td>
-                  <td>{formatNumber(cafe.orders)}</td>
+          <div className="admin-table-container">
+            <table className="admin-table admin-table--compact">
+              <thead>
+                <tr>
+                  <th style={{ width: 30 }}>#</th>
+                  <th>Café Name</th>
+                  <th>Revenue</th>
+                  <th>Orders</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredTopCafes.map((cafe) => (
+                  <tr
+                    key={cafe.id}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/admin/cafe-analytics?cafe=${cafe.id}`)}
+                  >
+                    <td className="admin-table-index">{cafe.rank}</td>
+                    <td>
+                      <div className="admin-entity-cell">
+                        <div className="admin-cafe-badge admin-cafe-badge--small">
+                          {cafe.name.charAt(0)}
+                        </div>
+                        <span className="admin-text-bold">{cafe.name}</span>
+                      </div>
+                    </td>
+                    <td className="admin-text-bold">{formatINR(cafe.revenue)}</td>
+                    <td>{formatNumber(cafe.orders)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

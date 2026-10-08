@@ -190,16 +190,14 @@ export default function AdminOwners() {
     <div className="admin-owners">
       {/* Page Header */}
       <div className="admin-page-header">
-        <div className="admin-page-header__top">
-          <div>
-            <h1 className="admin-page-header__title">Owners</h1>
-            <p className="admin-page-header__subtitle">Manage all café owner accounts across the platform.</p>
-          </div>
-          <button className="admin-btn-primary" onClick={() => setShowCreateModal(true)} id="create-owner-btn">
-            <Plus size={18} />
-            Create Owner
-          </button>
+        <div>
+          <h1 className="admin-page-title">Owners</h1>
+          <p className="admin-page-subtitle">Manage all café owner accounts across the platform.</p>
         </div>
+        <button className="admin-btn-primary" onClick={() => setShowCreateModal(true)} id="create-owner-btn">
+          <Plus size={18} />
+          Create Owner
+        </button>
       </div>
 
       {/* KPI Cards */}

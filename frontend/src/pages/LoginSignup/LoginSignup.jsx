@@ -41,7 +41,6 @@ export default function LoginSignup() {
 
   // One-click Demo Admin Login
   const handleDemoAdminLogin = () => {
-    const adminPhone = '9876543210'
     sessionStorage.setItem(
       'cafeflow_admin_auth',
       JSON.stringify({
@@ -57,6 +56,26 @@ export default function LoginSignup() {
     setVerifiedSuccess(true)
     setTimeout(() => {
       navigate('/admin/dashboard')
+    }, 800)
+  }
+
+  // One-click Demo Owner Login
+  const handleDemoOwnerLogin = () => {
+    sessionStorage.setItem(
+      'cafeflow_owner_auth',
+      JSON.stringify({
+        authenticated: true,
+        role: 'owner',
+        name: 'Café Owner',
+        cafe: 'The Daily Bean',
+        phone: '+91 98765 43210',
+        loginTime: new Date().toISOString(),
+      })
+    )
+    setToastMessage('Owner verified! Welcome to The Daily Bean Dashboard.')
+    setVerifiedSuccess(true)
+    setTimeout(() => {
+      navigate('/owner/dashboard')
     }, 800)
   }
 
@@ -162,6 +181,7 @@ export default function LoginSignup() {
               setAuthState('signup')
             }}
             onDemoAdminLogin={handleDemoAdminLogin}
+            onDemoOwnerLogin={handleDemoOwnerLogin}
           />
         )}
 

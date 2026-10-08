@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Building2, Users, ShoppingCart, IndianRupee, Star } from 'lucide-react'
+import { Coffee, Users, ShoppingCart, IndianRupee, Star } from 'lucide-react'
 import heroBg from '../assets/hero-bg.jpg'
 
 const stats = [
-  { icon: Building2, value: '500+', label: 'Cafés Onboarded' },
+  { icon: Coffee, value: '500+', label: 'Cafés Onboarded' },
   { icon: Users, value: '1M+', label: 'Happy Customers' },
   { icon: ShoppingCart, value: '10M+', label: 'Orders Processed' },
   { icon: IndianRupee, value: '₹100Cr+', label: 'Total Revenue' },
@@ -22,7 +22,7 @@ export default function StatsSection() {
           observer.disconnect()
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     )
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
@@ -30,17 +30,12 @@ export default function StatsSection() {
 
   return (
     <section className="stats-section" ref={ref} aria-label="Platform Statistics">
-      <div className="stats-section__bg">
-        <img src={heroBg} alt="" aria-hidden="true" loading="lazy" />
+      <div className="stats-section__bg" aria-hidden="true">
+        <img src={heroBg} alt="" loading="lazy" />
       </div>
-      <div className="stats-section__overlay" />
+      <div className="stats-section__overlay" aria-hidden="true" />
 
       <div className="stats-section__container">
-        <div className="stats-section__header">
-          <div className="stats-section__eyebrow">Powering Cafés Across India</div>
-          <h2 className="stats-section__title">Numbers That Speak</h2>
-        </div>
-
         <div className="stats-section__grid">
           {stats.map((s, i) => (
             <div
@@ -48,12 +43,12 @@ export default function StatsSection() {
               key={s.label}
               style={{
                 opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(20px)',
-                transition: `all 0.6s ease ${i * 0.1}s`,
+                transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                transition: `all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.08}s`,
               }}
             >
-              <div className="stat-card__icon">
-                <s.icon size={24} />
+              <div className="stat-card__icon" aria-hidden="true">
+                <s.icon size={26} />
               </div>
               <div className="stat-card__value">{s.value}</div>
               <div className="stat-card__label">{s.label}</div>
