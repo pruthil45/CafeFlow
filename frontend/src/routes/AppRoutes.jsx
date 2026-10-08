@@ -24,6 +24,12 @@ import AdminSettings from '../pages/Admin/Settings/Settings'
 // Owner Portal Modules
 import OwnerLayout from '../pages/Owner/OwnerLayout'
 import OwnerDashboard from '../pages/Owner/Dashboard/OwnerDashboard'
+import OwnerOrders from '../pages/Owner/Orders/OwnerOrders'
+import OwnerKitchenDisplay from '../pages/Owner/Kitchen/OwnerKitchenDisplay'
+import OwnerTables from '../pages/Owner/Tables/OwnerTables'
+import OwnerCustomers from '../pages/Owner/Customers/OwnerCustomers'
+import OwnerReports from '../pages/Owner/Reports/OwnerReports'
+import OwnerAnalytics from '../pages/Owner/Analytics/OwnerAnalytics'
 import OwnerPlaceholderView from '../pages/Owner/modules/OwnerPlaceholderView'
 
 export default function AppRoutes() {
@@ -66,15 +72,15 @@ export default function AppRoutes() {
       <Route path="/owner" element={<OwnerLayout />}>
         <Route index element={<Navigate to="/owner/dashboard" replace />} />
         <Route path="dashboard" element={<OwnerDashboard />} />
-        <Route path="orders" element={<OwnerPlaceholderView title="Orders Management" description="Real-time order queue, processing status, and table-assigned orders." />} />
-        <Route path="kitchen" element={<OwnerPlaceholderView title="Kitchen Display System (KDS)" description="Live order tickets, preparation timers, and fulfillment controls for kitchen chefs." />} />
+        <Route path="orders" element={<OwnerOrders />} />
+        <Route path="kitchen" element={<OwnerKitchenDisplay />} />
         <Route path="menu" element={<OwnerPlaceholderView title="Menu Management" description="Manage dishes, drinks, categories, prices, variants, add-ons, and stock availability." />} />
-        <Route path="tables" element={<OwnerPlaceholderView title="Tables & QR Codes" description="Floor map, table occupancy, dynamic QR ordering codes, and party seating." />} />
-        <Route path="customers" element={<OwnerPlaceholderView title="Customer Profiles" description="Customer directory, contact numbers, order frequency, and visit timelines." />} />
+        <Route path="tables" element={<OwnerTables />} />
+        <Route path="customers" element={<OwnerCustomers />} />
         <Route path="loyalty" element={<OwnerPlaceholderView title="Loyalty & Rewards" description="Point multipliers, stamp cards, redeemable rewards, and customer tiers." />} />
         <Route path="promotions" element={<OwnerPlaceholderView title="Promotions & Offers" description="Discount codes, festive combos, happy hour deals, and marketing campaigns." />} />
-        <Route path="reports" element={<OwnerPlaceholderView title="Business Reports" description="Exportable sales summaries, tax filings, inventory consumption, and staff logs." />} />
-        <Route path="analytics" element={<OwnerPlaceholderView title="Café Analytics" description="Deep dive revenue analytics, customer lifetime value, and peak hour trends." />} />
+        <Route path="reports" element={<OwnerReports />} />
+        <Route path="analytics" element={<OwnerAnalytics />} />
         <Route path="settings" element={<OwnerPlaceholderView title="Café Settings" description="Café operating hours, printer configuration, tax rates, and staff permissions." />} />
         <Route path="my-cafe" element={<OwnerPlaceholderView title="My Café Overview" description="Public café profile, bio, address, social links, and cover branding." />} />
         {/* Fallback to Dashboard */}

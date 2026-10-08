@@ -2070,3 +2070,2436 @@
     font-size: 11.5px;
   }
 }
+
+/* ==========================================================================
+   ORDERS, REPORTS & ANALYTICS SHARED STYLES
+   ========================================================================== */
+
+.owner-module-container {
+  padding: 24px 32px 48px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1680px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Module Header Row */
+.owner-module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.owner-module-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-module-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  letter-spacing: -0.5px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.owner-module-subtitle {
+  font-size: 13.5px;
+  color: var(--owner-text-secondary);
+  margin-top: 3px;
+  font-weight: 400;
+}
+
+.owner-module-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Primary Button (Caramel Brown) */
+.owner-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #9c4c20, #7a3a16);
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(122, 58, 22, 0.3);
+  transition: all 0.15s ease;
+}
+
+.owner-btn-primary:hover {
+  background: linear-gradient(135deg, #af5524, #8c421a);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(122, 58, 22, 0.4);
+}
+
+/* Secondary Button / Dropdown */
+.owner-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--owner-espresso);
+  cursor: pointer;
+  box-shadow: var(--owner-shadow-sm);
+  transition: all 0.15s ease;
+}
+
+.owner-btn-secondary:hover {
+  background: #faf8f5;
+  border-color: #d8cebf;
+}
+
+/* Date Range Inputs Box */
+.owner-date-range-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 9px;
+  padding: 6px 12px;
+  box-shadow: var(--owner-shadow-sm);
+}
+
+.owner-date-range-input {
+  border: none;
+  background: transparent;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--owner-espresso);
+  outline: none;
+  font-family: inherit;
+  width: 95px;
+}
+
+.owner-date-range-separator {
+  font-size: 12px;
+  color: var(--owner-text-muted);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   ORDERS MODULE SPECIFIC STYLES
+   ========================================================================== */
+
+/* Status Tabs Bar */
+.owner-orders-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.owner-orders-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--owner-card-border);
+  background: #ffffff;
+  color: var(--owner-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-orders-tab:hover {
+  background: #fbf9f6;
+  color: var(--owner-espresso);
+}
+
+.owner-orders-tab.active {
+  background: #8c4a23;
+  color: #ffffff;
+  border-color: #8c4a23;
+  box-shadow: 0 2px 8px rgba(140, 74, 35, 0.3);
+}
+
+.owner-orders-tab-count {
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f4efe8;
+  color: var(--owner-espresso);
+}
+
+.owner-orders-tab.active .owner-orders-tab-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Orders Filter Bar */
+.owner-orders-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: var(--owner-shadow-card);
+  flex-wrap: wrap;
+}
+
+.owner-orders-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 220px;
+  background: #faf8f5;
+  border: 1px solid #ede8e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.owner-orders-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: var(--owner-espresso);
+  font-family: inherit;
+  width: 100%;
+}
+
+.owner-orders-search-input::placeholder {
+  color: #9c9186;
+}
+
+.owner-select-field {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #ede8e1;
+  background: #faf8f5;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--owner-espresso);
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Desktop Orders Table Card */
+.owner-orders-table-card {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--owner-shadow-card);
+}
+
+.owner-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.owner-orders-full-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.owner-orders-full-table th {
+  padding: 12px 14px;
+  background: #faf8f5;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--owner-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #ede8e1;
+}
+
+.owner-orders-full-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f4f0ea;
+  color: var(--owner-text-primary);
+  vertical-align: middle;
+}
+
+.owner-orders-full-table tr:hover td {
+  background-color: #fcfbf9;
+}
+
+/* Customer Cell */
+.owner-customer-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owner-customer-avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #eee8de;
+  color: #73675a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.owner-customer-name-text {
+  font-weight: 700;
+  color: var(--owner-espresso);
+  font-size: 13px;
+}
+
+.owner-customer-phone-text {
+  font-size: 11px;
+  color: var(--owner-text-muted);
+}
+
+/* Table Tag Badge */
+.owner-table-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #8c4a23;
+  background: #fbf0e6;
+  border: 1px solid #f5decb;
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+/* Stacked Items Cell */
+.owner-items-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.owner-item-thumbnail {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #ede8e1;
+  background: #f4efe8;
+}
+
+.owner-items-more-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--owner-text-secondary);
+  background: #f1ede8;
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+/* Payment Status Badges */
+.owner-payment-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.owner-payment-badge--paid {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.owner-payment-badge--pending {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* Action 3-dots Menu Button */
+.owner-action-menu-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: #8c7b6f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-action-menu-btn:hover {
+  background: #f1ede8;
+  color: var(--owner-espresso);
+}
+
+/* Action Dropdown Popup */
+.owner-action-popup {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  width: 180px;
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(26, 14, 10, 0.15);
+  padding: 5px;
+  z-index: 100;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+.owner-action-popup-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--owner-text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.owner-action-popup-item:hover {
+  background: #fbf8f4;
+  color: var(--owner-caramel);
+}
+
+/* Table Pagination Bar */
+.owner-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #faf8f5;
+  border-top: 1px solid #ede8e1;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.owner-pagination-text {
+  font-size: 12.5px;
+  color: var(--owner-text-secondary);
+}
+
+.owner-pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.owner-pagination-btn {
+  min-width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid #e5dfd5;
+  background: #ffffff;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--owner-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0 6px;
+}
+
+.owner-pagination-btn:hover:not(:disabled) {
+  background: #f4efe8;
+  color: var(--owner-espresso);
+}
+
+.owner-pagination-btn.active {
+  background: #8c4a23;
+  color: #ffffff;
+  border-color: #8c4a23;
+}
+
+.owner-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Mobile Orders Card View (Displayed on <= 768px) */
+.owner-mobile-orders-list {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.owner-mobile-order-card {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: var(--owner-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.owner-mobile-order-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f4efe8;
+  padding-bottom: 8px;
+}
+
+.owner-mobile-order-card__id-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+.owner-mobile-order-card__amount {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+}
+
+.owner-mobile-order-card__body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.owner-mobile-order-card__img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #eee8e0;
+}
+
+.owner-mobile-order-card__details {
+  flex: 1;
+  min-width: 0;
+}
+
+.owner-mobile-order-card__customer {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+.owner-mobile-order-card__items {
+  font-size: 12px;
+  color: var(--owner-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner-mobile-order-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+}
+
+/* ==========================================================================
+   REPORTS MODULE SPECIFIC STYLES
+   ========================================================================== */
+
+/* Report Tabs */
+.owner-report-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1ede6;
+  padding: 4px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.owner-report-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--owner-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-report-tab-btn:hover {
+  color: var(--owner-espresso);
+}
+
+.owner-report-tab-btn.active {
+  background: #8c4a23;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(140, 74, 35, 0.3);
+}
+
+/* Daily Sales Details Table */
+.owner-daily-sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.owner-daily-sales-table th {
+  padding: 10px 12px;
+  background: #faf8f5;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--owner-text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid #ede8e1;
+}
+
+.owner-daily-sales-table td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #f4f0ea;
+  color: var(--owner-text-primary);
+}
+
+.owner-daily-sales-table tr:hover td {
+  background: #fdfbf8;
+}
+
+/* Export Dropdown Menu */
+.owner-export-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 160px;
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  z-index: 100;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+.owner-export-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--owner-text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.owner-export-dropdown-item:hover {
+  background: #fef4eb;
+  color: var(--owner-caramel);
+}
+
+/* ==========================================================================
+   ANALYTICS MODULE SPECIFIC STYLES
+   ========================================================================== */
+
+/* 4 Top KPI Cards Grid */
+.owner-analytics-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* Peak badge on Peak Ordering Hours chart */
+.owner-peak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #7a3a16;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 3px 8px;
+  box-shadow: 0 2px 6px rgba(122, 58, 22, 0.35);
+}
+
+/* Promotion and Loyalty Cards */
+.owner-loyalty-card-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #faf8f5;
+  border: 1px solid #ede8e1;
+  border-radius: 10px;
+}
+
+.owner-loyalty-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   MODAL DIALOG (Add Order / Order Details)
+   ========================================================================== */
+
+.owner-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 8, 5, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.owner-modal-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid var(--owner-card-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  animation: scaleUp 0.18s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-modal-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0eae1;
+  background: #faf8f5;
+}
+
+.owner-modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  margin: 0;
+}
+
+.owner-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #8c7b6f;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.owner-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.owner-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.owner-modal-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+.owner-modal-input {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #dfd8cf;
+  font-size: 13px;
+  color: var(--owner-espresso);
+  font-family: inherit;
+  outline: none;
+}
+
+.owner-modal-input:focus {
+  border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.15);
+}
+
+.owner-modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #f0eae1;
+  background: #faf8f5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Toast Message */
+.owner-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #1a0e0a;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border-left: 4px solid var(--owner-gold);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 2000;
+  animation: fadeInDown 0.2s ease-out;
+}
+
+/* Responsive adjustments for Orders, Reports & Analytics */
+@media (max-width: 1024px) {
+  .owner-module-container {
+    padding: 20px;
+  }
+
+  .owner-analytics-kpis-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .owner-module-container {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .owner-module-title {
+    font-size: 22px;
+  }
+
+  .owner-analytics-kpis-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Switch desktop orders table to mobile cards */
+  .owner-orders-table-card {
+    display: none;
+  }
+
+  .owner-mobile-orders-list {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .owner-module-container {
+    padding: 12px;
+  }
+
+  .owner-date-range-box {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .owner-module-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .owner-btn-primary,
+  .owner-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   MODULE 1: CUSTOMERS MODULE STYLES (Matching Reference Screenshot)
+   ========================================================================== */
+
+.owner-customers-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.owner-customers-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1ebd8;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.owner-customers-tab-btn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #6d5b4f;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.owner-customers-tab-btn:hover {
+  color: var(--owner-espresso);
+}
+
+.owner-customers-tab-btn.active {
+  background: #3e2719;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(62, 39, 25, 0.25);
+}
+
+.owner-customers-search {
+  position: relative;
+  min-width: 280px;
+  max-width: 380px;
+  flex: 1;
+}
+
+.owner-customers-search svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9c8e82;
+  pointer-events: none;
+}
+
+.owner-customers-search input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border-radius: 10px;
+  border: 1px solid #e5dfd5;
+  background: #ffffff;
+  font-size: 13px;
+  color: var(--owner-espresso);
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.owner-customers-search input:focus {
+  border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.15);
+}
+
+/* Customers Table */
+.owner-customers-table-card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--owner-card-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-customers-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.owner-customers-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.owner-customers-table th {
+  padding: 14px 18px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #7a6a5e;
+  border-bottom: 1px solid #f0eae1;
+  background: #faf8f5;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.owner-customers-th-sortable {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.owner-customers-th-sortable:hover {
+  color: var(--owner-espresso);
+}
+
+.owner-customers-table td {
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: var(--owner-espresso);
+  border-bottom: 1px solid #f5efe6;
+  white-space: nowrap;
+}
+
+.owner-customers-table tbody tr {
+  transition: background 0.12s ease;
+}
+
+.owner-customers-table tbody tr:hover {
+  background: #fdfaf5;
+}
+
+.owner-customers-table tbody tr.selected {
+  background: #f9f2e8;
+}
+
+.owner-customers-name-cell {
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+.owner-customers-view-btn {
+  background: #f1ebd8;
+  color: #633b1e;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-customers-view-btn:hover {
+  background: #e5dac2;
+  color: #3e2719;
+}
+
+/* Pagination Bar */
+.owner-customers-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid #f0eae1;
+  background: #faf8f5;
+  font-size: 13px;
+  color: #7a6a5e;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.owner-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.owner-pagination-btn {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e5dfd5;
+  background: #ffffff;
+  color: var(--owner-espresso);
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0 6px;
+}
+
+.owner-pagination-btn:hover:not(:disabled) {
+  border-color: #8c4a23;
+  color: #8c4a23;
+}
+
+.owner-pagination-btn.active {
+  background: #3e2719;
+  color: #ffffff;
+  border-color: #3e2719;
+}
+
+.owner-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.owner-pagination-rows-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.owner-pagination-rows-select select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #e5dfd5;
+  background: #ffffff;
+  font-size: 12.5px;
+  color: var(--owner-espresso);
+  outline: none;
+}
+
+/* Slide-in Customer Drawer (Right Side) */
+.owner-customer-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 11, 7, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 1040;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.owner-customer-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.owner-customer-drawer {
+  position: fixed;
+  top: 0;
+  right: -520px;
+  bottom: 0;
+  width: 480px;
+  max-width: 95vw;
+  background: #ffffff;
+  z-index: 1050;
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+  transition: right 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.owner-customer-drawer.open {
+  right: 0;
+}
+
+.owner-customer-drawer-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0eae1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: #faf8f5;
+}
+
+.owner-customer-drawer-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  margin: 0;
+}
+
+.owner-customer-drawer-subtitle {
+  font-size: 12.5px;
+  color: #7a6a5e;
+  margin-top: 4px;
+}
+
+.owner-customer-drawer-close {
+  background: transparent;
+  border: none;
+  color: #8c7b6f;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.owner-customer-drawer-close:hover {
+  background: #f0eae1;
+  color: var(--owner-espresso);
+}
+
+.owner-customer-drawer-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  border-bottom: 1px solid #f0eae1;
+  background: #ffffff;
+}
+
+.owner-customer-drawer-tab {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #7a6a5e;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-customer-drawer-tab:hover {
+  color: var(--owner-espresso);
+}
+
+.owner-customer-drawer-tab.active {
+  background: #3e2719;
+  color: #ffffff;
+}
+
+.owner-customer-drawer-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Customer Drawer KPI 2x3 Grid */
+.owner-customer-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.owner-customer-metric-box {
+  background: #faf8f5;
+  border: 1px solid #eee8df;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.owner-customer-metric-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+}
+
+.owner-customer-metric-lbl {
+  font-size: 11.5px;
+  color: #8c7b6f;
+  font-weight: 600;
+}
+
+/* Contact Details */
+.owner-customer-section-card {
+  border: 1px solid #eee8df;
+  border-radius: 12px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.owner-customer-section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.owner-customer-section-title a,
+.owner-customer-section-title button {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c4a23;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.owner-customer-contact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.owner-customer-contact-label {
+  color: #8c7b6f;
+}
+
+.owner-customer-contact-val {
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+/* Drawer Recent Orders */
+.owner-customer-order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #faf8f5;
+  border: 1px solid #f0eae1;
+  margin-bottom: 8px;
+  transition: all 0.12s ease;
+  cursor: pointer;
+}
+
+.owner-customer-order-item:hover {
+  background: #f5f0e6;
+}
+
+.owner-customer-order-num {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+.owner-customer-order-sub {
+  font-size: 11.5px;
+  color: #8c7b6f;
+  margin-top: 2px;
+}
+
+.owner-customer-order-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owner-customer-order-amount {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+}
+
+.owner-customer-order-badge {
+  background: #eafaf1;
+  color: #0d8a55;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* Loyalty Progress Box */
+.owner-loyalty-box {
+  background: #faf8f5;
+  border: 1px solid #eee8df;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.owner-loyalty-pts {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+}
+
+.owner-loyalty-pts-label {
+  font-size: 12px;
+  color: #8c7b6f;
+  margin-bottom: 10px;
+}
+
+.owner-loyalty-progress-track {
+  width: 100%;
+  height: 8px;
+  background: #ebe5dc;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 10px 0 6px 0;
+}
+
+.owner-loyalty-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c47d2e, #8c4a23);
+  border-radius: 4px;
+}
+
+.owner-loyalty-progress-sub {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #8c7b6f;
+}
+
+/* Promotions List */
+.owner-customer-promo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #faf8f5;
+  border: 1px solid #f0eae1;
+  margin-bottom: 8px;
+}
+
+.owner-customer-promo-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+.owner-customer-promo-sub {
+  font-size: 11.5px;
+  color: #8c7b6f;
+}
+
+.owner-customer-promo-badge {
+  background: #eafaf1;
+  color: #0d8a55;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* Mobile Customer Cards */
+.owner-mobile-customer-cards {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.owner-mobile-customer-card {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.owner-mobile-customer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.owner-mobile-customer-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+}
+
+.owner-mobile-customer-phone {
+  font-size: 12px;
+  color: #8c7b6f;
+  margin-top: 2px;
+}
+
+.owner-mobile-customer-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: #faf8f5;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.owner-mobile-customer-stat-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+}
+
+.owner-mobile-customer-stat-lbl {
+  font-size: 11px;
+  color: #8c7b6f;
+}
+
+/* ==========================================================================
+   MODULE 2: KITCHEN DISPLAY SYSTEM (Kanban Board & Operational View)
+   ========================================================================== */
+
+.owner-kitchen-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.owner-kitchen-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owner-kitchen-table-select {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #e0d8cc;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--owner-espresso);
+  cursor: pointer;
+  outline: none;
+}
+
+.owner-kitchen-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #e0d8cc;
+  background: #ffffff;
+  color: #634f43;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.owner-kitchen-icon-btn:hover {
+  background: #f7f3ec;
+  color: var(--owner-espresso);
+  border-color: #c9bea9;
+}
+
+.owner-kitchen-icon-btn.active {
+  background: #3e2719;
+  color: #ffffff;
+  border-color: #3e2719;
+}
+
+/* Kitchen 4 KPI Cards */
+.owner-kitchen-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.owner-kitchen-kpi-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--owner-card-border);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.owner-kitchen-kpi-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-kitchen-kpi-icon-wrap--queued {
+  background: #fff4ea;
+  color: #ea580c;
+}
+
+.owner-kitchen-kpi-icon-wrap--progress {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.owner-kitchen-kpi-icon-wrap--completed {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.owner-kitchen-kpi-icon-wrap--time {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.owner-kitchen-kpi-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  line-height: 1.1;
+}
+
+.owner-kitchen-kpi-lbl {
+  font-size: 12px;
+  color: #7a6a5e;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Kanban 3-Column Board */
+.owner-kitchen-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.owner-kitchen-column {
+  background: #f8f6f2;
+  border: 1px solid #e8e2d7;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 450px;
+}
+
+.owner-kitchen-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ede7dc;
+}
+
+.owner-kitchen-col-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.owner-kitchen-col-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.owner-kitchen-count-badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.owner-kitchen-count-badge--queued {
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.owner-kitchen-count-badge--progress {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.owner-kitchen-count-badge--completed {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.owner-kitchen-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Operational Order Ticket Card */
+.owner-kitchen-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e6ded2;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.owner-kitchen-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
+}
+
+.owner-kitchen-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.owner-kitchen-card-id {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+}
+
+.owner-kitchen-table-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.owner-kitchen-table-pill--queued {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.owner-kitchen-table-pill--progress {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.owner-kitchen-table-pill--completed {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.owner-kitchen-card-time {
+  font-size: 12px;
+  color: #7a6a5e;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+/* In Progress elapsed track */
+.owner-kitchen-progress-track {
+  width: 100%;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: -2px;
+}
+
+.owner-kitchen-progress-fill {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 2px;
+}
+
+.owner-kitchen-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px dashed #efe9df;
+  padding-top: 8px;
+}
+
+.owner-kitchen-item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owner-kitchen-item-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f5efe6;
+  border: 1px solid #ebe5dc;
+}
+
+.owner-kitchen-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.owner-kitchen-item-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.owner-kitchen-item-mod {
+  font-size: 11.5px;
+  color: #8c7b6f;
+  margin-top: 1px;
+}
+
+.owner-kitchen-note-box {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #b45309;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.owner-kitchen-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.owner-kitchen-action-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.owner-kitchen-action-btn--start {
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.owner-kitchen-action-btn--start:hover {
+  background: #c2410c;
+}
+
+.owner-kitchen-action-btn--complete {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.owner-kitchen-action-btn--complete:hover {
+  background: #1d4ed8;
+}
+
+.owner-kitchen-action-btn--done {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  cursor: default;
+}
+
+.owner-kitchen-more-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e0d8cc;
+  background: #ffffff;
+  color: #7a6a5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.owner-kitchen-more-btn:hover {
+  background: #f7f3ec;
+  color: var(--owner-espresso);
+}
+
+/* Mobile Kitchen Status Navigation */
+.owner-kitchen-mobile-tabs {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--owner-card-border);
+}
+
+.owner-kitchen-mobile-tab-btn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #634f43;
+}
+
+.owner-kitchen-mobile-tab-btn.active {
+  background: #3e2719;
+  color: #ffffff;
+}
+
+.owner-kitchen-mobile-tab-btn.active .owner-kitchen-count-badge--queued {
+  background: #ea580c;
+}
+
+/* ==========================================================================
+   MODULE 3: TABLES MODULE STYLES (Matching Reference Screenshot)
+   ========================================================================== */
+
+.owner-tables-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.owner-tables-kpi-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--owner-card-border);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.owner-tables-kpi-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-tables-kpi-icon-wrap--total {
+  background: #f5efe6;
+  color: #8c4a23;
+}
+
+.owner-tables-kpi-icon-wrap--available {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.owner-tables-kpi-icon-wrap--occupied {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.owner-tables-kpi-icon-wrap--outofservice {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.owner-tables-kpi-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  line-height: 1.1;
+}
+
+.owner-tables-kpi-lbl {
+  font-size: 12px;
+  color: #7a6a5e;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Floor Map Section */
+.owner-tables-floor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.owner-tables-floor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.owner-tables-floor-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  margin: 0;
+}
+
+.owner-tables-floor-pill {
+  background: #eafaf1;
+  color: #0d8a55;
+  border: 1px solid #c7f0db;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 14px;
+}
+
+/* 15 Floor Table Cards Grid */
+.owner-floor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.owner-floor-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e8e2d7;
+  padding: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 110px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.owner-floor-card:hover {
+  transform: translateY(-2px);
+  border-color: #8c4a23;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.owner-floor-card.selected {
+  border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.25);
+  background: #fdfbf8;
+}
+
+.owner-floor-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.owner-floor-card-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  line-height: 1;
+}
+
+.owner-floor-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2.5px 8px;
+  border-radius: 6px;
+}
+
+.owner-floor-status-badge--available {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.owner-floor-status-badge--occupied {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.owner-floor-status-badge--outofservice {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.owner-floor-card-guests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 8px 0;
+}
+
+.owner-floor-guest-tag {
+  background: #f5ede4;
+  color: #5c3920;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+}
+
+.owner-floor-card-footer {
+  font-size: 11px;
+  color: #8c7b6f;
+  margin-top: 4px;
+}
+
+.owner-floor-card-empty-note {
+  font-size: 11.5px;
+  color: #9c8e82;
+  margin-top: 14px;
+}
+
+/* Slide-in Table Details Drawer */
+.owner-table-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 11, 7, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 1040;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.owner-table-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.owner-table-drawer {
+  position: fixed;
+  top: 0;
+  right: -540px;
+  bottom: 0;
+  width: 490px;
+  max-width: 95vw;
+  background: #ffffff;
+  z-index: 1050;
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+  transition: right 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.owner-table-drawer.open {
+  right: 0;
+}
+
+.owner-table-drawer-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid #f0eae1;
+  background: #faf8f5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.owner-table-drawer-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.owner-table-drawer-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #735d4e;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.owner-table-drawer-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+  margin: 0;
+}
+
+.owner-table-drawer-sub {
+  font-size: 12.5px;
+  color: #7a6a5e;
+  margin-top: 2px;
+}
+
+.owner-table-guests-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-bottom: 1px solid #f0eae1;
+  background: #f7f3ec;
+  overflow-x: auto;
+}
+
+.owner-table-guest-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid #ded6c9;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--owner-espresso);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.owner-table-guest-pill-btn.active {
+  background: #3e2719;
+  color: #ffffff;
+  border-color: #3e2719;
+}
+
+.owner-table-drawer-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-bottom: 1px solid #f0eae1;
+  background: #ffffff;
+}
+
+.owner-table-drawer-tab {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #7a6a5e;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-table-drawer-tab.active {
+  background: #8c4a23;
+  color: #ffffff;
+}
+
+.owner-table-drawer-body {
+  padding: 18px 22px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Order item card in Table Drawer */
+.owner-table-order-card {
+  border: 1px solid #ebe5dc;
+  border-radius: 12px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.owner-table-order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.owner-table-order-id {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--owner-espresso);
+}
+
+.owner-table-order-status {
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.owner-table-order-time {
+  font-size: 11.5px;
+  color: #8c7b6f;
+}
+
+.owner-table-order-item-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  color: var(--owner-espresso);
+}
+
+.owner-table-order-total-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13.5px;
+  font-weight: 800;
+  border-top: 1px dashed #e8e2d7;
+  margin-top: 8px;
+  padding-top: 8px;
+  color: var(--owner-espresso);
+}
+
+/* Sticky Bottom Generate Bill Action */
+.owner-table-drawer-footer {
+  padding: 16px 22px;
+  border-top: 1px solid #f0eae1;
+  background: #faf8f5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.owner-generate-bill-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #8c4a23;
+  color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(140, 74, 35, 0.25);
+}
+
+.owner-generate-bill-btn:hover {
+  background: #753b19;
+  transform: translateY(-1px);
+}
+
+.owner-generate-bill-note {
+  font-size: 11px;
+  color: #8c7b6f;
+  text-align: center;
+  line-height: 1.35;
+}
+
+/* Responsive Overrides for All Three Modules */
+@media (max-width: 1200px) {
+  .owner-floor-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .owner-kitchen-kpi-grid,
+  .owner-tables-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .owner-kitchen-board {
+    grid-template-columns: 1fr;
+  }
+
+  .owner-floor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Customer mobile adjustments */
+  .owner-customers-table-card {
+    display: none;
+  }
+
+  .owner-mobile-customer-cards {
+    display: flex;
+  }
+
+  .owner-customer-drawer,
+  .owner-table-drawer {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  /* Kitchen Mobile Kanban tabs */
+  .owner-kitchen-mobile-tabs {
+    display: grid;
+  }
+
+  .owner-kitchen-kpi-grid,
+  .owner-tables-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .owner-kitchen-kpi-card,
+  .owner-tables-kpi-card {
+    padding: 12px;
+  }
+
+  .owner-kitchen-kpi-val,
+  .owner-tables-kpi-val {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .owner-floor-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .owner-floor-card {
+    padding: 10px;
+    min-height: 95px;
+  }
+
+  .owner-floor-card-num {
+    font-size: 16px;
+  }
+
+  .owner-customer-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
