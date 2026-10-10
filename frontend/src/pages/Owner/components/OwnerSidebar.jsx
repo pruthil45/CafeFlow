@@ -214,8 +214,8 @@ export default function OwnerSidebar({
 
             <NavLink
               to="/owner/menu"
-              className={({ isActive }) =>
-                `owner-sidebar__link ${isActive ? 'active' : ''}`
+              className={() =>
+                `owner-sidebar__link ${location.pathname.startsWith('/owner/menu') ? 'active' : ''}`
               }
             >
               <span className="owner-sidebar__link-icon">

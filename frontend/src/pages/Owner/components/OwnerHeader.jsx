@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   Search,
   Bell,
@@ -58,6 +58,14 @@ export default function OwnerHeader({ selectedCafe, onToggleMobileSidebar }) {
 
   const unreadCount = notifications.filter((n) => n.unread).length
 
+  const location = useLocation()
+  let searchPlaceholder = 'Search orders, menu items, customers...'
+  if (location.pathname.includes('/owner/menu/combos')) {
+    searchPlaceholder = 'Search items, categories, combos...'
+  } else if (location.pathname.includes('/owner/menu')) {
+    searchPlaceholder = 'Search items, categories, add-ons...'
+  }
+
   return (
     <>
       <header
@@ -97,7 +105,7 @@ export default function OwnerHeader({ selectedCafe, onToggleMobileSidebar }) {
           >
             <Search size={16} className="owner-header-banner__search-icon" />
             <span className="owner-header-banner__search-text">
-              Search orders, menu items, customers...
+              {searchPlaceholder}
             </span>
             <span className="owner-header-banner__search-kbd">Ctrl K</span>
           </button>

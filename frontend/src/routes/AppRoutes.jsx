@@ -30,6 +30,7 @@ import OwnerTables from '../pages/Owner/Tables/OwnerTables'
 import OwnerCustomers from '../pages/Owner/Customers/OwnerCustomers'
 import OwnerReports from '../pages/Owner/Reports/OwnerReports'
 import OwnerAnalytics from '../pages/Owner/Analytics/OwnerAnalytics'
+import OwnerMenu from '../pages/Owner/Menu/OwnerMenu'
 import OwnerPlaceholderView from '../pages/Owner/modules/OwnerPlaceholderView'
 
 export default function AppRoutes() {
@@ -74,7 +75,8 @@ export default function AppRoutes() {
         <Route path="dashboard" element={<OwnerDashboard />} />
         <Route path="orders" element={<OwnerOrders />} />
         <Route path="kitchen" element={<OwnerKitchenDisplay />} />
-        <Route path="menu" element={<OwnerPlaceholderView title="Menu Management" description="Manage dishes, drinks, categories, prices, variants, add-ons, and stock availability." />} />
+        <Route path="menu/*" element={<OwnerMenu />} />
+        <Route path="menu" element={<OwnerMenu />} />
         <Route path="tables" element={<OwnerTables />} />
         <Route path="customers" element={<OwnerCustomers />} />
         <Route path="loyalty" element={<OwnerPlaceholderView title="Loyalty & Rewards" description="Point multipliers, stamp cards, redeemable rewards, and customer tiers." />} />
