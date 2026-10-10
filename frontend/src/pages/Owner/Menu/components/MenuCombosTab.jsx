@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Search,
   Plus,
@@ -73,11 +73,36 @@ export default function MenuCombosTab({
     setEditForm(null)
   }
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setActiveComboId(null)
+        setEditForm(null)
+      }
+    }
+    if (activeComboId) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeComboId])
+
   // Modals
   const [showAddModal, setShowAddModal] = useState(false)
   const [showAddItemToComboModal, setShowAddItemToComboModal] = useState(false)
   const [selectedItemToAdd, setSelectedItemToAdd] = useState('')
   const [deleteCandidate, setDeleteCandidate] = useState(null)
+
+  // Background scroll lock when modal is open
+  useEffect(() => {
+    if (activeComboId || showAddModal || showAddItemToComboModal || deleteCandidate) {
+      const orig = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = orig
+      }
+    }
+  }, [activeComboId, showAddModal, showAddItemToComboModal, deleteCandidate])
 
   // New Combo Form State
   const [newComboForm, setNewComboForm] = useState({
@@ -787,40 +812,22 @@ export default function MenuCombosTab({
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Right Column: Empty Placeholder when nothing selected (Desktop only) */}
-        {!activeCombo && (
-          <div className="owner-detail-empty-placeholder">
-            <div className="owner-detail-empty-icon">
-              <Package size={24} />
-            </div>
-            <h4 className="owner-detail-empty-title">No Combo Selected</h4>
-            <p className="owner-detail-empty-text">
-              Click any combo card to preview bundled items, edit pricing and savings, or manage availability.
-            </p>
-          </div>
-        )}
-
-        {/* Backdrop for mobile drawer */}
-        {activeCombo && editForm && (
+      {/* Centered Combo Details Modal with Blurred Background */}
+      {activeCombo && editForm && (
+        <div
+          className="owner-modal-overlay"
+          onClick={handleCloseDetail}
+          aria-label="Combo details modal backdrop"
+        >
           <div
-            className="owner-detail-drawer-backdrop"
-            onClick={handleCloseDetail}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Right Column / Mobile Drawer: Combo Detail Panel */}
-        {activeCombo && editForm && (
-          <div
-            className="owner-detail-panel-card owner-detail-panel-drawer"
-            style={{
-              background: '#ffffff',
-              border: '1px solid var(--owner-card-border)',
-              borderRadius: 12,
-              overflow: 'hidden',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-            }}
+            className="owner-item-detail-modal"
+            style={{ maxWidth: 640 }}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Combo Details Modal"
           >
             <div
               style={{
@@ -1403,8 +1410,8 @@ export default function MenuCombosTab({
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Modal: Add Combo */}
       {showAddModal && (

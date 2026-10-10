@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Search,
   Plus,
@@ -13,6 +13,7 @@ import {
   Upload,
   GripVertical,
   Package,
+  Image as ImageIcon,
 } from 'lucide-react'
 import '../../Owner.css'
 
@@ -26,6 +27,17 @@ export default function MenuCategoriesTab({
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingCategory, setEditingCategory] = useState(null)
   const [deleteCandidate, setDeleteCandidate] = useState(null)
+
+  // Background scroll lock when modals are open
+  useEffect(() => {
+    if (showAddModal || editingCategory || deleteCandidate) {
+      const orig = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = orig
+      }
+    }
+  }, [showAddModal, editingCategory, deleteCandidate])
 
   // New Category Form
   const [newCatForm, setNewCatForm] = useState({
@@ -403,18 +415,85 @@ export default function MenuCategoriesTab({
                 </div>
 
                 <div>
-                  <label className="owner-field-label">Image URL</label>
-                  <input
-                    type="text"
-                    className="owner-form-input"
-                    value={newCatForm.image}
-                    onChange={(e) =>
-                      setNewCatForm((prev) => ({
-                        ...prev,
-                        image: e.target.value,
-                      }))
-                    }
-                  />
+                  <label className="owner-field-label">Category Photo</label>
+                  <div
+                    style={{
+                      border: '1.5px dashed #ded6c9',
+                      borderRadius: 10,
+                      padding: '12px',
+                      background: '#faf8f5',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                    }}
+                  >
+                    {newCatForm.image ? (
+                      <img
+                        src={newCatForm.image}
+                        alt="Preview"
+                        style={{
+                          width: 52,
+                          height: 52,
+                          borderRadius: 8,
+                          objectFit: 'cover',
+                          border: '1px solid #e2dad0',
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: 52,
+                          height: 52,
+                          borderRadius: 8,
+                          background: '#eee5d8',
+                          color: '#8c4a23',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <ImageIcon size={22} />
+                      </div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <label
+                        className="owner-btn-secondary"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontSize: '12px',
+                          padding: '6px 12px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Upload size={13} />
+                        <span>{newCatForm.image ? 'Change Photo' : 'Add Photo'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              const reader = new FileReader()
+                              reader.onload = (uploadEvt) => {
+                                setNewCatForm((prev) => ({
+                                  ...prev,
+                                  image: uploadEvt.target.result,
+                                }))
+                                showToast?.('Photo selected for category')
+                              }
+                              reader.readAsDataURL(file)
+                            }
+                          }}
+                        />
+                      </label>
+                      <div style={{ fontSize: '11px', color: '#8c7b6f', marginTop: 4 }}>
+                        PNG, JPG or WebP up to 5MB
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div
@@ -498,18 +577,85 @@ export default function MenuCategoriesTab({
                 </div>
 
                 <div>
-                  <label className="owner-field-label">Image URL</label>
-                  <input
-                    type="text"
-                    className="owner-form-input"
-                    value={editingCategory.image || ''}
-                    onChange={(e) =>
-                      setEditingCategory((prev) => ({
-                        ...prev,
-                        image: e.target.value,
-                      }))
-                    }
-                  />
+                  <label className="owner-field-label">Category Photo</label>
+                  <div
+                    style={{
+                      border: '1.5px dashed #ded6c9',
+                      borderRadius: 10,
+                      padding: '12px',
+                      background: '#faf8f5',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                    }}
+                  >
+                    {editingCategory.image ? (
+                      <img
+                        src={editingCategory.image}
+                        alt="Preview"
+                        style={{
+                          width: 52,
+                          height: 52,
+                          borderRadius: 8,
+                          objectFit: 'cover',
+                          border: '1px solid #e2dad0',
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: 52,
+                          height: 52,
+                          borderRadius: 8,
+                          background: '#eee5d8',
+                          color: '#8c4a23',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <ImageIcon size={22} />
+                      </div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <label
+                        className="owner-btn-secondary"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontSize: '12px',
+                          padding: '6px 12px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Upload size={13} />
+                        <span>{editingCategory.image ? 'Change Photo' : 'Add Photo'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              const reader = new FileReader()
+                              reader.onload = (uploadEvt) => {
+                                setEditingCategory((prev) => ({
+                                  ...prev,
+                                  image: uploadEvt.target.result,
+                                }))
+                                showToast?.('Photo updated for category')
+                              }
+                              reader.readAsDataURL(file)
+                            }
+                          }}
+                        />
+                      </label>
+                      <div style={{ fontSize: '11px', color: '#8c7b6f', marginTop: 4 }}>
+                        PNG, JPG or WebP up to 5MB
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="owner-modal-footer">

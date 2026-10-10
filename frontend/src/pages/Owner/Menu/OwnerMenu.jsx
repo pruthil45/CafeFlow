@@ -263,64 +263,32 @@ export default function OwnerMenu() {
       ) : (
         <>
           {/* Main Top Bar with Title, Subtitle, and Top-Right Actions */}
-          <div className="owner-page-top-bar" style={{ marginBottom: 16 }}>
+          <div className="owner-page-top-bar owner-menu-header-bar">
             <div className="owner-page-top-bar__left">
-              <h1
-                style={{
-                  fontSize: 24,
-                  fontWeight: 800,
-                  color: 'var(--owner-espresso)',
-                  margin: '0 0 4px 0',
-                }}
-              >
+              <h1 className="owner-menu-title">
                 {headerInfo.title}
               </h1>
-              <p
-                style={{
-                  fontSize: 13,
-                  color: 'var(--owner-text-muted)',
-                  margin: 0,
-                  maxWidth: 680,
-                }}
-              >
+              <p className="owner-menu-subtitle">
                 {headerInfo.subtitle}
               </p>
             </div>
 
-            <div
-              className="owner-page-top-bar__actions"
-              style={{ display: 'flex', alignItems: 'center', gap: 10 }}
-            >
+            <div className="owner-page-top-bar__actions owner-menu-top-actions">
               {activeTab === 'items' && (
                 <>
                   <button
                     type="button"
-                    className="owner-btn-secondary"
+                    className="owner-btn-secondary owner-import-export-btn"
                     onClick={() => setShowImportExportModal(true)}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      padding: '8px 14px',
-                    }}
+                    title="Import or Export Menu Items"
                   >
-                    <Download size={14} />
-                    <span>Import/Export</span>
+                    <Download size={15} />
+                    <span className="owner-btn-text-desktop">Import/Export</span>
                   </button>
                   <button
                     type="button"
-                    className="owner-btn-primary"
+                    className="owner-btn-primary owner-add-item-btn-header"
                     onClick={handleOpenAddItem}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      padding: '8px 18px',
-                      backgroundColor: '#8c4a23',
-                      color: '#ffffff',
-                      fontWeight: 700,
-                      boxShadow: '0 2px 6px rgba(140, 74, 35, 0.3)',
-                    }}
                   >
                     <Plus size={16} />
                     <span>Add Item</span>

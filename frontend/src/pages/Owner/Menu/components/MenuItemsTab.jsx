@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Search,
@@ -12,12 +12,14 @@ import {
   Edit2,
   Check,
   X,
+  Eye,
   Flame,
   Star,
   Sparkles,
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
+  RotateCcw,
 } from 'lucide-react'
 import '../../Owner.css'
 
@@ -34,11 +36,14 @@ export default function MenuItemsTab({
   const [filterDietary, setFilterDietary] = useState('all')
   const [viewMode, setViewMode] = useState('grid') // 'grid' or 'list'
   const [currentPage, setCurrentPage] = useState(1)
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
   const itemsPerPage = 12
 
-  // Selected item for detail panel (default to null - NO auto-select!)
+  // Selected item for detail modal (default to null - NO auto-select!)
   const [selectedItemId, setSelectedItemId] = useState(null)
   const [detailTab, setDetailTab] = useState('general') // 'general', 'variants', 'addons', 'nutrition'
+  const [isEditing, setIsEditing] = useState(false)
+  const [activeHeroImg, setActiveHeroImg] = useState(null)
 
   // Edit draft for the selected item
   const selectedItem = useMemo(() => {
@@ -48,18 +53,63 @@ export default function MenuItemsTab({
 
   const [editForm, setEditForm] = useState(null)
 
-  // Sync edit form when selected item changes
+  // Sync edit form when selected item changes (Defaults to READ-ONLY View Mode)
   const handleSelectItem = (item) => {
     setSelectedItemId(item.id)
     setEditForm({ ...item })
+    setIsEditing(false)
     setDetailTab('general')
+    setActiveHeroImg(item.image)
   }
 
-  // Close detail panel
+  // Close detail modal
   const handleCloseDetail = () => {
     setSelectedItemId(null)
     setEditForm(null)
+    setIsEditing(false)
+    setActiveHeroImg(null)
   }
+
+  // Background Scroll Lock when modal is open
+  useEffect(() => {
+    if (selectedItemId) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [selectedItemId])
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedItemId(null)
+        setEditForm(null)
+        setIsEditing(false)
+        setActiveHeroImg(null)
+      }
+    }
+    if (selectedItemId) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedItemId])
+
+  // Count active filter pills
+  const activeFilterCount = useMemo(() => {
+    let count = 0
+    if (filterAvailability !== 'all') count++
+    if (filterDietary !== 'all') count++
+    return count
+  }, [filterAvailability, filterDietary])
+
+  const hasActiveFilters =
+    searchQuery.trim() !== '' ||
+    filterAvailability !== 'all' ||
+    filterDietary !== 'all' ||
+    selectedCategory !== 'all'
 
   // Toggle active status of an item
   const handleToggleItemStatus = (e, itemId) => {
@@ -133,23 +183,32 @@ export default function MenuItemsTab({
           <button
             key={cat.id}
             type="button"
-            className={`owner-category-item-btn ${
+            className={`owner-mobile-cat-pill ${
               selectedCategory === cat.slug ? 'active' : ''
             }`}
-            style={{ width: 'auto', padding: '6px 14px' }}
             onClick={() => {
               setSelectedCategory(cat.slug)
               setCurrentPage(1)
             }}
           >
+            {cat.image ? (
+              <img
+                src={cat.image}
+                alt=""
+                style={{ width: 18, height: 18, borderRadius: 4, objectFit: 'cover' }}
+              />
+            ) : (
+              <LayoutGrid size={13} />
+            )}
             <span>{cat.name}</span>
+            <span className="owner-cat-pill-count">{cat.count}</span>
           </button>
         ))}
       </div>
 
-      {/* 3-Part Layout: Left Categories | Center Items Grid | Right Item Details */}
+      {/* 2-Part Layout: Left Sticky Categories Panel | Right Items Grid */}
       <div className="owner-menu-workspace">
-        {/* LEFT: Categories Panel */}
+        {/* LEFT: Categories Panel (Sticky & showing category images) */}
         <div className="owner-categories-panel">
           <div className="owner-categories-panel-header">
             <h3 className="owner-categories-panel-title">Categories</h3>
@@ -163,7 +222,7 @@ export default function MenuItemsTab({
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
             {categories.map((cat) => (
               <button
                 key={cat.id}
@@ -176,7 +235,20 @@ export default function MenuItemsTab({
                   setCurrentPage(1)
                 }}
               >
-                <span>{cat.name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                  {cat.image ? (
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="owner-cat-mini-thumb"
+                    />
+                  ) : (
+                    <div className="owner-cat-mini-placeholder">
+                      <LayoutGrid size={13} />
+                    </div>
+                  )}
+                  <span className="owner-cat-name-truncate">{cat.name}</span>
+                </div>
                 <span className="owner-category-count-badge">{cat.count}</span>
               </button>
             ))}
@@ -187,7 +259,8 @@ export default function MenuItemsTab({
         <div className="owner-menu-items-area">
           {/* Filters Bar */}
           <div className="owner-menu-filter-bar">
-            <div className="owner-menu-filter-inputs">
+            {/* Primary Row: Search input + Mobile Filter Toggle Button + View Mode Toggles */}
+            <div className="owner-menu-filter-primary-row">
               <div className="owner-menu-search-input-wrap">
                 <Search size={15} />
                 <input
@@ -200,24 +273,60 @@ export default function MenuItemsTab({
                   }}
                   aria-label="Search menu items"
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="owner-search-clear-btn"
+                    onClick={() => {
+                      setSearchQuery('')
+                      setCurrentPage(1)
+                    }}
+                    title="Clear search"
+                  >
+                    <X size={13} />
+                  </button>
+                )}
               </div>
 
-              <select
-                className="owner-menu-select"
-                value={selectedCategory}
-                onChange={(e) => {
-                  setSelectedCategory(e.target.value)
-                  setCurrentPage(1)
-                }}
-                aria-label="Filter by category"
+              {/* Mobile Filter Toggle Button */}
+              <button
+                type="button"
+                className={`owner-filter-toggle-btn ${showMobileFilters ? 'active' : ''}`}
+                onClick={() => setShowMobileFilters((prev) => !prev)}
+                title="Toggle filter options"
               >
-                {categories.map((c) => (
-                  <option key={c.id} value={c.slug}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                <SlidersHorizontal size={14} />
+                <span>Filters</span>
+                {activeFilterCount > 0 && (
+                  <span className="owner-filter-count-badge">{activeFilterCount}</span>
+                )}
+              </button>
 
+              {/* Grid / List View Toggles */}
+              <div className="owner-menu-view-toggles">
+                <button
+                  type="button"
+                  className={`owner-view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                  onClick={() => setViewMode('grid')}
+                  title="Grid View"
+                  aria-label="Grid View"
+                >
+                  <LayoutGrid size={15} />
+                </button>
+                <button
+                  type="button"
+                  className={`owner-view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                  title="List View"
+                  aria-label="List View"
+                >
+                  <List size={15} />
+                </button>
+              </div>
+            </div>
+
+            {/* Secondary Filters: Always visible on Desktop, collapsible on Mobile */}
+            <div className={`owner-menu-filter-secondary-row ${showMobileFilters ? 'is-open' : ''}`}>
               <select
                 className="owner-menu-select"
                 value={filterAvailability}
@@ -247,43 +356,27 @@ export default function MenuItemsTab({
                 <option value="egg">Contains Egg</option>
               </select>
 
-              <button
-                type="button"
-                className="owner-btn-secondary"
-                style={{ padding: '6px 10px', fontSize: '12px' }}
-                onClick={() => {
-                  setSearchQuery('')
-                  setFilterAvailability('all')
-                  setFilterDietary('all')
-                  setSelectedCategory('all')
-                }}
-              >
-                Reset
-              </button>
-            </div>
-
-            {/* Grid / List View Toggles */}
-            <div className="owner-menu-view-toggles">
-              <button
-                type="button"
-                className={`owner-view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                onClick={() => setViewMode('grid')}
-                title="Grid view"
-                aria-label="Grid view"
-              >
-                <LayoutGrid size={15} />
-              </button>
-              <button
-                type="button"
-                className={`owner-view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
-                onClick={() => setViewMode('list')}
-                title="List view"
-                aria-label="List view"
-              >
-                <List size={15} />
-              </button>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  className="owner-btn-secondary owner-filter-reset-btn"
+                  onClick={() => {
+                    setSearchQuery('')
+                    setFilterAvailability('all')
+                    setFilterDietary('all')
+                    setSelectedCategory('all')
+                    setCurrentPage(1)
+                  }}
+                  title="Reset all filters"
+                >
+                  <RotateCcw size={12} />
+                  <span>Reset</span>
+                </button>
+              )}
             </div>
           </div>
+
+
 
           {/* Items Display: Grid or List */}
           {viewMode === 'grid' ? (
@@ -504,396 +597,691 @@ export default function MenuItemsTab({
             <div>12 per page</div>
           </div>
         </div>
+      </div>
 
-        {/* RIGHT: Empty Placeholder when nothing selected (Desktop only) */}
-        {!selectedItem && (
-          <aside className="owner-item-detail-panel owner-detail-empty-placeholder" aria-label="Item Details Placeholder">
-            <div className="owner-detail-empty-icon">
-              <LayoutGrid size={24} />
-            </div>
-            <h4 className="owner-detail-empty-title">No Item Selected</h4>
-            <p className="owner-detail-empty-text">
-              Click on any menu item card or row to preview details, adjust pricing, or edit variants and add-ons.
-            </p>
-            <button
-              type="button"
-              className="owner-btn-secondary"
-              onClick={onOpenAddItem}
-              style={{ marginTop: 8, fontSize: 12.5, display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            >
-              <Plus size={14} /> Add New Item
-            </button>
-          </aside>
-        )}
-
-        {/* Backdrop for mobile drawer */}
-        {selectedItem && editForm && (
-          <div
-            className="owner-detail-drawer-backdrop"
-            onClick={handleCloseDetail}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* RIGHT: Item Details Panel / Mobile Drawer */}
-        {selectedItem && editForm && (
-        <aside className="owner-item-detail-panel owner-detail-panel-drawer" aria-label="Item Details Panel">
-          <div className="owner-detail-panel-header">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <h3 className="owner-detail-panel-title">Item Details</h3>
-              <span style={{ fontSize: '11px', color: '#8c7b6f' }}>ID: {editForm.id}</span>
-            </div>
-            <button
-              type="button"
-              onClick={handleCloseDetail}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#7a6a5e',
-                padding: 4,
-                display: 'flex',
-                alignItems: 'center',
-                borderRadius: 6,
-              }}
-              title="Close panel"
-              aria-label="Close panel"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          <div className="owner-detail-hero-wrap">
-            <img src={editForm.image} alt={editForm.name} className="owner-detail-hero-img" />
-            <button
-              type="button"
-              className="owner-detail-hero-edit-btn"
-              onClick={() => showToast('Image picker opened (frontend demonstration)')}
-            >
-              <Edit2 size={12} /> Edit
-            </button>
-          </div>
-
-          <div
-            style={{
-              padding: '12px 16px 6px 16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
+      {/* Centered Item Details Modal with Blurred Background (Read-only by default, editable on 'Edit' click) */}
+      {selectedItem && editForm && (
+        <div
+          className="owner-modal-overlay"
+          onClick={handleCloseDetail}
+          aria-label="Item details modal backdrop"
+        >
+          <aside
+            className="owner-item-detail-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Item Details Modal"
           >
-            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--owner-espresso)' }}>
-              {editForm.name}
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  color: editForm.active ? '#047857' : '#b91c1c',
-                }}
-              >
-                {editForm.active ? 'Active' : 'Inactive'}
-              </span>
-              <label className="owner-switch">
-                <input
-                  type="checkbox"
-                  checked={editForm.active}
-                  onChange={(e) =>
-                    setEditForm((prev) => ({ ...prev, active: e.target.checked }))
-                  }
-                />
-                <span className="owner-switch-slider" />
-              </label>
-            </div>
-          </div>
-
-          {/* Details Tabs */}
-          <div className="owner-detail-tabs-nav">
-            <button
-              type="button"
-              className={`owner-detail-tab-btn ${detailTab === 'general' ? 'active' : ''}`}
-              onClick={() => setDetailTab('general')}
-            >
-              General
-            </button>
-            <button
-              type="button"
-              className={`owner-detail-tab-btn ${detailTab === 'variants' ? 'active' : ''}`}
-              onClick={() => setDetailTab('variants')}
-            >
-              Variants
-            </button>
-            <button
-              type="button"
-              className={`owner-detail-tab-btn ${detailTab === 'addons' ? 'active' : ''}`}
-              onClick={() => setDetailTab('addons')}
-            >
-              Add-ons
-            </button>
-            <button
-              type="button"
-              className={`owner-detail-tab-btn ${detailTab === 'nutrition' ? 'active' : ''}`}
-              onClick={() => setDetailTab('nutrition')}
-            >
-              Nutrition
-            </button>
-          </div>
-
-          {/* Details Body */}
-          <form onSubmit={handleSaveChanges}>
-            <div className="owner-detail-body">
-              {detailTab === 'general' && (
-                <>
-                  <div className="owner-detail-field">
-                    <label className="owner-detail-label">Name</label>
-                    <input
-                      type="text"
-                      className="owner-detail-input"
-                      value={editForm.name}
-                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="owner-detail-field">
-                    <label className="owner-detail-label">Description</label>
-                    <textarea
-                      rows={3}
-                      className="owner-detail-textarea"
-                      value={editForm.description}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, description: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1.2fr 1fr',
-                      gap: '10px',
-                    }}
+            {/* Header: Changes title and controls based on isEditing */}
+            <div className="owner-detail-panel-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <h3 className="owner-detail-panel-title">
+                  {isEditing ? 'Edit Item' : 'Item Details'}
+                </h3>
+                <span
+                  style={{
+                    fontSize: '11px',
+                    color: '#8c7b6f',
+                    background: '#f0eae1',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontWeight: 700,
+                  }}
+                >
+                  ID: {editForm.id}
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {isEditing ? (
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    style={{ padding: '4px 10px', fontSize: '11.5px', display: 'flex', alignItems: 'center', gap: 4 }}
+                    onClick={() => setIsEditing(false)}
                   >
-                    <div className="owner-detail-field">
-                      <label className="owner-detail-label">Category</label>
-                      <select
-                        className="owner-detail-select"
-                        value={editForm.category}
-                        onChange={(e) =>
-                          setEditForm({ ...editForm, category: e.target.value })
-                        }
-                      >
-                        {categories
-                          .filter((c) => c.slug !== 'all')
-                          .map((c) => (
-                            <option key={c.id} value={c.name}>
-                              {c.name}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
+                    <Eye size={13} /> View Mode
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="owner-btn-primary"
+                    style={{ padding: '4px 12px', fontSize: '11.5px', display: 'flex', alignItems: 'center', gap: 4 }}
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Edit2 size={12} /> Edit
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleCloseDetail}
+                  className="owner-modal-close-btn"
+                  title="Close dialog"
+                  aria-label="Close dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
 
-                    <div className="owner-detail-field">
-                      <label className="owner-detail-label">Price (₹)</label>
-                      <input
-                        type="number"
-                        className="owner-detail-input"
-                        value={editForm.price}
-                        onChange={(e) =>
-                          setEditForm({ ...editForm, price: Number(e.target.value) })
-                        }
-                        required
-                      />
-                    </div>
+            {/* ============================================================== */}
+            {/* 1. READ-ONLY VIEW MODE (Opened until user clicks 'Edit')       */}
+            {/* ============================================================== */}
+            {!isEditing ? (
+              <div className="owner-item-view-container">
+                {/* Hero Showcase with Badges Overlay */}
+                <div className="owner-item-view-hero-wrap">
+                  <img
+                    src={activeHeroImg || editForm.image}
+                    alt={editForm.name}
+                    className="owner-item-view-hero-img"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop&q=80'
+                    }}
+                  />
+                  <div className="owner-item-view-badges-overlay">
+                    <span
+                      className={`owner-item-view-diet-badge ${
+                        editForm.itemType === 'veg'
+                          ? 'owner-item-view-diet-badge--veg'
+                          : editForm.itemType === 'non-veg'
+                          ? 'owner-item-view-diet-badge--non-veg'
+                          : 'owner-item-view-diet-badge--egg'
+                      }`}
+                    >
+                      {editForm.itemType === 'veg'
+                        ? '🌱 Veg'
+                        : editForm.itemType === 'non-veg'
+                        ? '🍗 Non-Veg'
+                        : '🥚 Egg'}
+                    </span>
+                    <span
+                      className={`owner-item-view-status-pill ${
+                        editForm.active
+                          ? 'owner-item-view-status-pill--active'
+                          : 'owner-item-view-status-pill--inactive'
+                      }`}
+                    >
+                      {editForm.active ? '● Active' : '○ Inactive'}
+                    </span>
                   </div>
+                </div>
 
-                  <div className="owner-detail-field">
-                    <label className="owner-detail-label">Item Type</label>
-                    <div className="owner-dietary-selector">
-                      {['veg', 'non-veg', 'egg'].map((type) => (
-                        <button
-                          key={type}
-                          type="button"
-                          className={`owner-dietary-choice-btn ${
-                            editForm.itemType === type ? 'selected' : ''
-                          }`}
-                          onClick={() => setEditForm({ ...editForm, itemType: type })}
-                        >
-                          {type === 'veg' ? '🌱 Veg' : type === 'non-veg' ? '🍗 Non-Veg' : '🥚 Egg'}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="owner-detail-field">
-                    <label className="owner-detail-label">Badges & Highlights</label>
-                    <div style={{ display: 'flex', gap: '12px', fontSize: '12px' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <input
-                          type="checkbox"
-                          checked={editForm.tag === 'Bestseller'}
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              tag: e.target.checked ? 'Bestseller' : null,
-                            })
-                          }
-                        />
-                        Bestseller
-                      </label>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <input
-                          type="checkbox"
-                          checked={editForm.tag === 'Spicy'}
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              tag: e.target.checked ? 'Spicy' : null,
-                            })
-                          }
-                        />
-                        Spicy
-                      </label>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <input
-                          type="checkbox"
-                          checked={editForm.tag === 'New'}
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              tag: e.target.checked ? 'New' : null,
-                            })
-                          }
-                        />
-                        New Item
-                      </label>
+                {/* Identity & Price Summary */}
+                <div className="owner-item-view-title-row">
+                  <div>
+                    <h2 className="owner-item-view-name">{editForm.name}</h2>
+                    <div className="owner-item-view-meta-pills">
+                      <span className="owner-item-view-pill">{editForm.category}</span>
+                      {editForm.tag === 'Bestseller' && (
+                        <span className="owner-item-view-pill owner-item-view-pill--bestseller">
+                          ★ Bestseller
+                        </span>
+                      )}
+                      {editForm.tag === 'Spicy' && (
+                        <span className="owner-item-view-pill owner-item-view-pill--spicy">
+                          🌶 Spicy
+                        </span>
+                      )}
+                      {editForm.tag === 'New' && (
+                        <span className="owner-item-view-pill owner-item-view-pill--new">
+                          ✨ New
+                        </span>
+                      )}
                     </div>
                   </div>
+                  <div className="owner-item-view-price">₹ {editForm.price}</div>
+                </div>
 
-                  <div className="owner-detail-field">
-                    <label className="owner-detail-label">Image Gallery</label>
-                    <div className="owner-gallery-strip">
-                      {editForm.gallery?.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={img}
-                          alt="Thumbnail"
-                          className="owner-gallery-thumb"
-                        />
-                      ))}
-                      <button
-                        type="button"
-                        className="owner-gallery-add-btn"
-                        onClick={() => showToast('Image upload demo')}
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
+                {/* Segmented Detail Tabs */}
+                <div className="owner-detail-tabs-nav">
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'general' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('general')}
+                  >
+                    General
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'variants' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('variants')}
+                  >
+                    Variants ({editForm.variants?.length || 0})
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'addons' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('addons')}
+                  >
+                    Add-ons ({editForm.selectedAddons?.length || 0})
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'nutrition' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('nutrition')}
+                  >
+                    Nutrition
+                  </button>
+                </div>
 
-              {detailTab === 'variants' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ fontSize: '12.5px', color: '#7a6a5e' }}>
-                    Item Variants ({editForm.variants?.length || 0})
-                  </div>
-                  {editForm.variants && editForm.variants.length > 0 ? (
-                    editForm.variants.map((v) => (
-                      <div
-                        key={v.id}
-                        style={{
-                          background: '#faf8f5',
-                          padding: '10px',
-                          borderRadius: '8px',
-                          border: '1px solid #ede7dc',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
+                {/* Read-Only Details Body */}
+                <div className="owner-detail-body">
+                  {detailTab === 'general' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <div>
+                        <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#8c7b6f', marginBottom: '6px' }}>
+                          DESCRIPTION
+                        </div>
+                        <p className="owner-item-view-desc">
+                          {editForm.description || 'No description provided for this item.'}
+                        </p>
+                      </div>
+
+                      {/* Image Gallery Thumbnails */}
+                      {editForm.gallery && editForm.gallery.length > 0 && (
                         <div>
-                          <div style={{ fontWeight: 700, fontSize: '13px' }}>{v.name}</div>
-                          <div style={{ fontSize: '11.5px', color: '#8c7b6f' }}>
-                            Stock: {v.stock} pcs
+                          <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#8c7b6f', marginBottom: '8px' }}>
+                            PHOTO GALLERY (Click to preview)
+                          </div>
+                          <div className="owner-gallery-preview-strip">
+                            {/* Main photo thumbnail */}
+                            <img
+                              src={editForm.image}
+                              alt={editForm.name}
+                              className={`owner-gallery-preview-thumb ${
+                                (activeHeroImg || editForm.image) === editForm.image ? 'active' : ''
+                              }`}
+                              onClick={() => setActiveHeroImg(editForm.image)}
+                            />
+                            {/* Additional gallery thumbnails */}
+                            {editForm.gallery.map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img}
+                                alt={`Gallery ${idx + 1}`}
+                                className={`owner-gallery-preview-thumb ${
+                                  activeHeroImg === img ? 'active' : ''
+                                }`}
+                                onClick={() => setActiveHeroImg(img)}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none'
+                                }}
+                              />
+                            ))}
                           </div>
                         </div>
-                        <div style={{ fontWeight: 800, color: 'var(--owner-espresso)' }}>
-                          ₹ {v.price}
+                      )}
+                    </div>
+                  )}
+
+                  {detailTab === 'variants' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ fontSize: '12px', color: '#7a6a5e', fontWeight: 600 }}>
+                        Configured Variations ({editForm.variants?.length || 0})
+                      </div>
+                      {editForm.variants && editForm.variants.length > 0 ? (
+                        editForm.variants.map((v) => (
+                          <div
+                            key={v.id}
+                            style={{
+                              background: '#faf8f5',
+                              padding: '10px 14px',
+                              borderRadius: '8px',
+                              border: '1px solid #ede7dc',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: 700, fontSize: '13.5px', color: 'var(--owner-espresso)' }}>
+                                {v.name}
+                              </div>
+                              <div style={{ fontSize: '11.5px', color: '#8c7b6f', marginTop: 2 }}>
+                                Stock: {v.stock} pcs available
+                              </div>
+                            </div>
+                            <div style={{ fontWeight: 800, color: '#8c4a23', fontSize: '14.5px' }}>
+                              ₹ {v.price}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ fontSize: '12.5px', color: '#8c7b6f', textAlign: 'center', padding: '24px', background: '#faf8f5', borderRadius: '8px' }}>
+                          No variants configured for this item.
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {detailTab === 'addons' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ fontSize: '12px', color: '#7a6a5e', fontWeight: 600 }}>
+                        Linked Add-ons ({editForm.selectedAddons?.length || 0})
+                      </div>
+                      {editForm.selectedAddons && editForm.selectedAddons.length > 0 ? (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '8px' }}>
+                          {editForm.selectedAddons.map((addonName, idx) => (
+                            <div
+                              key={idx}
+                              style={{
+                                background: '#faf8f5',
+                                padding: '10px 12px',
+                                borderRadius: '8px',
+                                border: '1px solid #ede7dc',
+                                fontSize: '12.5px',
+                                fontWeight: 700,
+                                color: 'var(--owner-espresso)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                              }}
+                            >
+                              <span style={{ color: '#16a34a' }}>✓</span> {addonName}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '12.5px', color: '#8c7b6f', textAlign: 'center', padding: '24px', background: '#faf8f5', borderRadius: '8px' }}>
+                          No add-ons linked to this item.
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {detailTab === 'nutrition' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ fontSize: '12px', color: '#7a6a5e', fontWeight: 600 }}>
+                        Nutritional Facts
+                      </div>
+                      <div className="owner-nutrition-grid-view">
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">{editForm.nutrition?.calories || '520 kcal'}</div>
+                          <div className="owner-nutrition-lbl">Calories</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">{editForm.nutrition?.protein || '22g'}</div>
+                          <div className="owner-nutrition-lbl">Protein</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">{editForm.nutrition?.carbs || '48g'}</div>
+                          <div className="owner-nutrition-lbl">Carbs</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">{editForm.nutrition?.fat || '18g'}</div>
+                          <div className="owner-nutrition-lbl">Fat</div>
                         </div>
                       </div>
-                    ))
-                  ) : (
-                    <div style={{ fontSize: '12px', color: '#8c7b6f', textAlign: 'center', padding: '16px' }}>
-                      No variants configured for this item.
                     </div>
                   )}
                 </div>
-              )}
 
-              {detailTab === 'addons' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ fontSize: '12.5px', color: '#7a6a5e' }}>
-                    Linked Add-ons ({editForm.selectedAddons?.length || 0})
-                  </div>
-                  {editForm.selectedAddons?.map((addonName, idx) => (
-                    <div
-                      key={idx}
+                {/* Read-Only Mode Footer */}
+                <div className="owner-detail-footer">
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    onClick={handleCloseDetail}
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-btn-primary"
+                    onClick={() => setIsEditing(true)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <Edit2 size={14} /> Edit Item
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* ============================================================== */
+              /* 2. EDIT MODE (Active only when user clicks 'Edit')              */
+              /* ============================================================== */
+              <form onSubmit={(e) => {
+                handleSaveChanges(e)
+                setIsEditing(false)
+              }}>
+                <div className="owner-detail-hero-wrap">
+                  <img src={editForm.image} alt={editForm.name} className="owner-detail-hero-img" />
+                  <button
+                    type="button"
+                    className="owner-detail-hero-edit-btn"
+                    onClick={() => showToast('Image picker opened (frontend demonstration)')}
+                  >
+                    <Edit2 size={12} /> Edit Photo
+                  </button>
+                </div>
+
+                <div
+                  style={{
+                    padding: '12px 16px 6px 16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--owner-espresso)' }}>
+                    Item Settings
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
                       style={{
-                        background: '#faf8f5',
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        border: '1px solid #ede7dc',
-                        fontSize: '12.5px',
-                        fontWeight: 600,
-                        color: 'var(--owner-espresso)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: editForm.active ? '#047857' : '#b91c1c',
                       }}
                     >
-                      ✓ {addonName}
+                      {editForm.active ? 'Active' : 'Inactive'}
+                    </span>
+                    <label className="owner-switch">
+                      <input
+                        type="checkbox"
+                        checked={editForm.active}
+                        onChange={(e) =>
+                          setEditForm((prev) => ({ ...prev, active: e.target.checked }))
+                        }
+                      />
+                      <span className="owner-switch-slider" />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Details Tabs */}
+                <div className="owner-detail-tabs-nav">
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'general' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('general')}
+                  >
+                    General
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'variants' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('variants')}
+                  >
+                    Variants
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'addons' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('addons')}
+                  >
+                    Add-ons
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${detailTab === 'nutrition' ? 'active' : ''}`}
+                    onClick={() => setDetailTab('nutrition')}
+                  >
+                    Nutrition
+                  </button>
+                </div>
+
+                {/* Details Form Body */}
+                <div className="owner-detail-body">
+                  {detailTab === 'general' && (
+                    <>
+                      <div className="owner-detail-field">
+                        <label className="owner-detail-label">Name</label>
+                        <input
+                          type="text"
+                          className="owner-detail-input"
+                          value={editForm.name}
+                          onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                          required
+                        />
+                      </div>
+
+                      <div className="owner-detail-field">
+                        <label className="owner-detail-label">Description</label>
+                        <textarea
+                          rows={3}
+                          className="owner-detail-textarea"
+                          value={editForm.description}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, description: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1.2fr 1fr',
+                          gap: '10px',
+                        }}
+                      >
+                        <div className="owner-detail-field">
+                          <label className="owner-detail-label">Category</label>
+                          <select
+                            className="owner-detail-select"
+                            value={editForm.category}
+                            onChange={(e) =>
+                              setEditForm({ ...editForm, category: e.target.value })
+                            }
+                          >
+                            {categories
+                              .filter((c) => c.slug !== 'all')
+                              .map((c) => (
+                                <option key={c.id} value={c.name}>
+                                  {c.name}
+                                </option>
+                              ))}
+                          </select>
+                        </div>
+
+                        <div className="owner-detail-field">
+                          <label className="owner-detail-label">Price (₹)</label>
+                          <input
+                            type="number"
+                            className="owner-detail-input"
+                            value={editForm.price}
+                            onChange={(e) =>
+                              setEditForm({ ...editForm, price: Number(e.target.value) })
+                            }
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="owner-detail-field">
+                        <label className="owner-detail-label">Item Type</label>
+                        <div className="owner-dietary-selector">
+                          {['veg', 'non-veg', 'egg'].map((type) => (
+                            <button
+                              key={type}
+                              type="button"
+                              className={`owner-dietary-choice-btn ${
+                                editForm.itemType === type ? 'selected' : ''
+                              }`}
+                              onClick={() => setEditForm({ ...editForm, itemType: type })}
+                            >
+                              {type === 'veg' ? '🌱 Veg' : type === 'non-veg' ? '🍗 Non-Veg' : '🥚 Egg'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="owner-detail-field">
+                        <label className="owner-detail-label">Badges & Highlights</label>
+                        <div style={{ display: 'flex', gap: '12px', fontSize: '12px' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <input
+                              type="checkbox"
+                              checked={editForm.tag === 'Bestseller'}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  tag: e.target.checked ? 'Bestseller' : null,
+                                })
+                              }
+                            />
+                            Bestseller
+                          </label>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <input
+                              type="checkbox"
+                              checked={editForm.tag === 'Spicy'}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  tag: e.target.checked ? 'Spicy' : null,
+                                })
+                              }
+                            />
+                            Spicy
+                          </label>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <input
+                              type="checkbox"
+                              checked={editForm.tag === 'New'}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  tag: e.target.checked ? 'New' : null,
+                                })
+                              }
+                            />
+                            New Item
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="owner-detail-field">
+                        <label className="owner-detail-label">Image Gallery</label>
+                        <div className="owner-gallery-strip">
+                          {editForm.gallery?.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={img}
+                              alt="Thumbnail"
+                              className="owner-gallery-thumb"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          ))}
+                          <button
+                            type="button"
+                            className="owner-gallery-add-btn"
+                            onClick={() => showToast('Image upload demo')}
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {detailTab === 'variants' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ fontSize: '12.5px', color: '#7a6a5e' }}>
+                        Item Variants ({editForm.variants?.length || 0})
+                      </div>
+                      {editForm.variants && editForm.variants.length > 0 ? (
+                        editForm.variants.map((v) => (
+                          <div
+                            key={v.id}
+                            style={{
+                              background: '#faf8f5',
+                              padding: '10px',
+                              borderRadius: '8px',
+                              border: '1px solid #ede7dc',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: 700, fontSize: '13px' }}>{v.name}</div>
+                              <div style={{ fontSize: '11.5px', color: '#8c7b6f' }}>
+                                Stock: {v.stock} pcs
+                              </div>
+                            </div>
+                            <div style={{ fontWeight: 800, color: 'var(--owner-espresso)' }}>
+                              ₹ {v.price}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ fontSize: '12px', color: '#8c7b6f', textAlign: 'center', padding: '16px' }}>
+                          No variants configured for this item.
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
+                  )}
 
-              {detailTab === 'nutrition' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12.5px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c7b6f' }}>Calories</span>
-                    <span style={{ fontWeight: 700 }}>{editForm.nutrition?.calories || '520 kcal'}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c7b6f' }}>Protein</span>
-                    <span style={{ fontWeight: 700 }}>{editForm.nutrition?.protein || '22g'}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c7b6f' }}>Carbohydrates</span>
-                    <span style={{ fontWeight: 700 }}>{editForm.nutrition?.carbs || '48g'}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c7b6f' }}>Fat</span>
-                    <span style={{ fontWeight: 700 }}>{editForm.nutrition?.fat || '18g'}</span>
-                  </div>
-                </div>
-              )}
-            </div>
+                  {detailTab === 'addons' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ fontSize: '12.5px', color: '#7a6a5e' }}>
+                        Linked Add-ons ({editForm.selectedAddons?.length || 0})
+                      </div>
+                      {editForm.selectedAddons?.map((addonName, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            background: '#faf8f5',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid #ede7dc',
+                            fontSize: '12.5px',
+                            fontWeight: 600,
+                            color: 'var(--owner-espresso)',
+                          }}
+                        >
+                          ✓ {addonName}
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
-            <div className="owner-detail-footer">
-              <button
-                type="button"
-                className="owner-btn-secondary"
-                onClick={handleCloseDetail}
-              >
-                Close
-              </button>
-              <button type="submit" className="owner-btn-primary">
-                Save Changes
-              </button>
-            </div>
-          </form>
-        </aside>
-        )}
-      </div>
+                  {detailTab === 'nutrition' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12.5px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c7b6f' }}>Calories</span>
+                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.calories || '520 kcal'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c7b6f' }}>Protein</span>
+                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.protein || '22g'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c7b6f' }}>Carbohydrates</span>
+                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.carbs || '48g'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c7b6f' }}>Fat</span>
+                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.fat || '18g'}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="owner-detail-footer">
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    onClick={() => {
+                      setEditForm({ ...selectedItem })
+                      setIsEditing(false)
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="owner-btn-primary">
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            )}
+          </aside>
+        </div>
+      )}
 
       {/* Import / Export Dialog */}
       {isImportExportOpen && (

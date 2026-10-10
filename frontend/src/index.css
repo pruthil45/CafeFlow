@@ -113,7 +113,8 @@ ul, ol {
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {

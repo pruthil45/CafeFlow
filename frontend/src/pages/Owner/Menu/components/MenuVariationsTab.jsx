@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Search,
   Plus,
@@ -66,11 +66,36 @@ export default function MenuVariationsTab({
     setEditForm(null)
   }
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setActiveVariationId(null)
+        setEditForm(null)
+      }
+    }
+    if (activeVariationId) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeVariationId])
+
   // Modals
   const [showAddModal, setShowAddModal] = useState(false)
   const [showAddOptionModal, setShowAddOptionModal] = useState(false)
   const [newOptionForm, setNewOptionForm] = useState({ name: '', price: 0 })
   const [deleteCandidate, setDeleteCandidate] = useState(null)
+
+  // Background scroll lock when variation modal or add modal is open
+  useEffect(() => {
+    if (activeVariationId || showAddModal || showAddOptionModal || deleteCandidate) {
+      const orig = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = orig
+      }
+    }
+  }, [activeVariationId, showAddModal, showAddOptionModal, deleteCandidate])
 
   // New Variation Group Form State
   const [newGroupForm, setNewGroupForm] = useState({
@@ -81,11 +106,9 @@ export default function MenuVariationsTab({
     minSelect: 1,
     maxSelect: 1,
     active: true,
-    image:
-      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&auto=format&fit=crop&q=80',
     options: [
-      { id: 'opt-1', name: 'Regular', price: 0, image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=100&auto=format&fit=crop&q=80' },
-      { id: 'opt-2', name: 'Premium', price: 20, image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=100&auto=format&fit=crop&q=80' },
+      { id: 'opt-1', name: 'Regular', price: 0 },
+      { id: 'opt-2', name: 'Premium', price: 20 },
     ],
   })
 
@@ -508,8 +531,7 @@ export default function MenuVariationsTab({
                       style={{ accentColor: '#8c4a23' }}
                     />
                   </th>
-                  <th style={{ width: 36 }}>#</th>
-                  <th style={{ width: 50 }}>Image</th>
+                  <th style={{ width: 44 }}>#</th>
                   <th>Variation Group</th>
                   <th>Category</th>
                   <th>Type</th>
@@ -521,7 +543,7 @@ export default function MenuVariationsTab({
               <tbody>
                 {paginatedVariations.length === 0 ? (
                   <tr>
-                    <td colSpan={9} style={{ textAlign: 'center', padding: 36, color: '#8c7b6f' }}>
+                    <td colSpan={8} style={{ textAlign: 'center', padding: 36, color: '#8c7b6f' }}>
                       No variations match your filter criteria.
                     </td>
                   </tr>
@@ -550,13 +572,6 @@ export default function MenuVariationsTab({
                         </td>
                         <td style={{ color: '#9c8e82', fontWeight: 600 }}>
                           #{rowNumber}
-                        </td>
-                        <td>
-                          <img
-                            src={variation.image}
-                            alt={variation.name}
-                            className="owner-table-thumb"
-                          />
                         </td>
                         <td style={{ fontWeight: 700, color: 'var(--owner-espresso)' }}>
                           {variation.name}
@@ -702,40 +717,22 @@ export default function MenuVariationsTab({
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Right Column: Empty Placeholder when nothing selected (Desktop only) */}
-        {!activeVariation && (
-          <div className="owner-detail-empty-placeholder">
-            <div className="owner-detail-empty-icon">
-              <Sliders size={24} />
-            </div>
-            <h4 className="owner-detail-empty-title">No Variation Selected</h4>
-            <p className="owner-detail-empty-text">
-              Click any variation row in the table to view details, configure options, and adjust upcharges.
-            </p>
-          </div>
-        )}
-
-        {/* Backdrop for mobile drawer */}
-        {activeVariation && editForm && (
+      {/* Centered Variation Details Modal with Blurred Background */}
+      {activeVariation && editForm && (
+        <div
+          className="owner-modal-overlay"
+          onClick={handleCloseDetail}
+          aria-label="Variation details modal backdrop"
+        >
           <div
-            className="owner-detail-drawer-backdrop"
-            onClick={handleCloseDetail}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Right Column / Mobile Drawer: Variation Details Panel */}
-        {activeVariation && editForm && (
-          <div
-            className="owner-detail-panel-card owner-detail-panel-drawer"
-            style={{
-              background: '#ffffff',
-              border: '1px solid var(--owner-card-border)',
-              borderRadius: 12,
-              overflow: 'hidden',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-            }}
+            className="owner-item-detail-modal"
+            style={{ maxWidth: 620 }}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Variation Details Modal"
           >
             <div
               style={{
@@ -793,59 +790,6 @@ export default function MenuVariationsTab({
             </div>
 
             <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Image with Change Image */}
-              <div style={{ position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
-                <img
-                  src={editForm.image}
-                  alt={editForm.name}
-                  style={{
-                    width: '100%',
-                    height: 140,
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-                <label
-                  style={{
-                    position: 'absolute',
-                    bottom: 8,
-                    right: 8,
-                    background: 'rgba(26,24,22,0.85)',
-                    color: '#fff',
-                    borderRadius: 6,
-                    padding: '4px 8px',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
-                >
-                  <Upload size={12} />
-                  <span>Change image</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) {
-                        const reader = new FileReader()
-                        reader.onload = (uploadEvt) => {
-                          setEditForm((prev) => ({
-                            ...prev,
-                            image: uploadEvt.target.result,
-                          }))
-                          showToast?.('Image updated preview', 'info')
-                        }
-                        reader.readAsDataURL(file)
-                      }
-                    }}
-                  />
-                </label>
-              </div>
-
               {/* Group Name */}
               <div className="owner-field-group">
                 <label className="owner-field-label">
@@ -1061,18 +1005,8 @@ export default function MenuVariationsTab({
                         background: '#faf8f5',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <GripVertical size={13} color="#b5a798" />
-                        <img
-                          src={opt.image || editForm.image}
-                          alt={opt.name}
-                          style={{
-                            width: 26,
-                            height: 26,
-                            borderRadius: 4,
-                            objectFit: 'cover',
-                          }}
-                        />
                         <div>
                           <div style={{ fontSize: 12.5, fontWeight: 700, color: '#33271e' }}>
                             {opt.name}
@@ -1154,8 +1088,8 @@ export default function MenuVariationsTab({
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Modal: Add New Variation Group */}
       {showAddModal && (
