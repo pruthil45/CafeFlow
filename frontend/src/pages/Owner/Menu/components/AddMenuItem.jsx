@@ -9,7 +9,6 @@ import {
   X,
   HelpCircle,
   Eye,
-  GripVertical,
   Search,
   Sparkles,
 } from 'lucide-react'
@@ -43,18 +42,16 @@ export default function AddMenuItem({
     'https://images.unsplash.com/photo-1550547660-d9450f859349?w=300&auto=format&fit=crop&q=80',
     'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=300&auto=format&fit=crop&q=80',
     'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=300&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=300&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1586816001966-79b736744398?w=300&auto=format&fit=crop&q=80',
   ]
   const [galleryImages, setGalleryImages] = useState(sampleImages)
   const [heroImage, setHeroImage] = useState(sampleImages[0])
 
-  // Variants State
-  const [hasVariants, setHasVariants] = useState(false)
-  const [variantsList, setVariantsList] = useState([])
-  const [showAddVariantModal, setShowAddVariantModal] = useState(false)
-  const [newVarName, setNewVarName] = useState('')
-  const [newVarPrice, setNewVarPrice] = useState('')
-  const [newVarStock, setNewVarStock] = useState('25')
+  // Nutrition State (Optional: Carbohydrates, Protein, Calories, Fat)
+  const [nutritionCarbs, setNutritionCarbs] = useState('')
+  const [nutritionProtein, setNutritionProtein] = useState('')
+  const [nutritionCalories, setNutritionCalories] = useState('')
+  const [nutritionFat, setNutritionFat] = useState('')
 
   // Availability State
   const [hasAvailabilityRule, setHasAvailabilityRule] = useState(false)
@@ -96,33 +93,7 @@ export default function AddMenuItem({
     )
   }
 
-  const handleAddVariantSubmit = (e) => {
-    e.preventDefault()
-    if (!newVarName.trim() || !newVarPrice) return
-    const newVar = {
-      id: `v-${Date.now()}`,
-      name: newVarName.trim(),
-      price: parseFloat(newVarPrice) || 0,
-      stock: parseInt(newVarStock, 10) || 0,
-      active: true,
-    }
-    setVariantsList((prev) => [...prev, newVar])
-    setNewVarName('')
-    setNewVarPrice('')
-    setNewVarStock('25')
-    setShowAddVariantModal(false)
-    showToast?.('Variant added successfully', 'success')
-  }
 
-  const handleDeleteVariant = (id) => {
-    setVariantsList((prev) => prev.filter((v) => v.id !== id))
-  }
-
-  const handleToggleVariantStatus = (id) => {
-    setVariantsList((prev) =>
-      prev.map((v) => (v.id === id ? { ...v, active: !v.active } : v))
-    )
-  }
 
   const handleSave = () => {
     if (!name.trim()) {
@@ -147,7 +118,7 @@ export default function AddMenuItem({
       image: heroImage,
       gallery: galleryImages,
       displayOrder: parseInt(displayOrder, 10) || 1,
-      variants: hasVariants ? variantsList : [],
+      variants: [],
       addons: allowAddons ? selectedAddonIds : [],
       variations: allowVariations ? selectedVariationIds : [],
       choices: allowVariations ? selectedVariationIds : [],
@@ -166,10 +137,18 @@ export default function AddMenuItem({
         100 + Math.random() * 900
       )}`,
       nutrition: {
-        calories: 450,
-        protein: '22g',
-        carbs: '38g',
-        fat: '19g',
+        calories: nutritionCalories.trim()
+          ? (nutritionCalories.includes('kcal') ? nutritionCalories.trim() : `${nutritionCalories.trim()} kcal`)
+          : '',
+        protein: nutritionProtein.trim()
+          ? (nutritionProtein.endsWith('g') ? nutritionProtein.trim() : `${nutritionProtein.trim()}g`)
+          : '',
+        carbs: nutritionCarbs.trim()
+          ? (nutritionCarbs.endsWith('g') ? nutritionCarbs.trim() : `${nutritionCarbs.trim()}g`)
+          : '',
+        fat: nutritionFat.trim()
+          ? (nutritionFat.endsWith('g') ? nutritionFat.trim() : `${nutritionFat.trim()}g`)
+          : '',
       },
     }
 
@@ -431,6 +410,9 @@ export default function AddMenuItem({
                           objectFit: 'cover',
                           display: 'block',
                         }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
                       />
                       {heroImage === imgUrl && (
                         <div
@@ -626,7 +608,7 @@ export default function AddMenuItem({
               </div>
             </div>
 
-            {/* Card 4: Variants (Optional) */}
+            {/* Card 4: Nutrition Information (Optional) */}
             <div className="owner-form-card">
               <div
                 style={{
@@ -635,139 +617,66 @@ export default function AddMenuItem({
                   alignItems: 'center',
                 }}
               >
-                <h2 className="owner-form-card-title">Variants (Optional)</h2>
-                {hasVariants && (
-                  <button
-                    type="button"
-                    className="owner-btn-secondary"
-                    style={{
-                      fontSize: 12,
-                      padding: '4px 10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      color: '#8c4a23',
-                      borderColor: '#d5c8b5',
-                    }}
-                    onClick={() => setShowAddVariantModal(true)}
-                  >
-                    <Plus size={13} />
-                    <span>Add Variant</span>
-                  </button>
-                )}
+                <div>
+                  <h2 className="owner-form-card-title">Nutrition Information (Optional)</h2>
+                  <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: '#8c7b6f' }}>
+                    Enter estimated nutritional values per serving (optional).
+                  </p>
+                </div>
               </div>
 
-              <label
+              <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: '#4a3f35',
-                  cursor: 'pointer',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                  gap: 12,
+                  marginTop: 4,
                 }}
               >
-                <input
-                  type="checkbox"
-                  checked={hasVariants}
-                  onChange={(e) => setHasVariants(e.target.checked)}
-                  style={{ accentColor: '#8c4a23', width: 16, height: 16 }}
-                />
-                <span>This item has variants (e.g., size, flavor)</span>
-              </label>
-
-              {hasVariants && (
-                <div style={{ marginTop: 10, overflowX: 'auto' }}>
-                  <table className="owner-variants-table">
-                    <thead>
-                      <tr>
-                        <th style={{ width: 30 }}></th>
-                        <th>Variant Name</th>
-                        <th>Price (₹)</th>
-                        <th>Stock</th>
-                        <th>Status</th>
-                        <th style={{ textAlign: 'right' }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {variantsList.map((variant) => (
-                        <tr key={variant.id}>
-                          <td style={{ color: '#b5a798' }}>
-                            <GripVertical size={14} />
-                          </td>
-                          <td style={{ fontWeight: 600, color: 'var(--owner-espresso)' }}>
-                            {variant.name}
-                          </td>
-                          <td style={{ fontWeight: 700 }}>₹{variant.price}</td>
-                          <td>
-                            <span
-                              style={{
-                                background: '#f5efe6',
-                                padding: '2px 8px',
-                                borderRadius: 4,
-                                fontSize: 11.5,
-                                fontWeight: 600,
-                              }}
-                            >
-                              {variant.stock} in stock
-                            </span>
-                          </td>
-                          <td>
-                            <label className="owner-toggle-switch">
-                              <input
-                                type="checkbox"
-                                checked={variant.active}
-                                onChange={() =>
-                                  handleToggleVariantStatus(variant.id)
-                                }
-                              />
-                              <span className="owner-toggle-slider"></span>
-                            </label>
-                          </td>
-                          <td style={{ textAlign: 'right' }}>
-                            <div
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 6,
-                              }}
-                            >
-                              <button
-                                type="button"
-                                style={{
-                                  background: 'none',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  color: '#7a6a5e',
-                                  padding: 3,
-                                }}
-                                title="Edit"
-                              >
-                                <Edit2 size={13} />
-                              </button>
-                              <button
-                                type="button"
-                                style={{
-                                  background: 'none',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  color: '#dc2626',
-                                  padding: 3,
-                                }}
-                                title="Delete"
-                                onClick={() => handleDeleteVariant(variant.id)}
-                              >
-                                <Trash2 size={13} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div>
+                  <label className="owner-field-label">Carbohydrates</label>
+                  <input
+                    type="text"
+                    className="owner-form-input"
+                    placeholder="e.g. 45g"
+                    value={nutritionCarbs}
+                    onChange={(e) => setNutritionCarbs(e.target.value)}
+                  />
                 </div>
-              )}
+
+                <div>
+                  <label className="owner-field-label">Protein</label>
+                  <input
+                    type="text"
+                    className="owner-form-input"
+                    placeholder="e.g. 28g"
+                    value={nutritionProtein}
+                    onChange={(e) => setNutritionProtein(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="owner-field-label">Calories</label>
+                  <input
+                    type="text"
+                    className="owner-form-input"
+                    placeholder="e.g. 580 kcal"
+                    value={nutritionCalories}
+                    onChange={(e) => setNutritionCalories(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="owner-field-label">Fat</label>
+                  <input
+                    type="text"
+                    className="owner-form-input"
+                    placeholder="e.g. 22g"
+                    value={nutritionFat}
+                    onChange={(e) => setNutritionFat(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Card 5: Availability */}
@@ -1421,7 +1330,7 @@ export default function AddMenuItem({
                   </div>
                 </div>
 
-                {hasVariants && variantsList.length > 0 && (
+                {(nutritionCalories || nutritionProtein || nutritionCarbs || nutritionFat) && (
                   <div
                     style={{
                       background: '#fff',
@@ -1431,22 +1340,42 @@ export default function AddMenuItem({
                     }}
                   >
                     <div style={{ fontWeight: 700, fontSize: 11, marginBottom: 4 }}>
-                      Variants ({variantsList.length})
+                      Nutrition Facts
                     </div>
-                    {variantsList.map((v) => (
-                      <div
-                        key={v.id}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          padding: '3px 0',
-                          borderBottom: '1px dashed #f0eae1',
-                        }}
-                      >
-                        <span>{v.name}</span>
-                        <span style={{ fontWeight: 700 }}>₹{v.price}</span>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: 4,
+                        textAlign: 'center',
+                        fontSize: 10.5,
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          {nutritionCarbs || '—'}
+                        </div>
+                        <div style={{ color: '#8c7b6f', fontSize: 9 }}>Carbs</div>
                       </div>
-                    ))}
+                      <div>
+                        <div style={{ fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          {nutritionProtein || '—'}
+                        </div>
+                        <div style={{ color: '#8c7b6f', fontSize: 9 }}>Protein</div>
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          {nutritionCalories || '—'}
+                        </div>
+                        <div style={{ color: '#8c7b6f', fontSize: 9 }}>Calories</div>
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          {nutritionFat || '—'}
+                        </div>
+                        <div style={{ color: '#8c7b6f', fontSize: 9 }}>Fat</div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1455,80 +1384,6 @@ export default function AddMenuItem({
         )}
       </div>
 
-      {/* Modal: Add Variant */}
-      {showAddVariantModal && (
-        <div className="owner-modal-overlay">
-          <div
-            className="owner-modal-card"
-            style={{ maxWidth: 420 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="owner-modal-header">
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
-                Add New Variant
-              </h3>
-              <button
-                className="owner-modal-close-btn"
-                onClick={() => setShowAddVariantModal(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <form onSubmit={handleAddVariantSubmit}>
-              <div className="owner-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div>
-                  <label className="owner-field-label">Variant Name *</label>
-                  <input
-                    type="text"
-                    className="owner-form-input"
-                    placeholder="e.g. Regular, Large, Double Patty"
-                    value={newVarName}
-                    onChange={(e) => setNewVarName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="owner-field-label">Price (₹) *</label>
-                  <input
-                    type="number"
-                    className="owner-form-input"
-                    placeholder="220"
-                    value={newVarPrice}
-                    onChange={(e) => setNewVarPrice(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="owner-field-label">Stock Quantity</label>
-                  <input
-                    type="number"
-                    className="owner-form-input"
-                    placeholder="50"
-                    value={newVarStock}
-                    onChange={(e) => setNewVarStock(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="owner-modal-footer">
-                <button
-                  type="button"
-                  className="owner-btn-secondary"
-                  onClick={() => setShowAddVariantModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="owner-btn-primary"
-                  style={{ background: '#8c4a23' }}
-                >
-                  Add Variant
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -361,10 +361,13 @@ export default function OwnerMenu() {
             {activeTab === 'items' && (
               <MenuItemsTab
                 categories={categories}
+                setCategories={setCategories}
                 items={items}
                 setItems={setItems}
                 onOpenAddItem={handleOpenAddItem}
                 showToast={showToast}
+                addons={addons}
+                variations={variations}
               />
             )}
 

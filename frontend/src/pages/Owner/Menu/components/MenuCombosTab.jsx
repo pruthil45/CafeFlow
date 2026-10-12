@@ -18,6 +18,7 @@ import {
   Minus,
   Sparkles,
   HelpCircle,
+  Eye,
 } from 'lucide-react'
 import '../../Owner.css'
 
@@ -50,11 +51,12 @@ export default function MenuCombosTab({
 
   // Sub-tabs in right panel
   const [comboDetailTab, setComboDetailTab] = useState('general') // 'general', 'items', 'pricing', 'availability'
+  const [isEditing, setIsEditing] = useState(false)
 
   // Draft form for right panel editor
   const [editForm, setEditForm] = useState(null)
 
-  // Sync draft form when selected combo changes
+  // Sync draft form when selected combo changes (Default to READ-ONLY View Mode)
   const handleSelectCombo = (combo) => {
     setActiveComboId(combo.id)
     setEditForm({
@@ -64,6 +66,7 @@ export default function MenuCombosTab({
       isPopular: getIsPopular(combo),
       items: [...(combo.items || [])],
     })
+    setIsEditing(false)
     setComboDetailTab('general')
   }
 
@@ -71,6 +74,7 @@ export default function MenuCombosTab({
   const handleCloseDetail = () => {
     setActiveComboId(null)
     setEditForm(null)
+    setIsEditing(false)
   }
 
   // Close on Escape key
@@ -79,6 +83,7 @@ export default function MenuCombosTab({
       if (e.key === 'Escape') {
         setActiveComboId(null)
         setEditForm(null)
+        setIsEditing(false)
       }
     }
     if (activeComboId) {
@@ -241,19 +246,19 @@ export default function MenuCombosTab({
       return
     }
 
+    const updated = {
+      ...editForm,
+      price: parseFloat(editForm.price),
+      comparePrice: editForm.comparePrice
+        ? parseFloat(editForm.comparePrice)
+        : null,
+    }
+
     setCombos((prev) =>
-      prev.map((c) =>
-        c.id === editForm.id
-          ? {
-              ...editForm,
-              price: parseFloat(editForm.price),
-              comparePrice: editForm.comparePrice
-                ? parseFloat(editForm.comparePrice)
-                : null,
-            }
-          : c
-      )
+      prev.map((c) => (c.id === editForm.id ? updated : c))
     )
+    setEditForm(updated)
+    setIsEditing(false)
     showToast?.(`Saved changes for "${editForm.name}"`, 'success')
   }
 
@@ -829,224 +834,875 @@ export default function MenuCombosTab({
             aria-modal="true"
             aria-label="Combo Details Modal"
           >
-            <div
-              style={{
-                padding: '12px 14px',
-                borderBottom: '1px solid #f0eae1',
-                background: '#faf8f5',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
+            <div className="owner-detail-panel-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <h2
-                  style={{
-                    fontSize: 15,
-                    fontWeight: 800,
-                    color: 'var(--owner-espresso)',
-                    margin: 0,
-                  }}
-                >
-                  {editForm.name || 'Combo Details'}
-                </h2>
+                <h3 className="owner-detail-panel-title">
+                  {isEditing ? 'Edit Combo' : 'Combo Details'}
+                </h3>
                 <span
                   style={{
-                    fontSize: 11,
+                    fontSize: '11px',
                     fontWeight: 700,
-                    color: editForm.active ? '#15803d' : '#8c7b6f',
-                    background: editForm.active ? '#dcfce7' : '#f0eae1',
+                    color: '#8c7b6f',
+                    background: '#f0eae1',
                     padding: '2px 8px',
-                    borderRadius: 4,
+                    borderRadius: '4px',
                   }}
                 >
-                  {editForm.active ? 'Active' : 'Inactive'}
+                  ID: {editForm.id}
                 </span>
               </div>
-
-              <button
-                type="button"
-                onClick={handleCloseDetail}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#7a6a5e',
-                  padding: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  borderRadius: 6,
-                }}
-                title="Close panel"
-                aria-label="Close panel"
-              >
-                <X size={18} />
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {isEditing ? (
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    style={{ padding: '4px 10px', fontSize: '11.5px', display: 'flex', alignItems: 'center', gap: 4 }}
+                    onClick={() => setIsEditing(false)}
+                  >
+                    <Eye size={13} /> View Mode
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="owner-btn-primary"
+                    style={{ padding: '4px 12px', fontSize: '11.5px', display: 'flex', alignItems: 'center', gap: 4 }}
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Edit2 size={12} /> Edit
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleCloseDetail}
+                  className="owner-modal-close-btn"
+                  title="Close dialog"
+                  aria-label="Close dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
-            <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {/* Combo Hero Image */}
-              <div style={{ position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
-                <img
-                  src={editForm.image}
-                  alt={editForm.name}
-                  style={{
-                    width: '100%',
-                    height: 140,
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-                <label
-                  style={{
-                    position: 'absolute',
-                    bottom: 8,
-                    right: 8,
-                    background: 'rgba(26,24,22,0.85)',
-                    color: '#fff',
-                    borderRadius: 6,
-                    padding: '4px 8px',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
-                >
-                  <Upload size={12} />
-                  <span>Change Image</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) {
-                        const reader = new FileReader()
-                        reader.onload = (uploadEvt) => {
-                          setEditForm((prev) => ({
-                            ...prev,
-                            image: uploadEvt.target.result,
-                          }))
-                          showToast?.('Image updated preview', 'info')
-                        }
-                        reader.readAsDataURL(file)
-                      }
+            {/* ============================================================== */}
+            {/* 1. READ-ONLY VIEW MODE (Opened until user clicks 'Edit')       */}
+            {/* ============================================================== */}
+            {!isEditing ? (
+              <div className="owner-item-view-container">
+                {/* Hero Showcase with Badges Overlay */}
+                <div className="owner-item-view-hero-wrap">
+                  <img
+                    src={editForm.image}
+                    alt={editForm.name}
+                    className="owner-item-view-hero-img"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=500&auto=format&fit=crop&q=80'
                     }}
                   />
-                </label>
-              </div>
+                  <div className="owner-item-view-badges-overlay">
+                    <span
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        background: 'rgba(255, 247, 237, 0.92)',
+                        color: '#c2410c',
+                        border: '1px solid #fdba74',
+                        backdropFilter: 'blur(8px)',
+                      }}
+                    >
+                      {editForm.category} Combo
+                    </span>
+                    <span
+                      className={`owner-item-view-status-pill ${
+                        editForm.active
+                          ? 'owner-item-view-status-pill--active'
+                          : 'owner-item-view-status-pill--inactive'
+                      }`}
+                    >
+                      {editForm.active ? '● Active' : '○ Inactive'}
+                    </span>
+                  </div>
+                </div>
 
-              {/* Sub-tabs: General | Items | Pricing | Availability */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 4,
-                  borderBottom: '1px solid #f0eae1',
-                  paddingBottom: 4,
-                }}
-              >
-                {['general', 'items', 'pricing', 'availability'].map((tab) => (
+                {/* Identity & Price Summary */}
+                <div className="owner-item-view-title-row">
+                  <div>
+                    <h2 className="owner-item-view-name">{editForm.name}</h2>
+                    <div className="owner-item-view-meta-pills">
+                      <span className="owner-item-view-pill">{editForm.category}</span>
+                      <span className="owner-item-view-pill">
+                        {editForm.items?.length || 0} Items Included
+                      </span>
+                      {editForm.isBestseller && (
+                        <span className="owner-item-view-pill owner-item-view-pill--bestseller">
+                          ★ Bestseller
+                        </span>
+                      )}
+                      {editForm.isPopular && (
+                        <span
+                          className="owner-item-view-pill"
+                          style={{
+                            background: '#eff6ff',
+                            color: '#1d4ed8',
+                            border: '1px solid #bfdbfe',
+                          }}
+                        >
+                          🔥 Popular
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="owner-item-view-price">
+                    {editForm.comparePrice && editForm.comparePrice > editForm.price && (
+                      <span
+                        style={{
+                          textDecoration: 'line-through',
+                          color: '#9c8e82',
+                          fontSize: '13px',
+                          marginRight: 6,
+                          fontWeight: 500,
+                        }}
+                      >
+                        ₹{editForm.comparePrice}
+                      </span>
+                    )}
+                    ₹ {editForm.price}
+                  </div>
+                </div>
+
+                {/* Segmented Detail Tabs */}
+                <div className="owner-detail-tabs-nav">
                   <button
-                    key={tab}
+                    type="button"
+                    className={`owner-detail-tab-btn ${comboDetailTab === 'general' ? 'active' : ''}`}
+                    onClick={() => setComboDetailTab('general')}
+                  >
+                    General
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${comboDetailTab === 'items' ? 'active' : ''}`}
+                    onClick={() => setComboDetailTab('items')}
+                  >
+                    Items ({editForm.items?.length || 0})
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${comboDetailTab === 'pricing' ? 'active' : ''}`}
+                    onClick={() => setComboDetailTab('pricing')}
+                  >
+                    Pricing
+                  </button>
+                  <button
+                    type="button"
+                    className={`owner-detail-tab-btn ${comboDetailTab === 'availability' ? 'active' : ''}`}
+                    onClick={() => setComboDetailTab('availability')}
+                  >
+                    Availability
+                  </button>
+                </div>
+
+                {/* Read-Only Details Body */}
+                <div className="owner-detail-body">
+                  {comboDetailTab === 'general' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <div>
+                        <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#8c7b6f', marginBottom: '6px' }}>
+                          DESCRIPTION
+                        </div>
+                        <p className="owner-item-view-desc">
+                          {editForm.description || 'No description provided for this combo.'}
+                        </p>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                        <div style={{ background: '#faf8f5', padding: '10px 12px', borderRadius: '8px', border: '1px solid #ede7dc' }}>
+                          <div style={{ fontSize: '11px', color: '#8c7b6f', fontWeight: 600 }}>CATEGORY</div>
+                          <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--owner-espresso)', marginTop: 2 }}>
+                            {editForm.category}
+                          </div>
+                        </div>
+                        <div style={{ background: '#faf8f5', padding: '10px 12px', borderRadius: '8px', border: '1px solid #ede7dc' }}>
+                          <div style={{ fontSize: '11px', color: '#8c7b6f', fontWeight: 600 }}>TOTAL UNITS</div>
+                          <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--owner-espresso)', marginTop: 2 }}>
+                            {editForm.items?.reduce((acc, it) => acc + (it.quantity || 1), 0) || 0} Total Units
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {comboDetailTab === 'items' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ fontSize: '12px', color: '#7a6a5e', fontWeight: 600 }}>
+                        Items Included in Combo ({editForm.items?.length || 0})
+                      </div>
+                      {editForm.items && editForm.items.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          {editForm.items.map((it, idx) => (
+                            <div
+                              key={idx}
+                              style={{
+                                background: '#faf8f5',
+                                padding: '10px 14px',
+                                borderRadius: '8px',
+                                border: '1px solid #ede7dc',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <img
+                                  src={
+                                    it.image ||
+                                    'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=60&auto=format&fit=crop&q=80'
+                                  }
+                                  alt={it.name}
+                                  style={{ width: 36, height: 36, borderRadius: 6, objectFit: 'cover' }}
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none'
+                                  }}
+                                />
+                                <div>
+                                  <div style={{ fontWeight: 700, fontSize: '13.5px', color: 'var(--owner-espresso)' }}>
+                                    {it.name}
+                                  </div>
+                                  <div style={{ fontSize: '11.5px', color: '#8c7b6f', marginTop: 2 }}>
+                                    {it.category || 'Menu Item'}
+                                  </div>
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span
+                                  style={{
+                                    background: '#f0eae1',
+                                    color: '#5c4d41',
+                                    fontWeight: 700,
+                                    fontSize: '12px',
+                                    padding: '3px 8px',
+                                    borderRadius: '6px',
+                                  }}
+                                >
+                                  Qty: {it.quantity || 1}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            fontSize: '12.5px',
+                            color: '#8c7b6f',
+                            textAlign: 'center',
+                            padding: '24px',
+                            background: '#faf8f5',
+                            borderRadius: '8px',
+                          }}
+                        >
+                          No items configured in this combo.
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {comboDetailTab === 'pricing' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ fontSize: '12px', color: '#7a6a5e', fontWeight: 600 }}>
+                        Pricing & Discount Structure
+                      </div>
+                      <div className="owner-nutrition-grid-view">
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">₹{editForm.price}</div>
+                          <div className="owner-nutrition-lbl">Combo Price</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">
+                            {editForm.comparePrice ? `₹${editForm.comparePrice}` : '—'}
+                          </div>
+                          <div className="owner-nutrition-lbl">Original Price</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val" style={{ color: '#15803d' }}>
+                            {editForm.comparePrice && editForm.comparePrice > editForm.price
+                              ? `₹${Math.round(editForm.comparePrice - editForm.price)}`
+                              : '₹0'}
+                          </div>
+                          <div className="owner-nutrition-lbl">Customer Savings</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val" style={{ color: '#ea580c' }}>
+                            {editForm.comparePrice && editForm.comparePrice > editForm.price
+                              ? `${Math.round(((editForm.comparePrice - editForm.price) / editForm.comparePrice) * 100)}%`
+                              : 'Special'}
+                          </div>
+                          <div className="owner-nutrition-lbl">Discount</div>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '11.5px',
+                          color: '#8c7b6f',
+                          background: '#faf8f5',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          border: '1px solid #f0eae1',
+                        }}
+                      >
+                        All combo prices are inclusive of applicable goods & service taxes (GST).
+                      </div>
+                    </div>
+                  )}
+
+                  {comboDetailTab === 'availability' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ fontSize: '12px', color: '#7a6a5e', fontWeight: 600 }}>
+                        Ordering Availability
+                      </div>
+                      <div
+                        style={{
+                          background: '#faf8f5',
+                          padding: '12px 14px',
+                          borderRadius: '8px',
+                          border: '1px solid #ede7dc',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--owner-espresso)' }}>
+                            Status for Customer Orders
+                          </div>
+                          <div style={{ fontSize: '11.5px', color: '#8c7b6f', marginTop: 2 }}>
+                            {editForm.active ? 'Accepting orders across all channels' : 'Currently paused and hidden'}
+                          </div>
+                        </div>
+                        <span
+                          className={`owner-item-view-status-pill ${
+                            editForm.active
+                              ? 'owner-item-view-status-pill--active'
+                              : 'owner-item-view-status-pill--inactive'
+                          }`}
+                        >
+                          {editForm.active ? '● Active' : '○ Inactive'}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#7a6a5e', lineHeight: 1.5 }}>
+                        <strong>Available Schedule:</strong> Everyday during standard cafe hours (11:00 AM – 11:00 PM).
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Read-Only Mode Footer */}
+                <div className="owner-detail-footer">
+                  <button
                     type="button"
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      fontSize: 12,
-                      fontWeight: comboDetailTab === tab ? 700 : 500,
-                      color:
-                        comboDetailTab === tab ? '#8c4a23' : '#7a6a5e',
-                      borderBottom:
-                        comboDetailTab === tab
-                          ? '2px solid #8c4a23'
-                          : '2px solid transparent',
-                      padding: '4px 8px',
-                      cursor: 'pointer',
-                      textTransform: 'capitalize',
-                    }}
-                    onClick={() => setComboDetailTab(tab)}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-
-              {/* GENERAL TAB */}
-              {comboDetailTab === 'general' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <div className="owner-field-group">
-                    <label className="owner-field-label">
-                      Combo Name <span style={{ color: '#dc2626' }}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="owner-form-input"
-                      value={editForm.name || ''}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({ ...prev, name: e.target.value }))
-                      }
-                    />
-                  </div>
-
-                  <div className="owner-field-group">
-                    <label className="owner-field-label">Description</label>
-                    <textarea
-                      className="owner-form-textarea"
-                      rows={2}
-                      value={editForm.description || ''}
-                      onChange={(e) =>
-                        setEditForm((prev) => ({
-                          ...prev,
-                          description: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1.2fr 1fr',
-                      gap: 10,
+                      marginRight: 'auto',
+                      display: 'flex',
                       alignItems: 'center',
+                      gap: '6px',
+                      padding: '7px 14px',
+                      fontSize: '12px',
+                      color: '#dc2626',
+                      borderColor: '#fecaca',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 700,
                     }}
+                    onClick={() => setDeleteCandidate(editForm)}
                   >
-                    <div className="owner-field-group">
-                      <label className="owner-field-label">
-                        Category <span style={{ color: '#dc2626' }}>*</span>
-                      </label>
-                      <select
-                        className="owner-form-select"
-                        value={editForm.category || 'Burgers'}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            category: e.target.value,
-                          }))
-                        }
-                      >
-                        <option value="Burgers">Burgers</option>
-                        <option value="Pizzas">Pizzas</option>
-                        <option value="Pasta">Pasta</option>
-                        <option value="Sandwiches">Sandwiches</option>
-                        <option value="Starters">Starters</option>
-                        <option value="Beverages">Beverages</option>
-                        <option value="Desserts">Desserts</option>
-                      </select>
-                    </div>
+                    <Trash2 size={13} /> Delete Combo
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    onClick={handleCloseDetail}
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-btn-primary"
+                    onClick={() => setIsEditing(true)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <Edit2 size={14} /> Edit Combo
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* ============================================================== */
+              /* 2. EDIT MODE (Active when user clicks 'Edit')                   */
+              /* ============================================================== */
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {/* Combo Hero Image with Change Image */}
+                  <div style={{ position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
+                    <img
+                      src={editForm.image}
+                      alt={editForm.name}
+                      style={{
+                        width: '100%',
+                        height: 140,
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                    <label
+                      style={{
+                        position: 'absolute',
+                        bottom: 8,
+                        right: 8,
+                        background: 'rgba(26,24,22,0.85)',
+                        color: '#fff',
+                        borderRadius: 6,
+                        padding: '4px 8px',
+                        fontSize: 11,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                      }}
+                    >
+                      <Upload size={12} />
+                      <span>Change Image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            const reader = new FileReader()
+                            reader.onload = (uploadEvt) => {
+                              setEditForm((prev) => ({
+                                ...prev,
+                                image: uploadEvt.target.result,
+                              }))
+                              showToast?.('Image updated preview', 'info')
+                            }
+                            reader.readAsDataURL(file)
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
 
-                    <div className="owner-field-group">
-                      <label className="owner-field-label">Status *</label>
+                  {/* Sub-tabs: General | Items | Pricing | Availability */}
+                  <div className="owner-detail-tabs-nav">
+                    {['general', 'items', 'pricing', 'availability'].map((tab) => (
+                      <button
+                        key={tab}
+                        type="button"
+                        className={`owner-detail-tab-btn ${comboDetailTab === tab ? 'active' : ''}`}
+                        onClick={() => setComboDetailTab(tab)}
+                        style={{ textTransform: 'capitalize' }}
+                      >
+                        {tab === 'items' ? `Items (${editForm.items?.length || 0})` : tab}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* GENERAL TAB (EDIT) */}
+                  {comboDetailTab === 'general' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div className="owner-field-group">
+                        <label className="owner-field-label">
+                          Combo Name <span style={{ color: '#dc2626' }}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="owner-form-input"
+                          value={editForm.name || ''}
+                          onChange={(e) =>
+                            setEditForm((prev) => ({ ...prev, name: e.target.value }))
+                          }
+                        />
+                      </div>
+
+                      <div className="owner-field-group">
+                        <label className="owner-field-label">Description</label>
+                        <textarea
+                          className="owner-form-textarea"
+                          rows={2}
+                          value={editForm.description || ''}
+                          onChange={(e) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              description: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1.2fr 1fr',
+                          gap: 10,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div className="owner-field-group">
+                          <label className="owner-field-label">
+                            Category <span style={{ color: '#dc2626' }}>*</span>
+                          </label>
+                          <select
+                            className="owner-form-select"
+                            value={editForm.category || 'Burgers'}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                category: e.target.value,
+                              }))
+                            }
+                          >
+                            <option value="Burgers">Burgers</option>
+                            <option value="Pizzas">Pizzas</option>
+                            <option value="Pasta">Pasta</option>
+                            <option value="Sandwiches">Sandwiches</option>
+                            <option value="Starters">Starters</option>
+                            <option value="Beverages">Beverages</option>
+                            <option value="Desserts">Desserts</option>
+                          </select>
+                        </div>
+
+                        <div className="owner-field-group">
+                          <label className="owner-field-label">Status *</label>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              height: 38,
+                            }}
+                          >
+                            <label className="owner-toggle-switch">
+                              <input
+                                type="checkbox"
+                                checked={!!editForm.active}
+                                onChange={(e) =>
+                                  setEditForm((prev) => ({
+                                    ...prev,
+                                    active: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <span className="owner-toggle-slider"></span>
+                            </label>
+                            <span
+                              style={{
+                                fontSize: 12,
+                                fontWeight: 600,
+                                color: editForm.active ? '#10b981' : '#8c7b6f',
+                              }}
+                            >
+                              {editForm.active ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ITEMS TAB (EDIT) */}
+                  {comboDetailTab === 'items' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       <div
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 6,
-                          height: 38,
+                          justifyContent: 'space-between',
                         }}
                       >
+                        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          Included Menu Items ({editForm.items?.length || 0})
+                        </span>
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 6,
+                          maxHeight: 220,
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {editForm.items?.map((item, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '6px 8px',
+                              borderRadius: 8,
+                              border: '1px solid #ebdccb',
+                              background: '#faf8f5',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <img
+                                src={
+                                  item.image ||
+                                  'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=60&auto=format&fit=crop&q=80'
+                                }
+                                alt={item.name}
+                                style={{
+                                  width: 32,
+                                  height: 32,
+                                  borderRadius: 4,
+                                  objectFit: 'cover',
+                                }}
+                              />
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: 12.5,
+                                    fontWeight: 700,
+                                    color: '#33271e',
+                                  }}
+                                >
+                                  {item.name}
+                                </div>
+                                <div style={{ fontSize: 10.5, color: '#8c7b6f' }}>
+                                  {item.category}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Quantity Stepper & Delete */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  background: '#fff',
+                                  border: '1px solid #e0d5c5',
+                                  borderRadius: 6,
+                                  padding: '2px 4px',
+                                }}
+                              >
+                                <button
+                                  type="button"
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: 2,
+                                    color: '#7a6a5e',
+                                  }}
+                                  onClick={() => handleUpdateItemQty(idx, -1)}
+                                >
+                                  <Minus size={11} />
+                                </button>
+                                <span
+                                  style={{
+                                    padding: '0 6px',
+                                    fontSize: 12,
+                                    fontWeight: 700,
+                                    minWidth: 16,
+                                    textAlign: 'center',
+                                  }}
+                                >
+                                  {item.quantity || 1}
+                                </span>
+                                <button
+                                  type="button"
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: 2,
+                                    color: '#7a6a5e',
+                                  }}
+                                  onClick={() => handleUpdateItemQty(idx, 1)}
+                                >
+                                  <Plus size={11} />
+                                </button>
+                              </div>
+
+                              <button
+                                type="button"
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  color: '#dc2626',
+                                  cursor: 'pointer',
+                                  padding: 3,
+                                }}
+                                title="Remove from combo"
+                                onClick={() => handleRemoveItemFromCombo(idx)}
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        type="button"
+                        style={{
+                          width: '100%',
+                          padding: '7px',
+                          borderRadius: 8,
+                          border: '1px dashed #d5c8b5',
+                          background: '#ffffff',
+                          color: '#8c4a23',
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 6,
+                        }}
+                        onClick={() => setShowAddItemToComboModal(true)}
+                      >
+                        <Plus size={14} />
+                        <span>+ Add Item</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* PRICING TAB (EDIT) */}
+                  {comboDetailTab === 'pricing' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: 10,
+                        }}
+                      >
+                        <div className="owner-field-group">
+                          <label className="owner-field-label">
+                            Combo Price (₹) <span style={{ color: '#dc2626' }}>*</span>
+                          </label>
+                          <input
+                            type="number"
+                            className="owner-form-input"
+                            value={editForm.price || ''}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                price: e.target.value,
+                              }))
+                            }
+                          />
+                        </div>
+
+                        <div className="owner-field-group">
+                          <label className="owner-field-label">
+                            Compare Price (Optional)
+                          </label>
+                          <input
+                            type="number"
+                            className="owner-form-input"
+                            value={editForm.comparePrice || ''}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                comparePrice: e.target.value,
+                              }))
+                            }
+                            placeholder="e.g. 350"
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <label
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            fontSize: 13,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!editForm.isBestseller}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                isBestseller: e.target.checked,
+                              }))
+                            }
+                            style={{ accentColor: '#ea580c' }}
+                          />
+                          <span>Show as Bestseller</span>
+                          {editForm.isBestseller && (
+                            <span
+                              style={{
+                                fontSize: 10,
+                                background: '#ea580c',
+                                color: '#fff',
+                                padding: '1px 5px',
+                                borderRadius: 3,
+                                fontWeight: 700,
+                              }}
+                            >
+                              Bestseller
+                            </span>
+                          )}
+                        </label>
+
+                        <label
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            fontSize: 13,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!editForm.isPopular}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                isPopular: e.target.checked,
+                              }))
+                            }
+                            style={{ accentColor: '#2563eb' }}
+                          />
+                          <span>Show as Popular</span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* AVAILABILITY TAB (EDIT) */}
+                  {comboDetailTab === 'availability' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '8px 10px',
+                          background: '#faf8f5',
+                          borderRadius: 8,
+                        }}
+                      >
+                        <span style={{ fontSize: 13, fontWeight: 600 }}>
+                          Active for Ordering
+                        </span>
                         <label className="owner-toggle-switch">
                           <input
                             type="checkbox"
@@ -1060,355 +1716,62 @@ export default function MenuCombosTab({
                           />
                           <span className="owner-toggle-slider"></span>
                         </label>
-                        <span
-                          style={{
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: editForm.active ? '#10b981' : '#8c7b6f',
-                          }}
-                        >
-                          {editForm.active ? 'Active' : 'Inactive'}
-                        </span>
                       </div>
+
+                      <p style={{ fontSize: 12, color: '#7a6a5e', margin: 0 }}>
+                        Availability Schedule: Everyday during operating hours (11:00 AM – 11:00 PM).
+                      </p>
                     </div>
-                  </div>
+                  )}
                 </div>
-              )}
 
-              {/* ITEMS TAB */}
-              {comboDetailTab === 'items' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--owner-espresso)' }}>
-                      Included Menu Items ({editForm.items?.length || 0})
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 6,
-                      maxHeight: 220,
-                      overflowY: 'auto',
-                    }}
-                  >
-                    {editForm.items?.map((item, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '6px 8px',
-                          borderRadius: 8,
-                          border: '1px solid #ebdccb',
-                          background: '#faf8f5',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <img
-                            src={
-                              item.image ||
-                              'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=60&auto=format&fit=crop&q=80'
-                            }
-                            alt={item.name}
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 4,
-                              objectFit: 'cover',
-                            }}
-                          />
-                          <div>
-                            <div
-                              style={{
-                                fontSize: 12.5,
-                                fontWeight: 700,
-                                color: '#33271e',
-                              }}
-                            >
-                              {item.name}
-                            </div>
-                            <div style={{ fontSize: 10.5, color: '#8c7b6f' }}>
-                              {item.category}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Quantity Stepper & Delete */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              background: '#fff',
-                              border: '1px solid #e0d5c5',
-                              borderRadius: 6,
-                              padding: '2px 4px',
-                            }}
-                          >
-                            <button
-                              type="button"
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: 2,
-                                color: '#7a6a5e',
-                              }}
-                              onClick={() => handleUpdateItemQty(idx, -1)}
-                            >
-                              <Minus size={11} />
-                            </button>
-                            <span
-                              style={{
-                                padding: '0 6px',
-                                fontSize: 12,
-                                fontWeight: 700,
-                                minWidth: 16,
-                                textAlign: 'center',
-                              }}
-                            >
-                              {item.quantity || 1}
-                            </span>
-                            <button
-                              type="button"
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: 2,
-                                color: '#7a6a5e',
-                              }}
-                              onClick={() => handleUpdateItemQty(idx, 1)}
-                            >
-                              <Plus size={11} />
-                            </button>
-                          </div>
-
-                          <button
-                            type="button"
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              color: '#dc2626',
-                              cursor: 'pointer',
-                              padding: 3,
-                            }}
-                            title="Remove from combo"
-                            onClick={() => handleRemoveItemFromCombo(idx)}
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
+                {/* Edit Mode Footer */}
+                <div className="owner-detail-footer">
                   <button
                     type="button"
                     style={{
-                      width: '100%',
-                      padding: '7px',
-                      borderRadius: 8,
-                      border: '1px dashed #d5c8b5',
-                      background: '#ffffff',
-                      color: '#8c4a23',
-                      fontSize: 12.5,
-                      fontWeight: 700,
-                      cursor: 'pointer',
+                      marginRight: 'auto',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 6,
+                      gap: '6px',
+                      padding: '7px 14px',
+                      fontSize: '12px',
+                      color: '#dc2626',
+                      borderColor: '#fecaca',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 700,
                     }}
-                    onClick={() => setShowAddItemToComboModal(true)}
+                    onClick={() => setDeleteCandidate(editForm)}
                   >
-                    <Plus size={14} />
-                    <span>+ Add Item</span>
+                    <Trash2 size={13} /> Delete Combo
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    onClick={() => setIsEditing(false)}
+                    style={{ padding: '6px 14px' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-btn-primary"
+                    onClick={handleSaveDetailChanges}
+                    style={{
+                      background: '#8c4a23',
+                      color: '#fff',
+                      fontWeight: 700,
+                      padding: '6px 18px',
+                    }}
+                  >
+                    Save Changes
                   </button>
                 </div>
-              )}
-
-              {/* PRICING TAB */}
-              {comboDetailTab === 'pricing' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: 10,
-                    }}
-                  >
-                    <div className="owner-field-group">
-                      <label className="owner-field-label">
-                        Combo Price (₹) <span style={{ color: '#dc2626' }}>*</span>
-                      </label>
-                      <input
-                        type="number"
-                        className="owner-form-input"
-                        value={editForm.price || ''}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            price: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-
-                    <div className="owner-field-group">
-                      <label className="owner-field-label">
-                        Compare Price (Optional)
-                      </label>
-                      <input
-                        type="number"
-                        className="owner-form-input"
-                        value={editForm.comparePrice || ''}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            comparePrice: e.target.value,
-                          }))
-                        }
-                        placeholder="e.g. 350"
-                      />
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        fontSize: 13,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!!editForm.isBestseller}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            isBestseller: e.target.checked,
-                          }))
-                        }
-                        style={{ accentColor: '#ea580c' }}
-                      />
-                      <span>Show as Bestseller</span>
-                      {editForm.isBestseller && (
-                        <span
-                          style={{
-                            fontSize: 10,
-                            background: '#ea580c',
-                            color: '#fff',
-                            padding: '1px 5px',
-                            borderRadius: 3,
-                            fontWeight: 700,
-                          }}
-                        >
-                          Bestseller
-                        </span>
-                      )}
-                    </label>
-
-                    <label
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        fontSize: 13,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!!editForm.isPopular}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            isPopular: e.target.checked,
-                          }))
-                        }
-                        style={{ accentColor: '#2563eb' }}
-                      />
-                      <span>Show as Popular</span>
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              {/* AVAILABILITY TAB */}
-              {comboDetailTab === 'availability' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '8px 10px',
-                      background: '#faf8f5',
-                      borderRadius: 8,
-                    }}
-                  >
-                    <span style={{ fontSize: 13, fontWeight: 600 }}>
-                      Active for Ordering
-                    </span>
-                    <label className="owner-toggle-switch">
-                      <input
-                        type="checkbox"
-                        checked={!!editForm.active}
-                        onChange={(e) =>
-                          setEditForm((prev) => ({
-                            ...prev,
-                            active: e.target.checked,
-                          }))
-                        }
-                      />
-                      <span className="owner-toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <p style={{ fontSize: 12, color: '#7a6a5e', margin: 0 }}>
-                    Availability Schedule: Everyday during operating hours (11:00 AM – 11:00 PM).
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Detail Footer */}
-            <div className="owner-detail-footer">
-              <button
-                type="button"
-                className="owner-btn-secondary"
-                onClick={handleCloseDetail}
-                style={{ padding: '6px 14px' }}
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                className="owner-btn-primary"
-                onClick={handleSaveDetailChanges}
-                style={{
-                  background: '#8c4a23',
-                  color: '#fff',
-                  fontWeight: 700,
-                  padding: '6px 18px',
-                }}
-              >
-                Save Changes
-              </button>
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}

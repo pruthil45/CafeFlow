@@ -2522,11 +2522,11 @@ export const OWNER_MENU_CATEGORIES = [
   { id: 'cat-all', name: 'All Items', slug: 'all', count: 48, icon: 'LayoutGrid', active: true, displayOrder: 1 },
   { id: 'cat-burgers', name: 'Burgers', slug: 'burgers', count: 8, icon: 'Sandwich', active: true, displayOrder: 2, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=100&auto=format&fit=crop&q=80' },
   { id: 'cat-pizzas', name: 'Pizzas', slug: 'pizzas', count: 6, icon: 'Pizza', active: true, displayOrder: 3, image: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=100&auto=format&fit=crop&q=80' },
-  { id: 'cat-pasta', name: 'Pasta', slug: 'pasta', count: 6, icon: 'Utensils', active: true, displayOrder: 4, image: 'https://images.unsplash.com/photo-1621996346565-e3d5d628178a?w=100&auto=format&fit=crop&q=80' },
+  { id: 'cat-pasta', name: 'Pasta', slug: 'pasta', count: 6, icon: 'Utensils', active: true, displayOrder: 4, image: 'https://images.unsplash.com/photo-1621996346565-e3d5d6281240?w=100&auto=format&fit=crop&q=80' },
   { id: 'cat-sandwiches', name: 'Sandwiches', slug: 'sandwiches', count: 5, icon: 'Sandwich', active: true, displayOrder: 5, image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=100&auto=format&fit=crop&q=80' },
   { id: 'cat-beverages', name: 'Beverages', slug: 'beverages', count: 8, icon: 'Coffee', active: true, displayOrder: 6, image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=100&auto=format&fit=crop&q=80' },
   { id: 'cat-desserts', name: 'Desserts', slug: 'desserts', count: 4, icon: 'Cake', active: true, displayOrder: 7, image: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=100&auto=format&fit=crop&q=80' },
-  { id: 'cat-starters', name: 'Starters', slug: 'starters', count: 6, icon: 'Salad', active: true, displayOrder: 8, image: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=100&auto=format&fit=crop&q=80' },
+  { id: 'cat-starters', name: 'Starters', slug: 'starters', count: 6, icon: 'Salad', active: true, displayOrder: 8, image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=100&auto=format&fit=crop&q=80' },
   { id: 'cat-salads', name: 'Salads', slug: 'salads', count: 3, icon: 'Salad', active: true, displayOrder: 9, image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=100&auto=format&fit=crop&q=80' },
 ];
 

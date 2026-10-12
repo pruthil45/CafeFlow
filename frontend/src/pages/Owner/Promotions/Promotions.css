@@ -1,0 +1,508 @@
+/* ==========================================================================
+   PROMOTIONS MODULE STYLES (CaféFlow Owner Portal)
+   ========================================================================== */
+
+.owner-promotions-page {
+  padding: 24px 32px 64px 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Header */
+.owner-promotions-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.owner-promotions-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--owner-espresso, #2a1911);
+  margin: 0 0 4px 0;
+  letter-spacing: -0.02em;
+}
+
+.owner-promotions-subtitle {
+  font-size: 13.5px;
+  color: #7a6a5e;
+  margin: 0;
+}
+
+/* 4 Summary Cards Grid */
+.owner-promotions-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.owner-promotions-kpi-card {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border, #ede8e1);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.owner-promotions-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.owner-promotions-kpi-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-promotions-kpi-icon--total {
+  background: #ffedd5;
+  color: #ea580c;
+}
+
+.owner-promotions-kpi-icon--active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.owner-promotions-kpi-icon--scheduled {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.owner-promotions-kpi-icon--inactive {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.owner-promotions-kpi-val {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--owner-espresso, #2a1911);
+  line-height: 1.1;
+}
+
+.owner-promotions-kpi-lbl {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6a5a4e;
+  margin-top: 2px;
+}
+
+/* Workspace Layout (Left: Table & Filters, Right: Create/Edit Panel if open) */
+.owner-promotions-workspace {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  transition: all 0.25s ease;
+}
+
+.owner-promotions-main-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Status Filter Tabs & Search Bar Container */
+.owner-promotions-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.owner-promotions-tabs-nav {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #ede8e1;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.owner-promotions-tab-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #7a6a5e;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-promotions-tab-btn.active {
+  background: #8c4a23;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(140, 74, 35, 0.2);
+}
+
+.owner-promotions-filters-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.owner-promotions-search-wrap {
+  position: relative;
+  min-width: 240px;
+}
+
+.owner-promotions-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9c8e82;
+  pointer-events: none;
+}
+
+.owner-promotions-search-input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid #ddd5c9;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2a1911;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.owner-promotions-search-input:focus {
+  border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.15);
+}
+
+.owner-promotions-type-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd5c9;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a3f35;
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+}
+
+.owner-promotions-type-select:focus {
+  border-color: #8c4a23;
+}
+
+/* Promotions Table Card */
+.owner-promotions-table-card {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border, #ede8e1);
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.owner-promotions-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.owner-promotions-table th {
+  background: #faf8f5;
+  color: #8c7b6f;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 13px 14px;
+  border-bottom: 1px solid #f0eae1;
+  white-space: nowrap;
+}
+
+.owner-promotions-table td {
+  padding: 14px 14px;
+  border-bottom: 1px solid #f5efe8;
+  color: #3b2d24;
+  vertical-align: middle;
+}
+
+.owner-promotions-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.owner-promotions-table tbody tr:hover td {
+  background: #fdfbf8;
+}
+
+/* Type Badges */
+.owner-promo-badge-discount {
+  background: #fee2e2;
+  color: #c2410c;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.owner-promo-badge-buyxgety {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.owner-promo-badge-freeitem {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.owner-promo-badge-combo {
+  background: #f3e8ff;
+  color: #7e22ce;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.owner-promo-badge-timebased {
+  background: #f0fdf4;
+  color: #047857;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Status Badges */
+.owner-status-badge--active {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.owner-status-badge--scheduled {
+  background: #fef3c7;
+  color: #b45309;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.owner-status-badge--inactive {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   CREATE / EDIT PROMOTION SIDE PANEL (Right Column)
+   ========================================================================== */
+.owner-promotion-side-panel {
+  width: 440px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border, #ede8e1);
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+.owner-promotion-panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0eae1;
+  background: #faf8f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.owner-promotion-panel-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--owner-espresso, #2a1911);
+  margin: 0;
+}
+
+.owner-promotion-panel-body {
+  padding: 18px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Selectable Cards for Promotion Types */
+.owner-promo-type-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.owner-promo-type-card-btn {
+  background: #faf8f5;
+  border: 1px solid #ede5da;
+  border-radius: 10px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.owner-promo-type-card-btn:hover {
+  background: #f7f1e7;
+  border-color: #d8c3b0;
+}
+
+.owner-promo-type-card-btn.selected {
+  background: #fff7ed;
+  border-color: #ea580c;
+  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+}
+
+.owner-promo-type-card-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #8c4a23;
+}
+
+.owner-promo-type-card-lbl {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #5a4b41;
+  line-height: 1.15;
+}
+
+/* Form Controls */
+.owner-promo-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.owner-promo-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #4a3f35;
+}
+
+.owner-promo-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd5c9;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2a1911;
+  background: #ffffff;
+  outline: none;
+}
+
+.owner-promo-input:focus {
+  border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.15);
+}
+
+.owner-promo-panel-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #f0eae1;
+  background: #faf8f5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .owner-promotions-workspace {
+    flex-direction: column;
+  }
+  .owner-promotion-side-panel {
+    width: 100%;
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .owner-promotions-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .owner-promotions-page {
+    padding: 12px 14px 48px 14px;
+  }
+  .owner-promotions-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .owner-promotions-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .owner-promotions-tabs-nav {
+    overflow-x: auto;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .owner-promotions-filters-right {
+    width: 100%;
+    flex-direction: column;
+  }
+  .owner-promotions-search-wrap {
+    width: 100%;
+  }
+  .owner-promotions-type-select {
+    width: 100%;
+  }
+  .owner-promo-type-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -20,15 +20,20 @@ import {
   ChevronRight,
   SlidersHorizontal,
   RotateCcw,
+  Trash2,
 } from 'lucide-react'
+import { OWNER_MENU_ADDONS } from '../../data/ownerMockData'
 import '../../Owner.css'
 
 export default function MenuItemsTab({
   categories,
+  setCategories,
   items,
   setItems,
   onOpenAddItem,
   showToast,
+  addons = [],
+  variations = [],
 }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -44,6 +49,73 @@ export default function MenuItemsTab({
   const [detailTab, setDetailTab] = useState('general') // 'general', 'variants', 'addons', 'nutrition'
   const [isEditing, setIsEditing] = useState(false)
   const [activeHeroImg, setActiveHeroImg] = useState(null)
+  const [customAddonInput, setCustomAddonInput] = useState('')
+  const [itemToDelete, setItemToDelete] = useState(null)
+
+  const availableAddonList = useMemo(() => {
+    return addons && addons.length > 0 ? addons : OWNER_MENU_ADDONS
+  }, [addons])
+
+  // Handlers for editing variants
+  const handleAddVariant = () => {
+    setEditForm((prev) => ({
+      ...prev,
+      variants: [
+        ...(prev.variants || []),
+        {
+          id: `var-${Date.now()}`,
+          name: '',
+          price: prev.price || 0,
+          stock: 30,
+          active: true,
+        },
+      ],
+    }))
+  }
+
+  const handleUpdateVariant = (index, field, value) => {
+    setEditForm((prev) => {
+      const updated = [...(prev.variants || [])]
+      updated[index] = { ...updated[index], [field]: value }
+      return { ...prev, variants: updated }
+    })
+  }
+
+  const handleDeleteVariant = (index) => {
+    setEditForm((prev) => ({
+      ...prev,
+      variants: (prev.variants || []).filter((_, i) => i !== index),
+    }))
+  }
+
+  // Handlers for editing add-ons
+  const handleToggleAddon = (addonName) => {
+    setEditForm((prev) => {
+      const current = prev.selectedAddons || []
+      const exists = current.includes(addonName)
+      return {
+        ...prev,
+        selectedAddons: exists
+          ? current.filter((a) => a !== addonName)
+          : [...current, addonName],
+      }
+    })
+  }
+
+  const handleAddCustomAddon = () => {
+    if (!customAddonInput.trim()) return
+    const name = customAddonInput.trim()
+    setEditForm((prev) => {
+      const current = prev.selectedAddons || []
+      if (current.includes(name)) return prev
+      return {
+        ...prev,
+        selectedAddons: [...current, name],
+      }
+    })
+    setCustomAddonInput('')
+    showToast?.(`Added "${name}" to add-ons`)
+  }
 
   // Edit draft for the selected item
   const selectedItem = useMemo(() => {
@@ -56,10 +128,18 @@ export default function MenuItemsTab({
   // Sync edit form when selected item changes (Defaults to READ-ONLY View Mode)
   const handleSelectItem = (item) => {
     setSelectedItemId(item.id)
-    setEditForm({ ...item })
+    setEditForm({
+      ...item,
+      variants: item.variants ? item.variants.map((v) => ({ ...v })) : [],
+      selectedAddons: item.selectedAddons ? [...item.selectedAddons] : [],
+      nutrition: item.nutrition
+        ? { ...item.nutrition }
+        : { calories: '', protein: '', carbs: '', fat: '' },
+    })
     setIsEditing(false)
     setDetailTab('general')
     setActiveHeroImg(item.image)
+    setCustomAddonInput('')
   }
 
   // Close detail modal
@@ -196,6 +276,9 @@ export default function MenuItemsTab({
                 src={cat.image}
                 alt=""
                 style={{ width: 18, height: 18, borderRadius: 4, objectFit: 'cover' }}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
               />
             ) : (
               <LayoutGrid size={13} />
@@ -241,6 +324,9 @@ export default function MenuItemsTab({
                       src={cat.image}
                       alt={cat.name}
                       className="owner-cat-mini-thumb"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
                     />
                   ) : (
                     <div className="owner-cat-mini-placeholder">
@@ -898,19 +984,19 @@ export default function MenuItemsTab({
                       </div>
                       <div className="owner-nutrition-grid-view">
                         <div className="owner-nutrition-card">
-                          <div className="owner-nutrition-val">{editForm.nutrition?.calories || '520 kcal'}</div>
-                          <div className="owner-nutrition-lbl">Calories</div>
-                        </div>
-                        <div className="owner-nutrition-card">
-                          <div className="owner-nutrition-val">{editForm.nutrition?.protein || '22g'}</div>
-                          <div className="owner-nutrition-lbl">Protein</div>
-                        </div>
-                        <div className="owner-nutrition-card">
-                          <div className="owner-nutrition-val">{editForm.nutrition?.carbs || '48g'}</div>
+                          <div className="owner-nutrition-val">{editForm.nutrition?.carbs || '—'}</div>
                           <div className="owner-nutrition-lbl">Carbs</div>
                         </div>
                         <div className="owner-nutrition-card">
-                          <div className="owner-nutrition-val">{editForm.nutrition?.fat || '18g'}</div>
+                          <div className="owner-nutrition-val">{editForm.nutrition?.protein || '—'}</div>
+                          <div className="owner-nutrition-lbl">Protein</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">{editForm.nutrition?.calories || '—'}</div>
+                          <div className="owner-nutrition-lbl">Calories</div>
+                        </div>
+                        <div className="owner-nutrition-card">
+                          <div className="owner-nutrition-val">{editForm.nutrition?.fat || '—'}</div>
                           <div className="owner-nutrition-lbl">Fat</div>
                         </div>
                       </div>
@@ -920,6 +1006,27 @@ export default function MenuItemsTab({
 
                 {/* Read-Only Mode Footer */}
                 <div className="owner-detail-footer">
+                  <button
+                    type="button"
+                    style={{
+                      marginRight: 'auto',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '7px 14px',
+                      fontSize: '12px',
+                      color: '#dc2626',
+                      borderColor: '#fecaca',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                    }}
+                    onClick={() => setItemToDelete(editForm)}
+                  >
+                    <Trash2 size={13} /> Delete Item
+                  </button>
                   <button
                     type="button"
                     className="owner-btn-secondary"
@@ -1179,90 +1286,375 @@ export default function MenuItemsTab({
                   )}
 
                   {detailTab === 'variants' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ fontSize: '12.5px', color: '#7a6a5e' }}>
-                        Item Variants ({editForm.variants?.length || 0})
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          Item Variants ({(editForm.variants || []).length})
+                        </div>
+                        <button
+                          type="button"
+                          className="owner-btn-secondary"
+                          style={{
+                            fontSize: '11.5px',
+                            padding: '4px 10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            borderColor: '#d5c8b5',
+                            color: '#8c4a23',
+                          }}
+                          onClick={handleAddVariant}
+                        >
+                          <Plus size={13} />
+                          <span>Add Variant</span>
+                        </button>
                       </div>
-                      {editForm.variants && editForm.variants.length > 0 ? (
-                        editForm.variants.map((v) => (
-                          <div
-                            key={v.id}
-                            style={{
-                              background: '#faf8f5',
-                              padding: '10px',
-                              borderRadius: '8px',
-                              border: '1px solid #ede7dc',
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <div>
-                              <div style={{ fontWeight: 700, fontSize: '13px' }}>{v.name}</div>
-                              <div style={{ fontSize: '11.5px', color: '#8c7b6f' }}>
-                                Stock: {v.stock} pcs
+
+                      {(editForm.variants || []).length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          {editForm.variants.map((v, idx) => (
+                            <div
+                              key={v.id || idx}
+                              style={{
+                                background: '#faf8f5',
+                                padding: '10px 12px',
+                                borderRadius: '10px',
+                                border: '1px solid #ebdccb',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '8px',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ flex: 1 }}>
+                                  <label style={{ fontSize: '10.5px', fontWeight: 600, color: '#7a6a5e', display: 'block', marginBottom: '2px' }}>
+                                    Variant Name
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="owner-detail-input"
+                                    placeholder="e.g. Regular, Large"
+                                    value={v.name}
+                                    onChange={(e) => handleUpdateVariant(idx, 'name', e.target.value)}
+                                    required
+                                  />
+                                </div>
+                                <div style={{ width: '85px' }}>
+                                  <label style={{ fontSize: '10.5px', fontWeight: 600, color: '#7a6a5e', display: 'block', marginBottom: '2px' }}>
+                                    Price (₹)
+                                  </label>
+                                  <input
+                                    type="number"
+                                    className="owner-detail-input"
+                                    placeholder="200"
+                                    value={v.price}
+                                    onChange={(e) => handleUpdateVariant(idx, 'price', Number(e.target.value))}
+                                    required
+                                  />
+                                </div>
+                                <div style={{ width: '75px' }}>
+                                  <label style={{ fontSize: '10.5px', fontWeight: 600, color: '#7a6a5e', display: 'block', marginBottom: '2px' }}>
+                                    Stock
+                                  </label>
+                                  <input
+                                    type="number"
+                                    className="owner-detail-input"
+                                    placeholder="25"
+                                    value={v.stock}
+                                    onChange={(e) => handleUpdateVariant(idx, 'stock', Number(e.target.value))}
+                                  />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', paddingTop: '14px' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteVariant(idx)}
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      color: '#dc2626',
+                                      cursor: 'pointer',
+                                      padding: '6px',
+                                      borderRadius: '6px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                    }}
+                                    title="Delete variant"
+                                  >
+                                    <Trash2 size={15} />
+                                  </button>
+                                </div>
                               </div>
                             </div>
-                            <div style={{ fontWeight: 800, color: 'var(--owner-espresso)' }}>
-                              ₹ {v.price}
-                            </div>
-                          </div>
-                        ))
+                          ))}
+                        </div>
                       ) : (
-                        <div style={{ fontSize: '12px', color: '#8c7b6f', textAlign: 'center', padding: '16px' }}>
-                          No variants configured for this item.
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: '#8c7b6f',
+                            textAlign: 'center',
+                            padding: '24px 16px',
+                            background: '#faf8f5',
+                            borderRadius: '8px',
+                            border: '1px dashed #e2dad0',
+                          }}
+                        >
+                          <p style={{ margin: '0 0 8px 0' }}>No variants configured for this item.</p>
+                          <button
+                            type="button"
+                            className="owner-btn-secondary"
+                            style={{ fontSize: '12px', padding: '5px 12px' }}
+                            onClick={handleAddVariant}
+                          >
+                            <Plus size={13} /> Add First Variant
+                          </button>
                         </div>
                       )}
                     </div>
                   )}
 
                   {detailTab === 'addons' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ fontSize: '12.5px', color: '#7a6a5e' }}>
-                        Linked Add-ons ({editForm.selectedAddons?.length || 0})
-                      </div>
-                      {editForm.selectedAddons?.map((addonName, idx) => (
-                        <div
-                          key={idx}
-                          style={{
-                            background: '#faf8f5',
-                            padding: '8px 12px',
-                            borderRadius: '6px',
-                            border: '1px solid #ede7dc',
-                            fontSize: '12.5px',
-                            fontWeight: 600,
-                            color: 'var(--owner-espresso)',
-                          }}
-                        >
-                          ✓ {addonName}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          Linked Add-ons ({(editForm.selectedAddons || []).length})
                         </div>
-                      ))}
+                        <span style={{ fontSize: '11px', color: '#8c7b6f' }}>
+                          Check to link add-on
+                        </span>
+                      </div>
+
+                      {/* Selected Chips */}
+                      {(editForm.selectedAddons || []).length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                          {editForm.selectedAddons.map((addonName, idx) => (
+                            <span
+                              key={idx}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                background: '#8c4a23',
+                                color: '#ffffff',
+                                fontSize: '11.5px',
+                                fontWeight: 600,
+                                padding: '3px 8px 3px 10px',
+                                borderRadius: '14px',
+                              }}
+                            >
+                              <span>{addonName}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleAddon(addonName)}
+                                style={{
+                                  background: 'rgba(255,255,255,0.25)',
+                                  border: 'none',
+                                  color: '#fff',
+                                  borderRadius: '50%',
+                                  width: '15px',
+                                  height: '15px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer',
+                                  padding: 0,
+                                }}
+                                title="Remove add-on"
+                              >
+                                <X size={10} />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Available Add-ons Selector */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
+                          gap: '8px',
+                          maxHeight: '180px',
+                          overflowY: 'auto',
+                          padding: '6px',
+                          background: '#faf8f5',
+                          borderRadius: '8px',
+                          border: '1px solid #ebdccb',
+                        }}
+                      >
+                        {availableAddonList.map((addon) => {
+                          const isSelected = (editForm.selectedAddons || []).includes(addon.name)
+                          return (
+                            <label
+                              key={addon.id || addon.name}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '7px 10px',
+                                borderRadius: '6px',
+                                background: isSelected ? '#ffffff' : '#fdfbf7',
+                                border: isSelected ? '1px solid #8c4a23' : '1px solid #eee5d9',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => handleToggleAddon(addon.name)}
+                                  style={{ accentColor: '#8c4a23', width: '14px', height: '14px' }}
+                                />
+                                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--owner-espresso)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {addon.name}
+                                </span>
+                              </div>
+                              <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#8c4a23', flexShrink: 0, marginLeft: '6px' }}>
+                                +₹{addon.price}
+                              </span>
+                            </label>
+                          )
+                        })}
+                      </div>
+
+                      {/* Add Custom Add-on Input */}
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <input
+                          type="text"
+                          className="owner-detail-input"
+                          placeholder="Add custom add-on (e.g. Garlic Mayo)"
+                          value={customAddonInput}
+                          onChange={(e) => setCustomAddonInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleAddCustomAddon()
+                            }
+                          }}
+                          style={{ flex: 1 }}
+                        />
+                        <button
+                          type="button"
+                          className="owner-btn-secondary"
+                          onClick={handleAddCustomAddon}
+                          style={{ fontSize: '11.5px', padding: '6px 12px', whiteSpace: 'nowrap' }}
+                        >
+                          <Plus size={13} /> Add
+                        </button>
+                      </div>
                     </div>
                   )}
 
                   {detailTab === 'nutrition' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12.5px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#8c7b6f' }}>Calories</span>
-                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.calories || '520 kcal'}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--owner-espresso)' }}>
+                          Nutrition Information (Optional)
+                        </div>
+                        <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#8c7b6f' }}>
+                          Edit nutritional values per serving.
+                        </p>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#8c7b6f' }}>Protein</span>
-                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.protein || '22g'}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#8c7b6f' }}>Carbohydrates</span>
-                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.carbs || '48g'}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#8c7b6f' }}>Fat</span>
-                        <span style={{ fontWeight: 700 }}>{editForm.nutrition?.fat || '18g'}</span>
+
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: '10px',
+                        }}
+                      >
+                        <div className="owner-detail-field">
+                          <label className="owner-detail-label">Carbohydrates</label>
+                          <input
+                            type="text"
+                            className="owner-detail-input"
+                            placeholder="e.g. 45g"
+                            value={editForm.nutrition?.carbs || ''}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                nutrition: { ...(prev.nutrition || {}), carbs: e.target.value },
+                              }))
+                            }
+                          />
+                        </div>
+
+                        <div className="owner-detail-field">
+                          <label className="owner-detail-label">Protein</label>
+                          <input
+                            type="text"
+                            className="owner-detail-input"
+                            placeholder="e.g. 28g"
+                            value={editForm.nutrition?.protein || ''}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                nutrition: { ...(prev.nutrition || {}), protein: e.target.value },
+                              }))
+                            }
+                          />
+                        </div>
+
+                        <div className="owner-detail-field">
+                          <label className="owner-detail-label">Calories</label>
+                          <input
+                            type="text"
+                            className="owner-detail-input"
+                            placeholder="e.g. 580 kcal"
+                            value={editForm.nutrition?.calories || ''}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                nutrition: { ...(prev.nutrition || {}), calories: e.target.value },
+                              }))
+                            }
+                          />
+                        </div>
+
+                        <div className="owner-detail-field">
+                          <label className="owner-detail-label">Fat</label>
+                          <input
+                            type="text"
+                            className="owner-detail-input"
+                            placeholder="e.g. 22g"
+                            value={editForm.nutrition?.fat || ''}
+                            onChange={(e) =>
+                              setEditForm((prev) => ({
+                                ...prev,
+                                nutrition: { ...(prev.nutrition || {}), fat: e.target.value },
+                              }))
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
 
                 <div className="owner-detail-footer">
+                  <button
+                    type="button"
+                    style={{
+                      marginRight: 'auto',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '7px 14px',
+                      fontSize: '12px',
+                      color: '#dc2626',
+                      borderColor: '#fecaca',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                    }}
+                    onClick={() => setItemToDelete(editForm)}
+                  >
+                    <Trash2 size={13} /> Delete Item
+                  </button>
                   <button
                     type="button"
                     className="owner-btn-secondary"
@@ -1280,6 +1672,78 @@ export default function MenuItemsTab({
               </form>
             )}
           </aside>
+        </div>
+      )}
+
+      {/* Delete Item Confirmation Modal */}
+      {itemToDelete && (
+        <div
+          className="owner-modal-overlay"
+          style={{ zIndex: 1200 }}
+          onClick={() => setItemToDelete(null)}
+        >
+          <div
+            className="owner-modal-card"
+            style={{ maxWidth: 420 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="owner-modal-header"
+              style={{ borderBottom: '1px solid #fee2e2', background: '#fff5f5' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#dc2626' }}>
+                <Trash2 size={18} />
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800 }}>Delete Menu Item?</h3>
+              </div>
+              <button
+                type="button"
+                className="owner-modal-close-btn"
+                onClick={() => setItemToDelete(null)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div
+              className="owner-modal-body"
+              style={{ padding: '18px 20px', fontSize: '13.5px', color: '#4a3f35', lineHeight: 1.5 }}
+            >
+              Are you sure you want to permanently delete <strong>"{itemToDelete.name}"</strong>? This will remove the item from your cafe menu.
+            </div>
+            <div
+              className="owner-modal-footer"
+              style={{ padding: '12px 18px', background: '#faf8f5', display: 'flex', justifyContent: 'flex-end', gap: 10 }}
+            >
+              <button
+                type="button"
+                className="owner-btn-secondary"
+                onClick={() => setItemToDelete(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="owner-btn-primary"
+                style={{ background: '#dc2626', borderColor: '#dc2626', color: '#fff' }}
+                onClick={() => {
+                  setItems((prev) => prev.filter((i) => i.id !== itemToDelete.id))
+                  setCategories?.((prev) =>
+                    prev.map((c) => {
+                      if (c.slug === 'all') return { ...c, count: Math.max(0, c.count - 1) }
+                      if (c.name.toLowerCase() === itemToDelete.category.toLowerCase()) {
+                        return { ...c, count: Math.max(0, c.count - 1) }
+                      }
+                      return c
+                    })
+                  )
+                  showToast?.(`"${itemToDelete.name}" deleted successfully!`, 'success')
+                  handleCloseDetail()
+                  setItemToDelete(null)
+                }}
+              >
+                Yes, Delete Item
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

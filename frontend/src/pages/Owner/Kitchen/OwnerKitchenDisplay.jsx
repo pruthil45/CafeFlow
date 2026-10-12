@@ -422,6 +422,9 @@ export default function OwnerKitchenDisplay() {
                           src={item.image}
                           alt={item.name}
                           className="owner-kitchen-item-thumb"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none'
+                          }}
                         />
                       )}
                       <div className="owner-kitchen-item-info">
@@ -603,6 +606,9 @@ export default function OwnerKitchenDisplay() {
                           src={item.image}
                           alt={item.name}
                           className="owner-kitchen-item-thumb"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none'
+                          }}
                         />
                       )}
                       <div className="owner-kitchen-item-info">
@@ -733,6 +739,9 @@ export default function OwnerKitchenDisplay() {
                           src={item.image}
                           alt={item.name}
                           className="owner-kitchen-item-thumb"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none'
+                          }}
                         />
                       )}
                       <div className="owner-kitchen-item-info">

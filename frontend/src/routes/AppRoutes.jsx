@@ -31,6 +31,8 @@ import OwnerCustomers from '../pages/Owner/Customers/OwnerCustomers'
 import OwnerReports from '../pages/Owner/Reports/OwnerReports'
 import OwnerAnalytics from '../pages/Owner/Analytics/OwnerAnalytics'
 import OwnerMenu from '../pages/Owner/Menu/OwnerMenu'
+import OwnerLoyalty from '../pages/Owner/Loyalty/OwnerLoyalty'
+import OwnerPromotions from '../pages/Owner/Promotions/OwnerPromotions'
 import OwnerPlaceholderView from '../pages/Owner/modules/OwnerPlaceholderView'
 
 export default function AppRoutes() {
@@ -79,8 +81,8 @@ export default function AppRoutes() {
         <Route path="menu" element={<OwnerMenu />} />
         <Route path="tables" element={<OwnerTables />} />
         <Route path="customers" element={<OwnerCustomers />} />
-        <Route path="loyalty" element={<OwnerPlaceholderView title="Loyalty & Rewards" description="Point multipliers, stamp cards, redeemable rewards, and customer tiers." />} />
-        <Route path="promotions" element={<OwnerPlaceholderView title="Promotions & Offers" description="Discount codes, festive combos, happy hour deals, and marketing campaigns." />} />
+        <Route path="loyalty" element={<OwnerLoyalty />} />
+        <Route path="promotions" element={<OwnerPromotions />} />
         <Route path="reports" element={<OwnerReports />} />
         <Route path="analytics" element={<OwnerAnalytics />} />
         <Route path="settings" element={<OwnerPlaceholderView title="Café Settings" description="Café operating hours, printer configuration, tax rates, and staff permissions." />} />
