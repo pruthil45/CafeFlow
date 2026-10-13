@@ -8,7 +8,6 @@ import {
   Users,
   Bell,
   Database,
-  Shield,
   ChevronRight,
 } from 'lucide-react'
 import { SETTINGS_SECTIONS } from '../data/settingsMockData'
@@ -22,7 +21,6 @@ const ICON_MAP = {
   Users: Users,
   Bell: Bell,
   Database: Database,
-  Shield: Shield,
 }
 
 export default function SettingsOverviewTab() {

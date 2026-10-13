@@ -72,8 +72,8 @@ export const SETTINGS_SECTIONS = [
     ],
   },
   {
-    id: 'data-security',
-    title: 'DATA & SECURITY',
+    id: 'data-management',
+    title: 'DATA MANAGEMENT',
     cards: [
       {
         id: 'data-management',
@@ -81,13 +81,6 @@ export const SETTINGS_SECTIONS = [
         description: 'Export and backup your café data',
         icon: 'Database',
         path: '/owner/settings/data-management',
-      },
-      {
-        id: 'security',
-        title: 'Security',
-        description: 'Password, 2FA, access logs and session management',
-        icon: 'Shield',
-        path: '/owner/settings/security',
       },
     ],
   },

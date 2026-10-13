@@ -5,7 +5,6 @@ import {
   Printer,
   Bell,
   Database,
-  Shield,
   ArrowLeft,
   CheckCircle2,
   AlertCircle,
@@ -41,13 +40,7 @@ const SECTION_METADATA = {
     title: 'Data Management',
     subtitle: 'Export audit logs, download CSV reports, schedule automatic cloud backups, and manage records.',
     icon: Database,
-    category: 'DATA & SECURITY',
-  },
-  security: {
-    title: 'Security & Access',
-    subtitle: 'Password protection, two-factor authentication, active login sessions, and permission audit logs.',
-    icon: Shield,
-    category: 'DATA & SECURITY',
+    category: 'DATA MANAGEMENT',
   },
 }
 

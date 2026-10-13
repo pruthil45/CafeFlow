@@ -13,6 +13,9 @@ import {
   TrendingUp,
   Settings,
   Store,
+  Palette,
+  Printer,
+  Bell,
   LogOut,
   ChevronDown,
   Check,
@@ -326,9 +329,33 @@ export default function OwnerSidebar({
               <span>Settings</span>
             </NavLink>
 
-            {/* Nested sub-links when inside Settings module (matching Screenshot 4) */}
+            {/* Nested sub-links when inside Settings module (matching Screenshot 2) */}
             {location.pathname.startsWith('/owner/settings') && (
               <div className="owner-sidebar__sublinks">
+                <NavLink
+                  to="/owner/settings/profile"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <Store size={14} />
+                  </span>
+                  <span>Restaurant Profile</span>
+                </NavLink>
+
+                <NavLink
+                  to="/owner/settings/appearance"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <Palette size={14} />
+                  </span>
+                  <span>Appearance</span>
+                </NavLink>
+
                 <NavLink
                   to="/owner/settings/operations"
                   className={({ isActive }) =>
@@ -363,6 +390,34 @@ export default function OwnerSidebar({
                     <Percent size={14} />
                   </span>
                   <span>Taxation</span>
+                </NavLink>
+
+                <NavLink
+                  to="/owner/settings/notifications"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <Bell size={14} />
+                  </span>
+                  <span>Notifications</span>
+                </NavLink>
+
+                <NavLink
+                  to="/owner/settings/printers"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${
+                      isActive || location.pathname.startsWith('/owner/settings/printers')
+                        ? 'active'
+                        : ''
+                    }`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <Printer size={14} />
+                  </span>
+                  <span>Printer & Templates</span>
                 </NavLink>
 
                 <NavLink
