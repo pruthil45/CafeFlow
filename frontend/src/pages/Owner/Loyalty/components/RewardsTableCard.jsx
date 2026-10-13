@@ -222,6 +222,97 @@ export default function RewardsTableCard({
           </tbody>
         </table>
       </div>
+
+      {/* Mobile Rewards List (Screens <= 768px) */}
+      <div className="owner-rewards-mobile-list">
+        {rewards.map((reward, index) => {
+          const isActive = reward.status === 'Active'
+          return (
+            <div key={reward.id || index} className="owner-reward-mobile-card">
+              <div className="owner-reward-mobile-card-top">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                  <span className="owner-reward-mobile-index">#{index + 1}</span>
+                  <span className="owner-reward-mobile-name">{reward.name}</span>
+                </div>
+                <span
+                  style={{
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    background: isActive ? '#dcfce7' : '#fee2e2',
+                    color: isActive ? '#15803d' : '#b91c1c',
+                    flexShrink: 0,
+                  }}
+                >
+                  {reward.status}
+                </span>
+              </div>
+
+              <div className="owner-reward-mobile-desc">
+                {reward.description}
+              </div>
+
+              <div className="owner-reward-mobile-stats">
+                <div className="owner-reward-stat-pill">
+                  <span className="owner-reward-stat-label">Points:</span>
+                  <span className="owner-reward-stat-value">{reward.pointsRequired} pts</span>
+                </div>
+                <div className="owner-reward-stat-pill">
+                  <span className="owner-reward-stat-label">Min Spend:</span>
+                  <span className="owner-reward-stat-value">
+                    {reward.minimumSpend > 0 ? `₹${reward.minimumSpend}` : '₹0'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="owner-reward-mobile-actions">
+                <button
+                  type="button"
+                  className="owner-btn-outline-warm"
+                  style={{ flex: 1, padding: '7px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}
+                  onClick={() => onEditReward(reward)}
+                >
+                  <Edit2 size={13} /> Edit
+                </button>
+                <button
+                  type="button"
+                  className="owner-btn-secondary"
+                  style={{
+                    flex: 1,
+                    padding: '7px 12px',
+                    fontSize: '12px',
+                    color: isActive ? '#d97706' : '#16a34a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '5px',
+                  }}
+                  onClick={() => onToggleStatus(reward.id)}
+                >
+                  <Power size={13} /> {isActive ? 'Deactivate' : 'Activate'}
+                </button>
+                <button
+                  type="button"
+                  className="owner-btn-secondary"
+                  style={{
+                    padding: '7px 10px',
+                    fontSize: '12px',
+                    color: '#dc2626',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onClick={() => onDeleteReward(reward)}
+                  title="Delete reward"
+                >
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

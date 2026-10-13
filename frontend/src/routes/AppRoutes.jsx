@@ -33,6 +33,7 @@ import OwnerAnalytics from '../pages/Owner/Analytics/OwnerAnalytics'
 import OwnerMenu from '../pages/Owner/Menu/OwnerMenu'
 import OwnerLoyalty from '../pages/Owner/Loyalty/OwnerLoyalty'
 import OwnerPromotions from '../pages/Owner/Promotions/OwnerPromotions'
+import OwnerSettings from '../pages/Owner/Settings/OwnerSettings'
 import OwnerPlaceholderView from '../pages/Owner/modules/OwnerPlaceholderView'
 
 export default function AppRoutes() {
@@ -85,7 +86,8 @@ export default function AppRoutes() {
         <Route path="promotions" element={<OwnerPromotions />} />
         <Route path="reports" element={<OwnerReports />} />
         <Route path="analytics" element={<OwnerAnalytics />} />
-        <Route path="settings" element={<OwnerPlaceholderView title="Café Settings" description="Café operating hours, printer configuration, tax rates, and staff permissions." />} />
+        <Route path="settings/*" element={<OwnerSettings />} />
+        <Route path="settings" element={<OwnerSettings />} />
         <Route path="my-cafe" element={<OwnerPlaceholderView title="My Café Overview" description="Public café profile, bio, address, social links, and cover branding." />} />
         {/* Fallback to Dashboard */}
         <Route path="*" element={<Navigate to="/owner/dashboard" replace />} />

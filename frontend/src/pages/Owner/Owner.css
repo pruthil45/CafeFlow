@@ -363,9 +363,108 @@
 
 /* Sidebar Bottom Section */
 .owner-sidebar__bottom {
-  padding: 12px;
+  padding: 12px 14px;
   border-top: 1px solid var(--owner-sidebar-border);
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.owner-sidebar__profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.owner-sidebar__profile-badge:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.owner-sidebar__profile-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #c25e2e;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.owner-sidebar__profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.owner-sidebar__profile-name {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.owner-sidebar__profile-role {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+/* Sidebar Sub-Links (Inside Settings) */
+.owner-sidebar__sublinks {
+  margin-top: 4px;
+  margin-bottom: 6px;
+  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.owner-sidebar__sublink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.owner-sidebar__sublink:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.owner-sidebar__sublink.active {
+  background: #542718;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.owner-sidebar__sublink-icon {
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-sidebar__sublink.active .owner-sidebar__sublink-icon {
+  color: #fff;
 }
 
 .owner-sidebar__logout-btn {
@@ -373,9 +472,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 9px 14px;
+  padding: 8px 10px;
   border-radius: 8px;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.75);
   background: transparent;
@@ -393,6 +492,39 @@
 /* Mobile Sidebar Drawer Overlay */
 .owner-sidebar-overlay {
   display: none;
+}
+
+@media (max-width: 1024px) {
+  .owner-main-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  .owner-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+    box-shadow: none;
+  }
+
+  .owner-sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.55);
+  }
+
+  .owner-sidebar-overlay.open {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(2px) !important;
+    z-index: 999 !important;
+  }
+
+  .owner-header-banner__menu-toggle {
+    display: flex !important;
+  }
 }
 
 /* ==========================================================================
@@ -1993,12 +2125,16 @@
   }
 
   .owner-kpis-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px;
   }
 
-  .owner-kpis-grid > .owner-kpi-card:last-child {
+  .owner-kpis-grid > .owner-kpi-card:nth-child(odd):last-child {
     grid-column: span 2;
+  }
+
+  .owner-kpis-grid > .owner-kpi-card:nth-child(even):last-child {
+    grid-column: span 1;
   }
 
   .owner-kpi-card {
@@ -2817,9 +2953,29 @@
   box-shadow: 0 2px 6px rgba(140, 74, 35, 0.3);
 }
 
+/* Table Responsive Container */
+.owner-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #d5c8b5 transparent;
+  margin-top: 8px;
+}
+
+.owner-table-responsive::-webkit-scrollbar {
+  height: 5px;
+}
+
+.owner-table-responsive::-webkit-scrollbar-thumb {
+  background: #d5c8b5;
+  border-radius: 4px;
+}
+
 /* Daily Sales Details Table */
 .owner-daily-sales-table {
   width: 100%;
+  min-width: 580px;
   border-collapse: collapse;
   font-size: 13px;
   text-align: left;
@@ -3342,24 +3498,28 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
   }
 
   .owner-module-actions > div {
-    flex: 1;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+  }
+
+  .owner-module-actions .owner-date-range-box,
+  .owner-date-range-box {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    justify-content: space-between;
   }
 
   .owner-module-actions .owner-btn-secondary,
   .owner-module-actions .owner-btn-primary {
     width: 100%;
     justify-content: center;
-    padding: 6px 10px;
-    font-size: 11.5px;
-  }
-
-  .owner-date-range-box {
-    width: 100%;
-    justify-content: space-between;
+    padding: 7px 10px;
+    font-size: 12px;
   }
 
   .owner-modal-card {
@@ -7418,6 +7578,41 @@
 
   .owner-table-wrapper-card {
     border-radius: 8px;
+  }
+
+  /* Reports & Analytics Mobile Styles */
+  .owner-report-tabs {
+    width: 100% !important;
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 4px !important;
+    padding: 3px !important;
+  }
+
+  .owner-report-tab-btn {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    padding: 8px 10px !important;
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+  }
+
+  .owner-donut-wrap {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 16px !important;
+  }
+
+  .owner-donut-legend {
+    width: 100% !important;
+  }
+
+  .owner-chart-container {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
   }
 }
 

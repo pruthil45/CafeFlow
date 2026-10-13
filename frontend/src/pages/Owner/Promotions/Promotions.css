@@ -192,8 +192,27 @@
   box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.15);
 }
 
+.owner-promotions-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 170px;
+}
+
+.owner-promotions-select-left-icon {
+  position: absolute;
+  left: 11px;
+  color: #8c7b6f;
+  pointer-events: none;
+  z-index: 2;
+}
+
 .owner-promotions-type-select {
-  padding: 8px 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 38px;
+  padding: 8px 30px 8px 30px;
   border: 1px solid #ddd5c9;
   border-radius: 8px;
   font-size: 13px;
@@ -202,10 +221,22 @@
   background: #ffffff;
   cursor: pointer;
   outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
 }
 
-.owner-promotions-type-select:focus {
+.owner-promotions-type-select:focus,
+.owner-promotions-type-select:hover {
   border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.12);
+}
+
+.owner-promotions-select-icon {
+  position: absolute;
+  right: 10px;
+  color: #8c7b6f;
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* Promotions Table Card */
@@ -506,27 +537,170 @@
   }
 }
 
+/* Mobile Promotions Card List */
+.owner-promotions-mobile-list {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.owner-promo-mobile-card {
+  background: #ffffff;
+  border: 1px solid #ebdccb;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.owner-promo-mobile-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.owner-promo-mobile-index {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8c7b6f;
+  background: #fbf8f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.owner-promo-mobile-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2a1911;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner-promo-mobile-card-type-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.owner-promo-mobile-category {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #8c7b6f;
+  background: #fbf8f5;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.owner-promo-mobile-details {
+  font-size: 13px;
+  color: #4d3b31;
+  line-height: 1.4;
+}
+
+.owner-promo-mobile-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #7a6a5e;
+  padding-top: 8px;
+  border-top: 1px dashed #f0eae1;
+}
+
+.owner-promo-mobile-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+
+/* Tablet & Mobile Screens: Slide-over Drawer for Create/Edit Panel */
+@media (max-width: 1199px) {
+  .owner-promotions-workspace {
+    display: block;
+  }
+
+  .owner-promo-panel-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 11, 7, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1040;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .owner-promotion-side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 460px;
+    max-width: 95vw;
+    background: #ffffff;
+    z-index: 1050;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
+  }
+}
+
 @media (max-width: 900px) {
   .owner-promotions-summary-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .owner-promotions-page {
-    padding: 12px 14px 48px 14px;
-  }
-  .owner-promotion-side-panel {
-    width: 100vw;
-    max-width: 100vw;
+    padding: 14px 14px 48px 14px;
   }
   .owner-promotions-summary-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .owner-promotions-kpi-card {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  .owner-promotions-kpi-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  .owner-promotions-kpi-val {
+    font-size: 22px;
+  }
+  .owner-promotions-table-wrap {
+    display: none;
+  }
+  .owner-promotions-mobile-list {
+    display: flex;
+    padding: 4px 0;
+  }
+  .owner-promotions-table-card {
+    border: none;
+    background: transparent;
+    box-shadow: none;
   }
   .owner-promotions-toolbar {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 10px;
   }
   .owner-promotions-tabs-nav {
     overflow-x: auto;
@@ -543,15 +717,49 @@
   }
   .owner-promotions-filters-right {
     width: 100%;
+    display: flex;
     flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
   .owner-promotions-search-wrap {
     width: 100%;
+    min-width: 0;
+  }
+  .owner-promotions-select-wrap {
+    width: 100%;
+    min-width: 0;
   }
   .owner-promotions-type-select {
     width: 100%;
+    box-sizing: border-box;
+  }
+  .owner-promotion-side-panel {
+    width: 100vw;
+    max-width: 100vw;
   }
   .owner-promo-type-cards-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .owner-promotions-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .owner-promotions-kpi-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .owner-promotions-kpi-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .owner-promotions-kpi-val {
+    font-size: 18px;
+  }
+  .owner-promotions-kpi-lbl {
+    font-size: 11.5px;
   }
 }

@@ -13,7 +13,6 @@ import RecentLoyaltyActivityCard from './components/RecentLoyaltyActivityCard'
 import CustomerLoyaltyDrawer from './components/CustomerLoyaltyDrawer'
 import EditPointsRuleModal from './components/EditPointsRuleModal'
 import CreateEditRewardModal from './components/CreateEditRewardModal'
-import RedeemRewardModal from './components/RedeemRewardModal'
 import LoyaltyHistoryModal from './components/LoyaltyHistoryModal'
 import { CheckCircle2, AlertTriangle, X, User } from 'lucide-react'
 import './Loyalty.css'
@@ -85,25 +84,15 @@ export default function OwnerLoyalty() {
     }))
   })
 
-  // 5. Selected Customer for Drawer (default to Rahul Mehta for instant preview matching design reference)
-  const [selectedCustomerId, setSelectedCustomerId] = useState(() => {
-    return customers[0]?.id || 'CUST-001'
-  })
-  const [isCustomerDrawerOpen, setIsCustomerDrawerOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 1200
-    }
-    return true
-  })
+  // 5. Selected Customer for Drawer (null by default; only opens when user clicks a customer)
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null)
+  const [isCustomerDrawerOpen, setIsCustomerDrawerOpen] = useState(false)
 
   // 6. Modals
   const [isEditRuleModalOpen, setIsEditRuleModalOpen] = useState(false)
   const [isCreateRewardModalOpen, setIsCreateRewardModalOpen] = useState(false)
   const [editingReward, setEditingReward] = useState(null)
   const [rewardToDelete, setRewardToDelete] = useState(null)
-  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false)
-  const [redeemCustomer, setRedeemCustomer] = useState(null)
-  const [redeemInitialReward, setRedeemInitialReward] = useState(null)
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
 
   // 7. Toast Notification
@@ -135,7 +124,8 @@ export default function OwnerLoyalty() {
 
   // Get active selected customer object
   const currentSelectedCustomer = useMemo(() => {
-    return customers.find((c) => c.id === selectedCustomerId) || customers[0]
+    if (!selectedCustomerId) return null
+    return customers.find((c) => c.id === selectedCustomerId) || null
   }, [customers, selectedCustomerId])
 
   // Customer-specific loyalty history
@@ -240,67 +230,6 @@ export default function OwnerLoyalty() {
     setIsCustomerDrawerOpen(true)
   }
 
-  // Open Redeem Modal for a specific customer & optional reward
-  const handleOpenRedeemModal = (cust, reward = null) => {
-    if (!loyaltyProgram.isEnabled) {
-      showToast('Cannot redeem rewards while loyalty program is disabled.', 'error')
-      return
-    }
-    setRedeemCustomer(cust || currentSelectedCustomer)
-    setRedeemInitialReward(reward)
-    setIsRedeemModalOpen(true)
-  }
-
-  // Confirm Reward Redemption Workflow
-  const handleConfirmRedeem = ({ customer, reward, orderNumber }) => {
-    const deduction = reward.pointsRequired
-
-    // 1. Deduct customer points & increase redeemed
-    setCustomers((prev) =>
-      prev.map((c) => {
-        if (c.id === customer.id) {
-          const newBal = Math.max(0, (c.loyaltyPoints || 0) - deduction)
-          const newRedeemed = (c.totalRedeemedPoints || 0) + deduction
-          return {
-            ...c,
-            loyaltyPoints: newBal,
-            totalRedeemedPoints: newRedeemed,
-          }
-        }
-        return c
-      })
-    )
-
-    // 2. Add activity log
-    const now = new Date()
-    const timeFormatted = now.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }) + `, ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`
-
-    const newActivity = {
-      id: `ACT-${Date.now().toString().slice(-4)}`,
-      customerId: customer.id,
-      customerName: customer.name,
-      type: 'Redeemed',
-      details: `${reward.name} Reward`,
-      points: -deduction,
-      orderNumber: orderNumber || '#POS',
-      dateTime: timeFormatted,
-    }
-
-    setActivities((prev) => [newActivity, ...prev])
-
-    setIsRedeemModalOpen(false)
-    setRedeemCustomer(null)
-    setRedeemInitialReward(null)
-
-    showToast(
-      `Successfully redeemed ${reward.name} for ${customer.name}! (${deduction} points deducted. Ready for POS billing application.)`
-    )
-  }
-
   return (
     <div className="owner-loyalty-page">
       {/* Toast Feedback */}
@@ -356,37 +285,39 @@ export default function OwnerLoyalty() {
             </div>
           </div>
 
-          {/* Mobile Customer Loyalty Quick-Access Trigger */}
-          <div className="owner-loyalty-mobile-customer-btn">
-            <button
-              type="button"
-              className="owner-btn-secondary"
-              style={{
-                width: '100%',
-                padding: '11px 14px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                background: '#ffffff',
-                border: '1px solid #ede5da',
-                borderRadius: 10,
-                fontWeight: 700,
-                color: '#2a1911',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.03)',
-              }}
-              onClick={() => setIsCustomerDrawerOpen(true)}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <User size={16} color="#8c4a23" />
-                <span style={{ fontSize: '13px' }}>
-                  Customer Loyalty: <strong style={{ color: '#8c4a23' }}>{currentSelectedCustomer?.name || 'Rahul Mehta'}</strong>
+          {/* Mobile Customer Loyalty Quick-Access Trigger (only if a customer is selected) */}
+          {currentSelectedCustomer && (
+            <div className="owner-loyalty-mobile-customer-btn">
+              <button
+                type="button"
+                className="owner-btn-secondary"
+                style={{
+                  width: '100%',
+                  padding: '11px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: '#ffffff',
+                  border: '1px solid #ede5da',
+                  borderRadius: 10,
+                  fontWeight: 700,
+                  color: '#2a1911',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.03)',
+                }}
+                onClick={() => setIsCustomerDrawerOpen(true)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <User size={16} color="#8c4a23" />
+                  <span style={{ fontSize: '13px' }}>
+                    Customer Loyalty: <strong style={{ color: '#8c4a23' }}>{currentSelectedCustomer.name}</strong>
+                  </span>
+                </div>
+                <span style={{ fontSize: '12px', color: '#8c4a23', fontWeight: 800 }}>
+                  {currentSelectedCustomer.loyaltyPoints || 320} pts →
                 </span>
-              </div>
-              <span style={{ fontSize: '12px', color: '#8c4a23', fontWeight: 800 }}>
-                {currentSelectedCustomer?.loyaltyPoints || 320} pts →
-              </span>
-            </button>
-          </div>
+              </button>
+            </div>
+          )}
 
           {/* 3.1 Loyalty Summary Cards */}
           <LoyaltySummaryCards
@@ -435,11 +366,12 @@ export default function OwnerLoyalty() {
         {isCustomerDrawerOpen && currentSelectedCustomer && (
           <CustomerLoyaltyDrawer
             customer={currentSelectedCustomer}
-            rewards={rewards}
             customerLoyaltyHistory={customerLoyaltyHistory}
             isLoyaltyProgramEnabled={loyaltyProgram.isEnabled}
-            onClose={() => setIsCustomerDrawerOpen(false)}
-            onOpenRedeemModal={(cust, reward) => handleOpenRedeemModal(cust, reward)}
+            onClose={() => {
+              setIsCustomerDrawerOpen(false)
+              setSelectedCustomerId(null)
+            }}
             onViewAllHistory={() => setIsHistoryModalOpen(true)}
           />
         )}
@@ -467,22 +399,6 @@ export default function OwnerLoyalty() {
             setEditingReward(null)
           }}
           onSave={handleSaveReward}
-        />
-      )}
-
-      {/* Redeem Reward Modal */}
-      {isRedeemModalOpen && (
-        <RedeemRewardModal
-          customer={redeemCustomer || currentSelectedCustomer}
-          allCustomers={customers}
-          rewards={rewards}
-          initialReward={redeemInitialReward}
-          onClose={() => {
-            setIsRedeemModalOpen(false)
-            setRedeemCustomer(null)
-            setRedeemInitialReward(null)
-          }}
-          onConfirmRedeem={handleConfirmRedeem}
         />
       )}
 

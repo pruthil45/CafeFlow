@@ -44,6 +44,8 @@ export default function CreateEditPromotionPanel({
   promotionToEdit,
   onSavePromotion,
 }) {
+  if (!isOpen) return null
+
   const isEditing = Boolean(promotionToEdit)
 
   // Form State

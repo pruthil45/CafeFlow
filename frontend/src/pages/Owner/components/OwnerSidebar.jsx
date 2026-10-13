@@ -18,6 +18,9 @@ import {
   Check,
   Coffee,
   X,
+  SlidersHorizontal,
+  Percent,
+  Database,
 } from 'lucide-react'
 import { OWNER_CAFES } from '../data/ownerMockData'
 
@@ -313,8 +316,8 @@ export default function OwnerSidebar({
 
             <NavLink
               to="/owner/settings"
-              className={({ isActive }) =>
-                `owner-sidebar__link ${isActive ? 'active' : ''}`
+              className={() =>
+                `owner-sidebar__link ${location.pathname.startsWith('/owner/settings') ? 'active' : ''}`
               }
             >
               <span className="owner-sidebar__link-icon">
@@ -322,29 +325,82 @@ export default function OwnerSidebar({
               </span>
               <span>Settings</span>
             </NavLink>
+
+            {/* Nested sub-links when inside Settings module (matching Screenshot 4) */}
+            {location.pathname.startsWith('/owner/settings') && (
+              <div className="owner-sidebar__sublinks">
+                <NavLink
+                  to="/owner/settings/operations"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <SlidersHorizontal size={14} />
+                  </span>
+                  <span>Operations</span>
+                </NavLink>
+
+                <NavLink
+                  to="/owner/settings/staff"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <Users size={14} />
+                  </span>
+                  <span>Staff</span>
+                </NavLink>
+
+                <NavLink
+                  to="/owner/settings/taxation"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <Percent size={14} />
+                  </span>
+                  <span>Taxation</span>
+                </NavLink>
+
+                <NavLink
+                  to="/owner/settings/data-management"
+                  className={({ isActive }) =>
+                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
+                  }
+                >
+                  <span className="owner-sidebar__sublink-icon">
+                    <Database size={14} />
+                  </span>
+                  <span>Data Management</span>
+                </NavLink>
+              </div>
+            )}
           </div>
         </nav>
 
-        {/* Bottom Actions */}
+        {/* Bottom Actions - matching Screenshot 2, 3, 4 */}
         <div className="owner-sidebar__bottom">
-          <NavLink
+          <Link
             to="/owner/my-cafe"
-            className={({ isActive }) =>
-              `owner-sidebar__link ${isActive ? 'active' : ''}`
-            }
+            className="owner-sidebar__profile-badge"
+            title="View Café Profile"
           >
-            <span className="owner-sidebar__link-icon">
-              <Store size={18} />
-            </span>
-            <span>My Café</span>
-          </NavLink>
+            <div className="owner-sidebar__profile-avatar">C</div>
+            <div className="owner-sidebar__profile-info">
+              <span className="owner-sidebar__profile-name">Café Owner</span>
+              <span className="owner-sidebar__profile-role">Owner</span>
+            </div>
+          </Link>
 
           <button
             type="button"
             className="owner-sidebar__logout-btn"
             onClick={handleLogout}
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             <span>Logout</span>
           </button>
         </div>

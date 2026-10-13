@@ -792,7 +792,7 @@ export const OWNER_REPORTS_DATA = {
     { rank: 1, name: 'Margherita Pizza', sold: '145 sold', percent: 100, revenue: '₹43,500', image: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=80&auto=format&fit=crop&q=80' },
     { rank: 2, name: 'Cold Coffee', sold: '128 sold', percent: 88, revenue: '₹32,760', image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=80&auto=format&fit=crop&q=80' },
     { rank: 3, name: 'Burger', sold: '119 sold', percent: 82, revenue: '₹32,000', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=80&auto=format&fit=crop&q=80' },
-    { rank: 4, name: 'French Fries', sold: '98 sold', percent: 67, revenue: '₹17,850', image: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=80&auto=format&fit=crop&q=80' },
+    { rank: 4, name: 'French Fries', sold: '98 sold', percent: 67, revenue: '₹17,850', image: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=120&auto=format&fit=crop&q=80' },
     { rank: 5, name: 'Paneer Tikka Pizza', sold: '87 sold', percent: 60, revenue: '₹30,450', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=80&auto=format&fit=crop&q=80' },
   ],
 
@@ -919,7 +919,7 @@ export const OWNER_ANALYTICS_DATA = {
     { rank: 1, name: 'Margherita Pizza', sold: '145 sold', percent: 100, revenue: '₹43,500', image: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=80&auto=format&fit=crop&q=80' },
     { rank: 2, name: 'Cold Coffee', sold: '128 sold', percent: 88, revenue: '₹32,760', image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=80&auto=format&fit=crop&q=80' },
     { rank: 3, name: 'Burger', sold: '119 sold', percent: 82, revenue: '₹32,000', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=80&auto=format&fit=crop&q=80' },
-    { rank: 4, name: 'French Fries', sold: '98 sold', percent: 67, revenue: '₹17,850', image: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=80&auto=format&fit=crop&q=80' },
+    { rank: 4, name: 'French Fries', sold: '98 sold', percent: 67, revenue: '₹17,850', image: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=120&auto=format&fit=crop&q=80' },
     { rank: 5, name: 'Paneer Tikka Pizza', sold: '87 sold', percent: 60, revenue: '₹30,450', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=80&auto=format&fit=crop&q=80' },
   ],
 

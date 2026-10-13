@@ -95,6 +95,46 @@ export default function RecentLoyaltyActivityCard({
           </tbody>
         </table>
       </div>
+
+      {/* Mobile Activity Card List (Screens <= 768px) */}
+      <div className="owner-activity-mobile-list">
+        {displayActivities.map((act) => {
+          const isEarned = act.type === 'Earned'
+          return (
+            <div key={act.id} className="owner-activity-mobile-card">
+              <div className="owner-activity-mobile-card-top">
+                <button
+                  type="button"
+                  className="owner-customer-link"
+                  style={{ fontWeight: 800, fontSize: '13.5px' }}
+                  onClick={() => onSelectCustomer && onSelectCustomer(act.customerId, act.customerName)}
+                >
+                  {act.customerName}
+                </button>
+                <span className={isEarned ? 'owner-badge-earned' : 'owner-badge-redeemed'}>
+                  {act.type}
+                </span>
+              </div>
+
+              <div className="owner-activity-mobile-details">
+                {act.details}
+              </div>
+
+              <div className="owner-activity-mobile-card-bottom">
+                <span style={{ fontSize: '12px', color: '#8c7b6f' }}>
+                  {act.dateTime} · {act.orderNumber}
+                </span>
+                <span
+                  className={isEarned ? 'owner-points-val-positive' : 'owner-points-val-negative'}
+                  style={{ fontWeight: 800, fontSize: '13px' }}
+                >
+                  {act.points > 0 ? `+${act.points}` : act.points} pts
+                </span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

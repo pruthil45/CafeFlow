@@ -29,8 +29,14 @@ import {
   Cell,
 } from 'recharts'
 import { OWNER_ANALYTICS_DATA } from '../data/ownerMockData'
+import { useChartWidth } from '../hooks/useChartWidth'
 
 export default function OwnerAnalytics() {
+  const [revenueTrendRef, revenueTrendWidth] = useChartWidth(340)
+  const [ordersTrendRef, ordersTrendWidth] = useChartWidth(340)
+  const [peakHoursRef, peakHoursWidth] = useChartWidth(340)
+  const [customerGrowthRef, customerGrowthWidth] = useChartWidth(340)
+
   const [periodPreset, setPeriodPreset] = useState('This Month')
   const [startDate, setStartDate] = useState('01 Oct 2026')
   const [endDate, setEndDate] = useState('31 Oct 2026')
@@ -302,36 +308,36 @@ export default function OwnerAnalytics() {
             </button>
           </div>
 
-          <div className="owner-chart-container">
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart
-                data={OWNER_ANALYTICS_DATA.revenueTrend}
-                margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={{ stroke: '#e8e2d8' }}
-                />
-                <YAxis
-                  tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(val) => `₹${val.toLocaleString()}`}
-                />
-                <Tooltip content={<CustomRevenueTooltip />} />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#8c4a23"
-                  strokeWidth={2.4}
-                  dot={{ r: 3.5, fill: '#8c4a23' }}
-                  activeDot={{ r: 6, fill: '#7a3a16', stroke: '#fff', strokeWidth: 2 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <div ref={revenueTrendRef} className="owner-chart-container">
+            <LineChart
+              width={revenueTrendWidth}
+              height={240}
+              data={OWNER_ANALYTICS_DATA.revenueTrend}
+              margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e8e2d8' }}
+              />
+              <YAxis
+                tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(val) => `₹${val.toLocaleString()}`}
+              />
+              <Tooltip content={<CustomRevenueTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#8c4a23"
+                strokeWidth={2.4}
+                dot={{ r: 3.5, fill: '#8c4a23' }}
+                activeDot={{ r: 6, fill: '#7a3a16', stroke: '#fff', strokeWidth: 2 }}
+              />
+            </LineChart>
           </div>
         </div>
 
@@ -355,29 +361,29 @@ export default function OwnerAnalytics() {
             </button>
           </div>
 
-          <div className="owner-chart-container">
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart
-                data={OWNER_ANALYTICS_DATA.ordersTrend}
-                margin={{ top: 12, right: 10, left: -15, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={{ stroke: '#e8e2d8' }}
-                />
-                <YAxis
-                  tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip content={<CustomOrdersTooltip />} />
-                <Bar dataKey="dineIn" stackId="a" fill="#8c4a23" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="takeaway" stackId="a" fill="#e0a96d" radius={[3, 3, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div ref={ordersTrendRef} className="owner-chart-container">
+            <BarChart
+              width={ordersTrendWidth}
+              height={240}
+              data={OWNER_ANALYTICS_DATA.ordersTrend}
+              margin={{ top: 12, right: 10, left: -15, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e8e2d8' }}
+              />
+              <YAxis
+                tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip content={<CustomOrdersTooltip />} />
+              <Bar dataKey="dineIn" stackId="a" fill="#8c4a23" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="takeaway" stackId="a" fill="#e0a96d" radius={[3, 3, 0, 0]} />
+            </BarChart>
           </div>
         </div>
       </section>
@@ -453,21 +459,19 @@ export default function OwnerAnalytics() {
 
           <div className="owner-donut-wrap">
             <div className="owner-donut-chart-box">
-              <ResponsiveContainer width="100%" height={170}>
-                <PieChart>
-                  <Pie
-                    data={OWNER_ANALYTICS_DATA.categoryPerformance}
-                    innerRadius={50}
-                    outerRadius={74}
-                    paddingAngle={3}
-                    dataKey="percent"
-                  >
-                    {OWNER_ANALYTICS_DATA.categoryPerformance.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              <PieChart width={170} height={170}>
+                <Pie
+                  data={OWNER_ANALYTICS_DATA.categoryPerformance}
+                  innerRadius={50}
+                  outerRadius={74}
+                  paddingAngle={3}
+                  dataKey="percent"
+                >
+                  {OWNER_ANALYTICS_DATA.categoryPerformance.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
 
               <div className="owner-donut-center-text">
                 <span className="owner-donut-center-number" style={{ fontSize: '17px' }}>
@@ -510,38 +514,38 @@ export default function OwnerAnalytics() {
             <span className="owner-peak-badge">67 orders peak</span>
           </div>
 
-          <div className="owner-chart-container" style={{ height: '200px' }}>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart
-                data={OWNER_ANALYTICS_DATA.peakOrderingHours}
-                margin={{ top: 10, right: 5, left: -20, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
-                <XAxis
-                  dataKey="hour"
-                  tick={{ fontSize: 9.5, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={{ stroke: '#e8e2d8' }}
-                />
-                <YAxis
-                  tick={{ fontSize: 9.5, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip
-                  formatter={(val) => [`${val} orders`, 'Volume']}
-                  labelFormatter={(l) => `Time: ${l}`}
-                />
-                <Bar dataKey="orders" fill="#c47d2e" radius={[3, 3, 0, 0]}>
-                  {OWNER_ANALYTICS_DATA.peakOrderingHours.map((entry, index) => (
-                    <Cell
-                      key={`bar-${index}`}
-                      fill={entry.isPeak ? '#7a3a16' : '#d4a04a'}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          <div ref={peakHoursRef} className="owner-chart-container" style={{ height: '200px' }}>
+            <BarChart
+              width={peakHoursWidth}
+              height={200}
+              data={OWNER_ANALYTICS_DATA.peakOrderingHours}
+              margin={{ top: 10, right: 5, left: -20, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
+              <XAxis
+                dataKey="hour"
+                tick={{ fontSize: 9.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e8e2d8' }}
+              />
+              <YAxis
+                tick={{ fontSize: 9.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                formatter={(val) => [`${val} orders`, 'Volume']}
+                labelFormatter={(l) => `Time: ${l}`}
+              />
+              <Bar dataKey="orders" fill="#c47d2e" radius={[3, 3, 0, 0]}>
+                {OWNER_ANALYTICS_DATA.peakOrderingHours.map((entry, index) => (
+                  <Cell
+                    key={`bar-${index}`}
+                    fill={entry.isPeak ? '#7a3a16' : '#d4a04a'}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
           </div>
         </div>
       </section>
@@ -566,41 +570,41 @@ export default function OwnerAnalytics() {
             </div>
           </div>
 
-          <div className="owner-chart-container" style={{ height: '200px' }}>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart
-                data={OWNER_ANALYTICS_DATA.customerGrowth}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 10, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={{ stroke: '#e8e2d8' }}
-                />
-                <YAxis
-                  tick={{ fontSize: 10, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="newCustomers"
-                  stroke="#8c4a23"
-                  strokeWidth={2}
-                  dot={{ r: 2.5 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="returningCustomers"
-                  stroke="#e0a96d"
-                  strokeWidth={2}
-                  dot={{ r: 2.5 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <div ref={customerGrowthRef} className="owner-chart-container" style={{ height: '200px' }}>
+            <LineChart
+              width={customerGrowthWidth}
+              height={200}
+              data={OWNER_ANALYTICS_DATA.customerGrowth}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 10, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e8e2d8' }}
+              />
+              <YAxis
+                tick={{ fontSize: 10, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="newCustomers"
+                stroke="#8c4a23"
+                strokeWidth={2}
+                dot={{ r: 2.5 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="returningCustomers"
+                stroke="#e0a96d"
+                strokeWidth={2}
+                dot={{ r: 2.5 }}
+              />
+            </LineChart>
           </div>
         </div>
 
@@ -617,21 +621,19 @@ export default function OwnerAnalytics() {
 
           <div className="owner-donut-wrap">
             <div className="owner-donut-chart-box">
-              <ResponsiveContainer width="100%" height={170}>
-                <PieChart>
-                  <Pie
-                    data={OWNER_ANALYTICS_DATA.repeatVsNew}
-                    innerRadius={50}
-                    outerRadius={74}
-                    paddingAngle={3}
-                    dataKey="percent"
-                  >
-                    {OWNER_ANALYTICS_DATA.repeatVsNew.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              <PieChart width={170} height={170}>
+                <Pie
+                  data={OWNER_ANALYTICS_DATA.repeatVsNew}
+                  innerRadius={50}
+                  outerRadius={74}
+                  paddingAngle={3}
+                  dataKey="percent"
+                >
+                  {OWNER_ANALYTICS_DATA.repeatVsNew.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
 
               <div className="owner-donut-center-text">
                 <span className="owner-donut-center-number" style={{ fontSize: '20px' }}>

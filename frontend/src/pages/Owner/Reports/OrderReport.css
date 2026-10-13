@@ -1,0 +1,951 @@
+/* ==========================================================================
+   CaféFlow — Order Report Styles (Matching Reference Screenshot)
+   ========================================================================== */
+
+.owner-order-report-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* 4 KPI Summary Cards matching reference */
+.owner-order-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.owner-order-kpi-card {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border, #ede8e1);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.owner-order-kpi-card:hover {
+  box-shadow: 0 6px 18px rgba(35, 20, 10, 0.06);
+}
+
+.owner-order-kpi-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-order-kpi-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.owner-order-kpi-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #7a6e65;
+  margin-bottom: 2px;
+}
+
+.owner-order-kpi-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a0e0a;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.owner-order-kpi-trend {
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.owner-order-kpi-trend--positive {
+  color: #16a34a;
+}
+
+.owner-order-kpi-trend--negative {
+  color: #dc2626;
+}
+
+.owner-order-kpi-trend--neutral {
+  color: #8c7b6f;
+}
+
+/* ==========================================================================
+   TOOLBAR: SEARCH & FILTER CONTROLS
+   ========================================================================== */
+
+.owner-order-toolbar {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border, #ede8e1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  flex-wrap: wrap;
+}
+
+.owner-order-search-box {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fbf9f6;
+  border: 1px solid #e8e2d8;
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #6e645a;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.owner-order-search-box:focus-within {
+  background: #ffffff;
+  border-color: #c47d2e;
+  box-shadow: 0 0 0 3px rgba(196, 125, 46, 0.1);
+}
+
+.owner-order-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: #1a0e0a;
+  width: 100%;
+}
+
+.owner-order-search-input::placeholder {
+  color: #9c9085;
+}
+
+.owner-order-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.owner-order-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.owner-order-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #fbf9f6;
+  border: 1px solid #e8e2d8;
+  border-radius: 9px;
+  padding: 8px 30px 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3e2f24;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.owner-order-select:focus,
+.owner-order-select:hover {
+  background: #ffffff;
+  border-color: #c47d2e;
+}
+
+.owner-order-select-icon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: #8c7b6f;
+}
+
+.owner-order-reset-btn {
+  background: transparent;
+  border: 1px solid #e2dad0;
+  color: #6e645a;
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-order-reset-btn:hover {
+  background: #f5eee4;
+  color: #1a0e0a;
+  border-color: #c47d2e;
+}
+
+/* ==========================================================================
+   2-COLUMN WORKSPACE: TABLE + DETAILS PANEL
+   ========================================================================== */
+
+.owner-order-workspace {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+  width: 100%;
+}
+
+.owner-order-workspace--split {
+  grid-template-columns: 1fr 380px;
+}
+
+/* Table Card Shell */
+.owner-order-table-card {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border, #ede8e1);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-order-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.owner-order-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  text-align: left;
+  min-width: 620px;
+}
+
+.owner-order-table th {
+  padding: 11px 10px;
+  background: #faf8f5;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a6e65;
+  text-transform: capitalize;
+  border-bottom: 1px solid #ede8e1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.owner-order-table th.sortable {
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.owner-order-table th.sortable:hover {
+  color: #8c4a23;
+}
+
+.owner-order-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid #f4f0ea;
+  color: #3e2f24;
+  vertical-align: middle;
+}
+
+.owner-order-table tr {
+  transition: background 0.12s ease;
+  cursor: pointer;
+}
+
+.owner-order-table tr:hover td {
+  background: #faf7f2;
+}
+
+/* Selected row highlight matching screenshot */
+.owner-order-table tr.selected td {
+  background: #fbf5ee !important;
+}
+
+.owner-order-table tr.selected td:first-child {
+  border-left: 3.5px solid #8c4a23;
+}
+
+.owner-order-id {
+  font-weight: 700;
+  color: #1a0e0a;
+}
+
+.owner-order-customer {
+  font-weight: 600;
+  color: #1a0e0a;
+}
+
+.owner-order-amount {
+  font-weight: 700;
+  color: #1a0e0a;
+}
+
+/* Status Badges */
+.owner-order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.owner-order-status-badge--completed {
+  background: #ecfdf5;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.owner-order-status-badge--inprogress {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.owner-order-status-badge--queued {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.owner-order-status-badge--cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Actions in Table Cell */
+.owner-order-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.owner-order-action-icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #6e645a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-order-action-icon-btn:hover {
+  background: #f1ede6;
+  color: #1a0e0a;
+  border-color: #e2dad0;
+}
+
+/* More Actions Dropdown Menu */
+.owner-order-actions-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #ffffff;
+  border: 1px solid #ede8e1;
+  border-radius: 9px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 5px;
+  z-index: 50;
+  width: 145px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.owner-order-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3e2f24;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease;
+}
+
+.owner-order-dropdown-item:hover {
+  background: #faf5ee;
+  color: #8c4a23;
+}
+
+/* ==========================================================================
+   ORDER DETAILS SIDE PANEL (Matching Reference Screenshot)
+   ========================================================================== */
+
+.owner-order-details-panel {
+  background: #ffffff;
+  border: 1px solid var(--owner-card-border, #ede8e1);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 16px;
+}
+
+.owner-order-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0eae1;
+}
+
+.owner-order-details-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owner-order-details-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a0e0a;
+}
+
+.owner-order-details-close-btn {
+  background: transparent;
+  border: none;
+  color: #8c7b6f;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.owner-order-details-close-btn:hover {
+  background: #f4efe8;
+  color: #1a0e0a;
+}
+
+/* 2x2 Info Grid */
+.owner-order-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.owner-order-info-box {
+  background: #faf8f5;
+  border: 1px solid #f0eae1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.owner-order-info-icon {
+  color: #8c7b6f;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.owner-order-info-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.owner-order-info-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #8c7b6f;
+}
+
+.owner-order-info-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a0e0a;
+  word-break: break-word;
+}
+
+/* Order Items Section */
+.owner-order-items-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.owner-order-items-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1a0e0a;
+}
+
+.owner-order-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.owner-order-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.owner-order-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.owner-order-item-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #ebdccb;
+  flex-shrink: 0;
+}
+
+.owner-order-item-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.owner-order-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a0e0a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner-order-item-qty {
+  font-size: 12px;
+  color: #8c7b6f;
+  font-weight: 500;
+}
+
+.owner-order-item-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a0e0a;
+  flex-shrink: 0;
+}
+
+/* Financial Summary */
+.owner-order-bill-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f0eae1;
+}
+
+.owner-order-bill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #6e645a;
+}
+
+.owner-order-bill-row--discount {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.owner-order-bill-row--total {
+  padding-top: 8px;
+  border-top: 1.5px dashed #ebdccb;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a0e0a;
+}
+
+.owner-order-total-amount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a0e0a;
+}
+
+/* Status & Notes Row */
+.owner-order-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0eae1;
+}
+
+.owner-order-meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.owner-order-meta-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8c7b6f;
+}
+
+.owner-order-meta-notes {
+  font-size: 12px;
+  color: #4a3b32;
+  font-style: italic;
+  background: #faf8f5;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+/* ==========================================================================
+   PAGINATION BAR (Matching Reference Screenshot)
+   ========================================================================== */
+
+.owner-order-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #ffffff;
+  border-top: 1px solid #ede8e1;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.owner-order-pagination-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.owner-order-page-btn {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: 7px;
+  border: 1px solid #e2dad0;
+  background: #ffffff;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #4a3b32;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.owner-order-page-btn:hover:not(:disabled) {
+  background: #fbf5ee;
+  border-color: #8c4a23;
+  color: #8c4a23;
+}
+
+.owner-order-page-btn.active {
+  background: #8c4a23;
+  border-color: #8c4a23;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(140, 74, 35, 0.3);
+}
+
+.owner-order-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.owner-order-page-ellipsis {
+  padding: 0 4px;
+  color: #8c7b6f;
+  font-size: 12px;
+}
+
+.owner-order-pagination-center {
+  font-size: 12.5px;
+  color: #6e645a;
+  font-weight: 500;
+}
+
+.owner-order-pagination-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #6e645a;
+}
+
+.owner-order-perpage-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #faf8f5;
+  border: 1px solid #e2dad0;
+  border-radius: 7px;
+  padding: 4px 22px 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a0e0a;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   MOBILE CARD LIST (Instead of cramped desktop table)
+   ========================================================================== */
+
+.owner-order-mobile-list {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px;
+}
+
+.owner-order-mobile-card {
+  background: #ffffff;
+  border: 1px solid #ebdccb;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease;
+}
+
+.owner-order-mobile-card.selected {
+  border-color: #8c4a23;
+  background: #fbf5ee;
+}
+
+.owner-order-mobile-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.owner-order-mobile-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.owner-order-mobile-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid #f4efe8;
+  font-size: 11.5px;
+  color: #8c7b6f;
+}
+
+.owner-order-mobile-view-btn {
+  background: #fbf5ee;
+  border: 1px solid #ebdccb;
+  border-radius: 6px;
+  color: #8c4a23;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* Mobile Drawer Backdrop & Overlay */
+.owner-order-mobile-drawer-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 8, 5, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 9999;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.owner-order-mobile-drawer-backdrop.open {
+  display: flex;
+}
+
+.owner-order-mobile-drawer {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  padding: 18px;
+  overflow-y: auto;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Empty State */
+.owner-order-empty-state {
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.owner-order-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fbf5ee;
+  color: #8c4a23;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (Tablets & Mobile)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .owner-order-workspace--split {
+    grid-template-columns: 1fr;
+  }
+
+  .owner-order-details-panel {
+    position: static;
+  }
+
+  .owner-order-kpis-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .owner-order-table-card {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .owner-order-table-scroll {
+    display: none;
+  }
+
+  .owner-order-mobile-list {
+    display: flex;
+  }
+
+  /* Desktop details panel hidden on mobile in favor of drawer */
+  .owner-order-details-panel {
+    display: none;
+  }
+
+  .owner-order-kpis-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+
+  .owner-order-kpi-card {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .owner-order-kpi-icon-box {
+    width: 38px;
+    height: 38px;
+  }
+
+  .owner-order-kpi-value {
+    font-size: 20px;
+  }
+
+  .owner-order-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .owner-order-search-box {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .owner-order-filter-group {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .owner-order-select-wrap {
+    width: 100%;
+  }
+
+  .owner-order-select {
+    width: 100%;
+    font-size: 11.5px;
+    padding: 7px 22px 7px 8px;
+  }
+
+  .owner-order-reset-btn {
+    grid-column: span 2;
+    text-align: center;
+    padding: 7px;
+  }
+
+  .owner-order-pagination {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .owner-order-kpis-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .owner-order-kpi-label {
+    font-size: 11.5px;
+  }
+
+  .owner-order-kpi-trend {
+    font-size: 10px;
+  }
+}

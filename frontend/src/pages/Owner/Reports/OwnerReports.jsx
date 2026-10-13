@@ -30,10 +30,14 @@ import {
   Bar,
 } from 'recharts'
 import { OWNER_REPORTS_DATA } from '../data/ownerMockData'
+import { useChartWidth } from '../hooks/useChartWidth'
+import OrderReportTab from './components/OrderReportTab'
 
 export default function OwnerReports() {
+  const [salesTrendRef, salesTrendWidth] = useChartWidth(340)
+
   // State
-  const [activeReportTab, setActiveReportTab] = useState('sales') // 'sales' | 'orders' | 'items'
+  const [activeReportTab, setActiveReportTab] = useState('orders') // 'sales' | 'orders' | 'items' (Order Report default matching screenshot)
   const [periodPreset, setPeriodPreset] = useState('This Month')
   const [startDate, setStartDate] = useState('01 Oct 2026')
   const [endDate, setEndDate] = useState('31 Oct 2026')
@@ -41,24 +45,123 @@ export default function OwnerReports() {
   const [isPeriodMenuOpen, setIsPeriodMenuOpen] = useState(false)
   const [salesTrendMetric, setSalesTrendMetric] = useState('Revenue')
   const [toastMessage, setToastMessage] = useState('')
+  const [filteredOrdersForExport, setFilteredOrdersForExport] = useState([])
 
   const showToast = (msg) => {
     setToastMessage(msg)
     setTimeout(() => setToastMessage(''), 3000)
   }
 
-  // Mock Export handler
+  // Handle preset date range selection
+  const handleSelectPreset = (preset) => {
+    setPeriodPreset(preset)
+    setIsPeriodMenuOpen(false)
+
+    if (preset === 'Today') {
+      setStartDate('02 Oct 2026')
+      setEndDate('02 Oct 2026')
+    } else if (preset === 'Yesterday') {
+      setStartDate('01 Oct 2026')
+      setEndDate('01 Oct 2026')
+    } else if (preset === 'This Week') {
+      setStartDate('01 Oct 2026')
+      setEndDate('07 Oct 2026')
+    } else if (preset === 'This Month') {
+      setStartDate('01 Oct 2026')
+      setEndDate('31 Oct 2026')
+    } else if (preset === 'Last Month') {
+      setStartDate('01 Sep 2026')
+      setEndDate('30 Sep 2026')
+    } else if (preset === 'This Year') {
+      setStartDate('01 Jan 2026')
+      setEndDate('31 Dec 2026')
+    } else if (preset === 'Custom Range') {
+      // User can manually enter start and end date
+    }
+
+    showToast(`Date range set to ${preset}`)
+  }
+
+  // Handle custom date edits with validation
+  const handleStartDateChange = (val) => {
+    setStartDate(val)
+    setPeriodPreset('Custom Range')
+    const s = Date.parse(val)
+    const e = Date.parse(endDate)
+    if (!isNaN(s) && !isNaN(e) && s > e) {
+      showToast('Validation Warning: Start date cannot be after end date')
+    }
+  }
+
+  const handleEndDateChange = (val) => {
+    setEndDate(val)
+    setPeriodPreset('Custom Range')
+    const s = Date.parse(startDate)
+    const e = Date.parse(val)
+    if (!isNaN(s) && !isNaN(e) && s > e) {
+      showToast('Validation Warning: Start date cannot be after end date')
+    }
+  }
+
+  // Export handler supporting CSV & JSON from active filtered data
   const handleExport = (format) => {
     setIsExportMenuOpen(false)
-    const filename = `CafeFlow_${activeReportTab}_report_Oct2026.${format.toLowerCase()}`
+    const timestamp = new Date().toISOString().slice(0, 10)
+    const filename = `CafeFlow_${activeReportTab}_report_${timestamp}.${format.toLowerCase()}`
 
-    // Trigger instant mock file download in browser
-    const blob = new Blob(
-      [
-        `CaféFlow Owner Portal - ${activeReportTab.toUpperCase()} REPORT\nDate Range: ${startDate} to ${endDate}\nGenerated: ${new Date().toLocaleString()}\n\nDate,Orders,Revenue\n01 Oct 2026,42,9230\n02 Oct 2026,51,11490\n03 Oct 2026,38,8580\n`,
-      ],
-      { type: format === 'CSV' ? 'text/csv' : 'application/pdf' }
-    )
+    let blob
+    if (activeReportTab === 'orders' && filteredOrdersForExport?.length > 0) {
+      if (format === 'CSV') {
+        const headers = [
+          'Order ID',
+          'Customer Name',
+          'Table',
+          'Item Count',
+          'Amount (INR)',
+          'Payment Method',
+          'Status',
+          'Date & Time',
+          'Subtotal',
+          'Discount',
+          'Notes',
+        ]
+        const rows = filteredOrdersForExport.map((o) => [
+          `#${o.id}`,
+          `"${(o.customerName || '').replace(/"/g, '""')}"`,
+          o.tableDisplay || o.tableNumber,
+          o.itemCount,
+          o.amount,
+          o.paymentMethod,
+          o.status,
+          `"${o.dateTime}"`,
+          o.subtotal,
+          o.discount,
+          `"${(o.notes || '').replace(/"/g, '""')}"`,
+        ])
+        const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
+        blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      } else {
+        // JSON format
+        const jsonContent = JSON.stringify(filteredOrdersForExport, null, 2)
+        blob = new Blob([jsonContent], { type: 'application/json' })
+      }
+    } else {
+      // General fallback export
+      if (format === 'CSV') {
+        const csvContent = `CaféFlow Owner Portal - ${activeReportTab.toUpperCase()} REPORT\nDate Range: ${startDate} to ${endDate}\nGenerated: ${new Date().toLocaleString()}\n\nDate,Orders,Revenue\n01 Oct 2026,42,9230\n02 Oct 2026,51,11490\n03 Oct 2026,38,8580\n`
+        blob = new Blob([csvContent], { type: 'text/csv' })
+      } else {
+        const jsonData = {
+          report: activeReportTab,
+          startDate,
+          endDate,
+          exportedAt: new Date().toISOString(),
+          status: 'success',
+        }
+        blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' })
+      }
+    }
+
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -121,16 +224,20 @@ export default function OwnerReports() {
 
             {isPeriodMenuOpen && (
               <div className="owner-export-dropdown" style={{ width: '160px' }}>
-                {['This Month', 'Last Month', 'This Quarter', 'This Year'].map((p) => (
+                {[
+                  'Today',
+                  'Yesterday',
+                  'This Week',
+                  'This Month',
+                  'Last Month',
+                  'This Year',
+                  'Custom Range',
+                ].map((p) => (
                   <button
                     key={p}
                     type="button"
                     className="owner-export-dropdown-item"
-                    onClick={() => {
-                      setPeriodPreset(p)
-                      setIsPeriodMenuOpen(false)
-                      showToast(`Report updated for ${p}`)
-                    }}
+                    onClick={() => handleSelectPreset(p)}
                   >
                     {p}
                   </button>
@@ -146,7 +253,7 @@ export default function OwnerReports() {
               type="text"
               className="owner-date-range-input"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => handleStartDateChange(e.target.value)}
               aria-label="Start Date"
             />
             <span className="owner-date-range-separator">to</span>
@@ -155,7 +262,7 @@ export default function OwnerReports() {
               type="text"
               className="owner-date-range-input"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => handleEndDateChange(e.target.value)}
               aria-label="End Date"
             />
           </div>
@@ -186,10 +293,10 @@ export default function OwnerReports() {
                 <button
                   type="button"
                   className="owner-export-dropdown-item"
-                  onClick={() => handleExport('PDF')}
+                  onClick={() => handleExport('JSON')}
                 >
-                  <FileCode size={15} color="#ef4444" />
-                  <span>Export PDF</span>
+                  <FileCode size={15} color="#c47d2e" />
+                  <span>Export JSON</span>
                 </button>
               </div>
             )}
@@ -235,7 +342,7 @@ export default function OwnerReports() {
       {activeReportTab === 'sales' && (
         <>
           {/* Sales KPI Cards (4 cards) */}
-          <section className="owner-kpis-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+          <section className="owner-kpis-grid">
             {/* Total Revenue */}
             <div className="owner-kpi-card">
               <div className="owner-kpi-card__top">
@@ -390,44 +497,44 @@ export default function OwnerReports() {
               </div>
 
               {/* Area Chart matching screenshot */}
-              <div className="owner-chart-container">
-                <ResponsiveContainer width="100%" height={250}>
-                  <AreaChart
-                    data={OWNER_REPORTS_DATA.salesTrendDaily}
-                    margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient id="reportsSalesFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#c47d2e" stopOpacity={0.35} />
-                        <stop offset="95%" stopColor="#c47d2e" stopOpacity={0.02} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
-                      tickLine={false}
-                      axisLine={{ stroke: '#e8e2d8' }}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(val) => `₹ ${(val / 1000).toFixed(0)}K`}
-                    />
-                    <Tooltip content={<CustomSalesTooltip />} />
-                    <Area
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="#8c4a23"
-                      strokeWidth={2.4}
-                      fillOpacity={1}
-                      fill="url(#reportsSalesFill)"
-                      dot={{ r: 3, fill: '#8c4a23' }}
-                      activeDot={{ r: 6, fill: '#7a3a16', stroke: '#fff', strokeWidth: 2 }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+              <div ref={salesTrendRef} className="owner-chart-container">
+                <AreaChart
+                  width={salesTrendWidth}
+                  height={250}
+                  data={OWNER_REPORTS_DATA.salesTrendDaily}
+                  margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="reportsSalesFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#c47d2e" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#c47d2e" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                    tickLine={false}
+                    axisLine={{ stroke: '#e8e2d8' }}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(val) => `₹ ${(val / 1000).toFixed(0)}K`}
+                  />
+                  <Tooltip content={<CustomSalesTooltip />} />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#8c4a23"
+                    strokeWidth={2.4}
+                    fillOpacity={1}
+                    fill="url(#reportsSalesFill)"
+                    dot={{ r: 3, fill: '#8c4a23' }}
+                    activeDot={{ r: 6, fill: '#7a3a16', stroke: '#fff', strokeWidth: 2 }}
+                  />
+                </AreaChart>
               </div>
             </div>
 
@@ -444,21 +551,19 @@ export default function OwnerReports() {
 
               <div className="owner-donut-wrap">
                 <div className="owner-donut-chart-box">
-                  <ResponsiveContainer width="100%" height={170}>
-                    <PieChart>
-                      <Pie
-                        data={OWNER_REPORTS_DATA.revenueBreakdown}
-                        innerRadius={50}
-                        outerRadius={74}
-                        paddingAngle={3}
-                        dataKey="amount"
-                      >
-                        {OWNER_REPORTS_DATA.revenueBreakdown.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <PieChart width={170} height={170}>
+                    <Pie
+                      data={OWNER_REPORTS_DATA.revenueBreakdown}
+                      innerRadius={50}
+                      outerRadius={74}
+                      paddingAngle={3}
+                      dataKey="amount"
+                    >
+                      {OWNER_REPORTS_DATA.revenueBreakdown.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
 
                   {/* Centered Total */}
                   <div className="owner-donut-center-text">
@@ -584,80 +689,12 @@ export default function OwnerReports() {
           TAB 2: ORDER REPORT
           ==================================================================== */}
       {activeReportTab === 'orders' && (
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Order Metrics Row */}
-          <div className="owner-kpis-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
-            <div className="owner-kpi-card">
-              <span className="owner-kpi-card__title">Total Placed</span>
-              <div className="owner-kpi-card__value">342</div>
-              <span className="owner-kpi-card__trend owner-kpi-card__trend--positive">
-                98.8% Fulfillment
-              </span>
-            </div>
-            <div className="owner-kpi-card">
-              <span className="owner-kpi-card__title">Completed</span>
-              <div className="owner-kpi-card__value" style={{ color: '#10b981' }}>310</div>
-              <span className="owner-kpi-card__trend owner-kpi-card__trend--positive">
-                Avg 14 min prep
-              </span>
-            </div>
-            <div className="owner-kpi-card">
-              <span className="owner-kpi-card__title">In Progress</span>
-              <div className="owner-kpi-card__value" style={{ color: '#0284c7' }}>14</div>
-              <span className="owner-kpi-card__trend owner-kpi-card__trend--neutral">
-                Live Kitchen
-              </span>
-            </div>
-            <div className="owner-kpi-card">
-              <span className="owner-kpi-card__title">Cancellation Rate</span>
-              <div className="owner-kpi-card__value" style={{ color: '#6e645a' }}>1.2%</div>
-              <span className="owner-kpi-card__trend owner-kpi-card__trend--positive">
-                4 orders total
-              </span>
-            </div>
-          </div>
-
-          {/* Payment Split & Order Channels */}
-          <div className="owner-middle-grid">
-            <div className="owner-card">
-              <div className="owner-card__header">
-                <h2 className="owner-card__title">Payment Method Breakdown</h2>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '10px' }}>
-                {OWNER_REPORTS_DATA.orderReport.paymentSplit.map((p) => (
-                  <div key={p.method}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
-                      <span style={{ fontWeight: 600 }}>{p.method}</span>
-                      <span style={{ fontWeight: 700 }}>{p.count} orders ({p.percent}%)</span>
-                    </div>
-                    <div style={{ width: '100%', height: '8px', background: '#f4efe8', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${p.percent}%`, height: '100%', background: p.color }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="owner-card">
-              <div className="owner-card__header">
-                <h2 className="owner-card__title">Order Status Fulfillment</h2>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '10px' }}>
-                {OWNER_REPORTS_DATA.orderReport.statusSplit.map((s) => (
-                  <div key={s.status}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
-                      <span style={{ fontWeight: 600 }}>{s.status}</span>
-                      <span style={{ fontWeight: 700 }}>{s.count} orders ({s.percent}%)</span>
-                    </div>
-                    <div style={{ width: '100%', height: '8px', background: '#f4efe8', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${s.percent}%`, height: '100%', background: s.color }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <OrderReportTab
+          startDate={startDate}
+          endDate={endDate}
+          onFilteredOrdersChange={setFilteredOrdersForExport}
+          showToast={showToast}
+        />
       )}
 
       {/* ====================================================================

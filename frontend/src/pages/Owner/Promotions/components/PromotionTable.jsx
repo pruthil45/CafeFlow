@@ -8,6 +8,7 @@ import {
   Eye,
   Power,
   ChevronDown,
+  Filter,
 } from 'lucide-react'
 
 export default function PromotionTable({
@@ -118,7 +119,8 @@ export default function PromotionTable({
             />
           </div>
 
-          <div style={{ position: 'relative' }}>
+          <div className="owner-promotions-select-wrap">
+            <Filter size={13} className="owner-promotions-select-left-icon" />
             <select
               className="owner-promotions-type-select"
               value={selectedType}
@@ -132,6 +134,7 @@ export default function PromotionTable({
               <option value="Combo Offer">Combo Offer</option>
               <option value="Time Based">Time Based</option>
             </select>
+            <ChevronDown size={14} className="owner-promotions-select-icon" />
           </div>
         </div>
       </div>
@@ -381,6 +384,88 @@ export default function PromotionTable({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Promotions Card List (Screens <= 768px) */}
+        <div className="owner-promotions-mobile-list">
+          {promotions.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '36px 16px', color: '#8c7b6f' }}>
+              No promotions found matching the current filters.
+            </div>
+          ) : (
+            promotions.map((promo, idx) => (
+              <div key={promo.id} className="owner-promo-mobile-card">
+                <div className="owner-promo-mobile-card-top">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                    <span className="owner-promo-mobile-index">#{idx + 1}</span>
+                    <span
+                      className="owner-promo-mobile-title"
+                      onClick={() => onViewDetails && onViewDetails(promo)}
+                    >
+                      {promo.name}
+                    </span>
+                  </div>
+                  <span className={getStatusBadgeClass(promo.status)}>
+                    {promo.status}
+                  </span>
+                </div>
+
+                <div className="owner-promo-mobile-card-type-row">
+                  <span className={getTypeBadgeClass(promo.type)}>
+                    {promo.type}
+                  </span>
+                  {promo.category && (
+                    <span className="owner-promo-mobile-category">
+                      {promo.category}
+                    </span>
+                  )}
+                </div>
+
+                <div className="owner-promo-mobile-details">
+                  {promo.details}
+                </div>
+
+                <div className="owner-promo-mobile-card-meta">
+                  <span>📅 {promo.validity}</span>
+                  <span>👥 {promo.usage ?? 0} uses</span>
+                </div>
+
+                <div className="owner-promo-mobile-card-actions">
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    style={{ flex: 1, padding: '7px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}
+                    onClick={() => onEditPromotion(promo)}
+                  >
+                    <Edit2 size={13} /> Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    style={{ flex: 1, padding: '7px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}
+                    onClick={() => onViewDetails && onViewDetails(promo)}
+                  >
+                    <Eye size={13} /> Details
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-btn-secondary"
+                    style={{
+                      padding: '7px 12px',
+                      color: promo.status === 'Active' ? '#dc2626' : '#16a34a',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    onClick={() => onToggleStatus(promo.id)}
+                    title={promo.status === 'Active' ? 'Deactivate' : 'Activate'}
+                  >
+                    <Power size={14} />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

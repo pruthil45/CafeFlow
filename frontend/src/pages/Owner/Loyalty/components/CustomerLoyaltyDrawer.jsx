@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   X,
   Award,
-  Gift,
   Tag,
   ShoppingBag,
   ChevronRight,
@@ -13,9 +12,7 @@ import {
 export default function CustomerLoyaltyDrawer({
   customer,
   onClose,
-  rewards = [],
   customerLoyaltyHistory = [],
-  onOpenRedeemModal,
   isLoyaltyProgramEnabled = true,
   onViewAllHistory,
 }) {
@@ -134,24 +131,19 @@ export default function CustomerLoyaltyDrawer({
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="owner-btn-primary"
+                <span
                   style={{
-                    background: '#8c4a23',
-                    color: '#ffffff',
-                    padding: '8px 14px',
-                    fontSize: '12.5px',
+                    background: '#ecfdf5',
+                    color: '#16a34a',
+                    padding: '6px 12px',
+                    fontSize: '11.5px',
                     fontWeight: 700,
                     borderRadius: '8px',
-                    cursor: !isLoyaltyProgramEnabled || currentPoints < 300 ? 'not-allowed' : 'pointer',
-                    opacity: !isLoyaltyProgramEnabled || currentPoints < 300 ? 0.6 : 1,
+                    border: '1px solid #bbf7d0',
                   }}
-                  onClick={() => onOpenRedeemModal && onOpenRedeemModal(customer)}
-                  disabled={!isLoyaltyProgramEnabled || currentPoints < 300}
                 >
-                  Redeem Reward
-                </button>
+                  Active Member
+                </span>
               </div>
 
               {/* Sub-stats: Total Earned & Total Redeemed */}
@@ -194,64 +186,6 @@ export default function CustomerLoyaltyDrawer({
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', color: '#6d5b4f', marginTop: 6, fontWeight: 600 }}>
                 <span>{currentPoints} / {targetPoints} points</span>
                 <span>Next Reward: ₹100 OFF</span>
-              </div>
-            </div>
-
-            {/* Available Rewards */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <h4 style={{ margin: 0, fontSize: '13.5px', fontWeight: 800, color: 'var(--owner-espresso, #2a1911)' }}>
-                  Available Rewards
-                </h4>
-                <button
-                  type="button"
-                  style={{ background: 'none', border: 'none', color: '#8c4a23', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
-                  onClick={() => onOpenRedeemModal && onOpenRedeemModal(customer)}
-                >
-                  View All
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {rewards.filter((r) => r.status === 'Active').slice(0, 3).map((reward) => {
-                  const canRedeem = isLoyaltyProgramEnabled && currentPoints >= reward.pointsRequired
-
-                  return (
-                    <div key={reward.id} className="owner-customer-reward-row">
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div className="owner-customer-reward-icon">
-                          <Gift size={16} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--owner-espresso, #2a1911)' }}>
-                            {reward.name}
-                          </div>
-                          <div style={{ fontSize: '11px', color: '#8c7b6f', marginTop: 1 }}>
-                            {reward.pointsRequired} points · {reward.minimumSpend > 0 ? `Min. spend: ₹${reward.minimumSpend}` : 'Min. spend: ₹0'}
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        style={{
-                          background: canRedeem ? '#8c4a23' : '#e0d8cc',
-                          color: canRedeem ? '#ffffff' : '#8c7b6f',
-                          border: 'none',
-                          padding: '5px 12px',
-                          borderRadius: '6px',
-                          fontSize: '11.5px',
-                          fontWeight: 700,
-                          cursor: canRedeem ? 'pointer' : 'not-allowed',
-                        }}
-                        disabled={!canRedeem}
-                        onClick={() => onOpenRedeemModal && onOpenRedeemModal(customer, reward)}
-                      >
-                        Redeem
-                      </button>
-                    </div>
-                  )
-                })}
               </div>
             </div>
 

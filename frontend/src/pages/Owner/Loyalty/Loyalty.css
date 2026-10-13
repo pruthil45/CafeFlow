@@ -523,12 +523,202 @@
   }
 }
 
+/* Mobile Rewards List */
+.owner-rewards-mobile-list {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.owner-reward-mobile-card {
+  background: #ffffff;
+  border: 1px solid #ebdccb;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.owner-reward-mobile-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.owner-reward-mobile-index {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8c7b6f;
+  background: #fbf8f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.owner-reward-mobile-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--owner-espresso, #2a1911);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner-reward-mobile-desc {
+  font-size: 13px;
+  color: #6d5b4f;
+  line-height: 1.4;
+}
+
+.owner-reward-mobile-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.owner-reward-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #faf7f2;
+  border: 1px solid #ede6dc;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11.5px;
+}
+
+.owner-reward-stat-label {
+  color: #8c7b6f;
+  font-weight: 500;
+}
+
+.owner-reward-stat-value {
+  color: #8c4a23;
+  font-weight: 700;
+}
+
+.owner-reward-mobile-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #f0eae1;
+}
+
+/* Mobile Activity List */
+.owner-activity-mobile-list {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.owner-activity-mobile-card {
+  background: #faf8f5;
+  border: 1px solid #ede6dc;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.owner-activity-mobile-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.owner-activity-mobile-details {
+  font-size: 12.5px;
+  color: #4a3f35;
+  line-height: 1.35;
+}
+
+.owner-activity-mobile-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px dashed #e8e0d5;
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+
+/* Tablet & Mobile Screens: Slide-over Drawer for Customer Detail Panel */
+@media (max-width: 1199px) {
+  .owner-loyalty-workspace {
+    display: block;
+  }
+
+  .owner-loyalty-mobile-customer-btn {
+    display: block;
+  }
+
+  .owner-loyalty-drawer-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 11, 7, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1040;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .owner-loyalty-detail-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 440px;
+    max-width: 95vw;
+    background: #ffffff;
+    z-index: 1050;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
+  }
+}
+
 @media (max-width: 860px) {
   .owner-loyalty-page {
     padding: 16px;
   }
+}
+
+@media (max-width: 768px) {
+  .owner-loyalty-table-wrap {
+    display: none;
+  }
+  .owner-rewards-mobile-list {
+    display: flex;
+  }
+  .owner-activity-mobile-list {
+    display: flex;
+  }
   .owner-loyalty-summary-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .owner-loyalty-kpi-card {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  .owner-loyalty-kpi-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  .owner-loyalty-kpi-val {
+    font-size: 22px;
   }
 }
 
@@ -546,7 +736,7 @@
     box-sizing: border-box;
   }
   .owner-loyalty-kpi-val {
-    font-size: 24px;
+    font-size: 20px;
   }
   .owner-loyalty-card {
     padding: 14px;
@@ -558,3 +748,304 @@
     gap: 12px;
   }
 }
+
+@media (max-width: 480px) {
+  .owner-loyalty-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+/* ==========================================================================
+   LOYALTY HISTORY MODAL (View All Audit Log)
+   ========================================================================== */
+
+.owner-history-modal-card {
+  max-width: 860px;
+  width: 95%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.owner-history-modal-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #f0eae1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.owner-history-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.owner-history-modal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #faf5ee;
+  color: #8c4a23;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.owner-history-modal-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #2a1911;
+  letter-spacing: -0.01em;
+}
+
+.owner-history-modal-sub {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: #8c7b6f;
+}
+
+.owner-history-modal-filters {
+  padding: 14px 24px;
+  background: #faf8f5;
+  border-bottom: 1px solid #ede6dc;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.owner-history-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 38px;
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+.owner-history-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9c8e82;
+  pointer-events: none;
+}
+
+.owner-history-search-input {
+  width: 100%;
+  height: 38px;
+  padding: 8px 12px 8px 34px;
+  border: 1px solid #ddd5c9;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2a1911;
+  background: #ffffff;
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.owner-history-search-input:focus {
+  border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.12);
+}
+
+.owner-history-selects-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.owner-history-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 150px;
+}
+
+.owner-history-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 38px;
+  padding: 8px 30px 8px 12px;
+  border: 1px solid #ddd5c9;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a3f35;
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.owner-history-select:focus,
+.owner-history-select:hover {
+  border-color: #8c4a23;
+  box-shadow: 0 0 0 2px rgba(140, 74, 35, 0.12);
+}
+
+.owner-history-select-chevron {
+  position: absolute;
+  right: 10px;
+  color: #8c7b6f;
+  pointer-events: none;
+}
+
+.owner-history-modal-table-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 440px;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.owner-history-modal-table-wrap table {
+  min-width: 620px;
+}
+
+.owner-history-modal-mobile-list {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  max-height: 52vh;
+  padding: 12px 14px;
+  background: #fdfcfb;
+  -webkit-overflow-scrolling: touch;
+}
+
+.owner-history-mobile-card {
+  background: #ffffff;
+  border: 1px solid #eddccb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.owner-history-mobile-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.owner-history-mobile-details {
+  font-size: 12.5px;
+  color: #4a3f35;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.owner-history-mobile-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px dashed #f0eae1;
+}
+
+.owner-history-modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid #f0eae1;
+  background: #faf8f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.owner-history-pagination-info {
+  font-size: 12.5px;
+  color: #8c7b6f;
+}
+
+.owner-history-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .owner-history-modal-card {
+    width: 96%;
+    max-height: 92vh;
+    border-radius: 14px;
+  }
+  .owner-history-modal-header {
+    padding: 14px 16px;
+  }
+  .owner-history-modal-title {
+    font-size: 15px;
+  }
+  .owner-history-modal-sub {
+    font-size: 11px;
+  }
+  .owner-history-modal-filters {
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .owner-history-search-wrap {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+    height: 38px;
+  }
+  .owner-history-selects-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    flex: none;
+  }
+  .owner-history-select-wrap {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+    height: 38px;
+  }
+  .owner-history-modal-table-wrap {
+    display: none;
+  }
+  .owner-history-modal-mobile-list {
+    display: flex;
+  }
+  .owner-history-modal-footer {
+    padding: 10px 14px;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .owner-history-pagination-info {
+    font-size: 11.5px;
+  }
+}
+
+@media (max-width: 420px) {
+  .owner-history-selects-row {
+    grid-template-columns: 1fr;
+  }
+}
+

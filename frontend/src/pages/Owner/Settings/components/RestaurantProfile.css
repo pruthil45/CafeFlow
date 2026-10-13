@@ -1,0 +1,1224 @@
+/* ==========================================================================
+   CAFÉFLOW OWNER PORTAL — RESTAURANT PROFILE MODULE STYLES
+   ========================================================================== */
+
+.owner-restaurant-profile-page {
+  padding: 0 4px 60px 4px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   5-Tab Navigation Bar & Step Controls
+   -------------------------------------------------------------------------- */
+.rp-tabs-container {
+  margin-bottom: 24px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rp-tabs-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 8px 2px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+
+/* Scroll Buttons for tabs */
+.rp-tabs-scroll-btn {
+  display: none;
+  width: 32px;
+  height: 38px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #ded3c7;
+  color: #5c3826;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(42, 25, 17, 0.08);
+  transition: all 0.15s ease;
+}
+
+.rp-tabs-scroll-btn:hover {
+  background: #fbf6f0;
+  border-color: #8b4513;
+  color: #8b4513;
+}
+
+/* Mobile Step Progress Indicator Card */
+.rp-mobile-step-card {
+  display: none;
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(42, 25, 17, 0.04);
+}
+
+.rp-mobile-step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.rp-mobile-step-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rp-mobile-step-badge {
+  background: #8b4513;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.rp-mobile-step-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #23150d;
+}
+
+.rp-mobile-step-arrows {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rp-mobile-arrow-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #fbf8f5;
+  border: 1px solid #ded3c7;
+  color: #3e2719;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rp-mobile-arrow-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.rp-step-dots-bar {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.rp-step-dot {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: #eadecf;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.rp-step-dot.active {
+  background: #8b4513;
+  transform: scaleY(1.3);
+}
+
+.rp-step-dot.completed {
+  background: #c25e2e;
+}
+
+.rp-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #ffffff;
+  color: #2a1911;
+  border: 1px solid #e8ded4;
+  box-shadow: 0 1px 3px rgba(42, 25, 17, 0.04);
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.rp-tab-btn:hover {
+  background: #fbf8f5;
+  border-color: #dbc9b8;
+  color: #1e110b;
+}
+
+/* Active Tab: Burnt Orange with White Text and Icon */
+.rp-tab-btn.active {
+  background: #8b4513;
+  color: #ffffff;
+  border-color: #8b4513;
+  box-shadow: 0 3px 8px rgba(139, 69, 19, 0.28);
+}
+
+.rp-tab-icon {
+  color: #8b4513;
+  flex-shrink: 0;
+  transition: color 0.18s ease;
+}
+
+.rp-tab-btn.active .rp-tab-icon {
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Section Card & Typography
+   -------------------------------------------------------------------------- */
+.rp-section-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rp-section-head {
+  margin-bottom: 2px;
+}
+
+.rp-section-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #23150d;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.2px;
+}
+
+.rp-section-subtitle {
+  font-size: 13px;
+  color: #6d5b4f;
+  margin: 0;
+}
+
+.rp-form-card {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 12px;
+  padding: 24px 26px;
+  box-shadow: 0 2px 10px rgba(42, 25, 17, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   Form Fields, Inputs & Labels
+   -------------------------------------------------------------------------- */
+.rp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.rp-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2a1911;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rp-required {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.rp-input,
+.rp-select,
+.rp-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ded3c7;
+  background-color: #ffffff;
+  font-size: 13.5px;
+  color: #1f140e;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rp-input:focus,
+.rp-select:focus,
+.rp-textarea:focus {
+  outline: none;
+  border-color: #8b4513;
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.14);
+}
+
+.rp-input::placeholder,
+.rp-textarea::placeholder {
+  color: #9c8e82;
+}
+
+.rp-input--error {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12) !important;
+}
+
+.rp-field-error {
+  font-size: 11.5px;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.rp-helper-text {
+  font-size: 12px;
+  color: #7a6a5d;
+  line-height: 1.35;
+}
+
+/* Textarea & Counter */
+.rp-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.rp-textarea-counter {
+  align-self: flex-end;
+  font-size: 11.5px;
+  color: #8c7b6f;
+  margin-top: 2px;
+}
+
+/* Input with Icon (Website, Search) */
+.rp-input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.rp-input-icon {
+  position: absolute;
+  left: 13px;
+  color: #8c7b6f;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.rp-input--icon-pad {
+  padding-left: 38px;
+}
+
+/* Phone input with calling code */
+.rp-phone-input-wrap {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.rp-phone-code-select {
+  width: 110px;
+  flex-shrink: 0;
+  padding: 10px 10px;
+  border-radius: 8px;
+  border: 1px solid #ded3c7;
+  background-color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2a1911;
+  cursor: pointer;
+}
+
+.rp-phone-number-input {
+  flex: 1;
+}
+
+/* Grids */
+.rp-grid {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+}
+
+.rp-grid--2col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rp-grid--3col {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rp-grid--4col {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Subheadings */
+.rp-subheading-wrap {
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid #f3ece4;
+}
+
+.rp-subheading {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #23150d;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Cuisine Selector & Chips
+   -------------------------------------------------------------------------- */
+.rp-cuisine-selector {
+  border: 1px solid #ded3c7;
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.rp-cuisine-selector:hover {
+  border-color: #c9b8a8;
+}
+
+.rp-cuisine-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.rp-cuisine-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fbf6f0;
+  border: 1px solid #ebd9c8;
+  color: #6e3a17;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.rp-cuisine-chip-remove {
+  background: transparent;
+  border: none;
+  color: #8c5e3d;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.15s;
+}
+
+.rp-cuisine-chip-remove:hover {
+  color: #dc2626;
+}
+
+.rp-placeholder-text {
+  font-size: 13px;
+  color: #9c8e82;
+}
+
+.rp-dropdown-chevron {
+  color: #8c7b6f;
+  flex-shrink: 0;
+}
+
+.rp-cuisine-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(42, 25, 17, 0.12);
+  z-index: 50;
+  padding: 8px;
+  animation: fadeInDown 0.15s ease-out;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.rp-cuisine-dropdown-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8c7b6f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 8px 6px 8px;
+  border-bottom: 1px solid #f5ede4;
+  margin-bottom: 4px;
+}
+
+.rp-cuisine-dropdown-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.rp-cuisine-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  color: #2a1911;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.rp-cuisine-option:hover {
+  background: #fdf8f4;
+}
+
+.rp-cuisine-option.selected {
+  background: #fbf0e6;
+  color: #8b4513;
+  font-weight: 600;
+}
+
+.rp-check-icon {
+  color: #8b4513;
+}
+
+/* --------------------------------------------------------------------------
+   Location Search Suggestions
+   -------------------------------------------------------------------------- */
+.rp-location-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(42, 25, 17, 0.12);
+  z-index: 60;
+  padding: 6px;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+.rp-suggestions-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8c7b6f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px 6px 10px;
+  border-bottom: 1px solid #f3ece4;
+  margin-bottom: 4px;
+}
+
+.rp-suggestion-item {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.rp-suggestion-item:hover {
+  background: #fbf6f0;
+}
+
+.rp-suggestion-icon {
+  color: #8b4513;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rp-suggestion-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.rp-suggestion-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #23150d;
+}
+
+.rp-suggestion-sub {
+  font-size: 11px;
+  color: #7a6a5d;
+  margin-top: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive SVG Map Preview (Screenshot 4)
+   -------------------------------------------------------------------------- */
+.rp-map-wrapper {
+  margin: 4px 0 6px 0;
+  width: 100%;
+}
+
+.rp-map-container {
+  width: 100%;
+  height: 290px;
+  background: #e8ece9;
+  border-radius: 12px;
+  border: 1px solid #ded3c7;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+  cursor: crosshair;
+}
+
+.rp-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Draggable / Clickable Pin Marker */
+.rp-map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  transition: left 0.15s ease, top 0.15s ease;
+  z-index: 10;
+}
+
+.rp-map-pin-label {
+  background: #ffffff;
+  color: #991b1b;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  margin-bottom: 2px;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.rp-map-pin-icon {
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+}
+
+/* Map Zoom Controls */
+.rp-map-controls {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  z-index: 15;
+}
+
+.rp-map-control-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.rp-map-control-btn:hover {
+  background: #f3f4f6;
+}
+
+.rp-map-control-btn + .rp-map-control-btn {
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Locate / Reset Button */
+.rp-map-locate-btn {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  color: #374151;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: background 0.15s;
+  z-index: 15;
+}
+
+.rp-map-locate-btn:hover {
+  background: #f3f4f6;
+}
+
+/* Google Watermark */
+.rp-map-google-badge {
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  letter-spacing: -0.5px;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* Drag helper row beneath map */
+.rp-map-helper-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #7a6a5d;
+  margin-top: 8px;
+}
+
+.rp-map-info-icon {
+  color: #8c7b6f;
+}
+
+/* --------------------------------------------------------------------------
+   Opening Hours Table (Screenshot 1)
+   -------------------------------------------------------------------------- */
+.rp-hours-card {
+  padding: 0 0 20px 0;
+  overflow: hidden;
+}
+
+.rp-hours-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.rp-hours-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.rp-hours-table thead th {
+  padding: 14px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8c7b6f;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #ebd9c8;
+  background: #fcf9f6;
+}
+
+.rp-hours-table tbody td {
+  padding: 13px 20px;
+  border-bottom: 1px solid #f3ece4;
+  vertical-align: middle;
+}
+
+.rp-hours-table tbody tr:hover {
+  background: #fffdfb;
+}
+
+.rp-row--closed {
+  opacity: 0.65;
+}
+
+.rp-day-cell {
+  font-weight: 600;
+  color: #23150d;
+}
+
+.rp-day-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #23150d;
+}
+
+/* Status Pill Toggle */
+.rp-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rp-status-pill--open {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.rp-status-pill--open:hover {
+  background: #bbf7d0;
+}
+
+.rp-status-pill--closed {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #e5e7eb;
+}
+
+.rp-status-pill--closed:hover {
+  background: #e5e7eb;
+}
+
+.rp-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+/* 24 Hours Toggle Switch */
+.rp-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.rp-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.rp-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.2s;
+  border-radius: 22px;
+}
+
+.rp-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.2s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.rp-switch input:checked + .rp-switch-slider {
+  background-color: #8b4513;
+}
+
+.rp-switch input:checked + .rp-switch-slider:before {
+  transform: translateX(18px);
+}
+
+.rp-switch input:disabled + .rp-switch-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Time Select Inputs */
+.rp-time-select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ded3c7;
+  background-color: #ffffff;
+  font-size: 13px;
+  color: #2a1911;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  max-width: 135px;
+}
+
+.rp-time-select:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.rp-to-cell {
+  text-align: center;
+  width: 32px;
+  padding: 0 !important;
+}
+
+.rp-to-label {
+  font-size: 12px;
+  color: #8c7b6f;
+  font-weight: 500;
+}
+
+/* Copy Action Button */
+.rp-copy-day-btn {
+  background: transparent;
+  border: none;
+  color: #8c7b6f;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.rp-copy-day-btn:hover {
+  background: #fbf6f0;
+  color: #8b4513;
+}
+
+/* Mobile Schedule Cards (Hidden on desktop) */
+.rp-hours-mobile-cards {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.rp-hours-mobile-card {
+  background: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rp-hours-mobile-card.closed {
+  background: #faf8f5;
+  opacity: 0.75;
+}
+
+.rp-hours-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rp-hours-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rp-hours-card-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rp-hours-time-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rp-hours-time-row .rp-time-select {
+  flex: 1;
+}
+
+/* Note Alert Panel (Screenshot 1) */
+.rp-note-banner {
+  margin: 20px 24px 4px 24px;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.rp-note-icon-wrap {
+  color: #d97706;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.rp-note-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.rp-note-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 2px 0;
+}
+
+.rp-note-text {
+  font-size: 12.5px;
+  color: #78350f;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Hours Bottom Actions Bar */
+.rp-hours-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Action Buttons (Green Save Changes Button)
+   -------------------------------------------------------------------------- */
+.rp-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.rp-btn-save {
+  background: #00a86b;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 168, 107, 0.22);
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rp-btn-save:hover {
+  background: #047857;
+  box-shadow: 0 4px 12px rgba(0, 168, 107, 0.32);
+  transform: translateY(-1px);
+}
+
+.rp-btn-save:active {
+  transform: translateY(0);
+}
+
+.rp-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #2a1911;
+  border: 1px solid #ded3c7;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rp-btn-outline:hover {
+  background: #fbf6f0;
+  border-color: #8b4513;
+  color: #8b4513;
+}
+
+/* Step Navigation Secondary Button */
+.rp-btn-step-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #3e2719;
+  border: 1px solid #ded3c7;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.rp-btn-step-nav:hover {
+  background: #fbf6f0;
+  border-color: #8b4513;
+  color: #8b4513;
+}
+
+.rp-form-actions--between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rp-form-actions-left,
+.rp-form-actions-right,
+.rp-hours-actions-left,
+.rp-hours-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .rp-tabs-scroll-btn {
+    display: flex;
+  }
+
+  .rp-grid--4col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .owner-restaurant-profile-page {
+    padding: 0 0 50px 0;
+  }
+
+  .rp-mobile-step-card {
+    display: block;
+  }
+
+  .rp-tabs-scroll-btn {
+    display: flex;
+  }
+
+  .rp-tabs-strip {
+    scrollbar-width: thin;
+    scrollbar-color: #d1bba7 transparent;
+    padding-bottom: 6px;
+  }
+
+  .rp-tabs-strip::-webkit-scrollbar {
+    height: 4px;
+    display: block;
+  }
+
+  .rp-tabs-strip::-webkit-scrollbar-thumb {
+    background: #d1bba7;
+    border-radius: 4px;
+  }
+
+  .rp-form-card {
+    padding: 18px 14px;
+  }
+
+  .rp-grid--2col,
+  .rp-grid--3col,
+  .rp-grid--4col {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .rp-hours-table-wrap {
+    display: none;
+  }
+
+  .rp-hours-mobile-cards {
+    display: flex;
+  }
+
+  .rp-note-banner {
+    margin: 12px 14px 0 14px;
+  }
+
+  .rp-hours-bottom-bar {
+    flex-direction: column-reverse;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .rp-hours-actions-left,
+  .rp-hours-actions-right {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rp-form-actions--between {
+    flex-direction: column-reverse;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .rp-form-actions-left,
+  .rp-form-actions-right {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rp-btn-save,
+  .rp-btn-outline,
+  .rp-btn-step-nav {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .rp-cuisine-dropdown-list {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-map-container {
+    height: 220px;
+  }
+}
