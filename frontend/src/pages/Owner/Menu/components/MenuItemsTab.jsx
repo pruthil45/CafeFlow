@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Search,
@@ -21,6 +21,8 @@ import {
   SlidersHorizontal,
   RotateCcw,
   Trash2,
+  ArrowUpDown,
+  ChevronDown,
 } from 'lucide-react'
 import { OWNER_MENU_ADDONS } from '../../data/ownerMockData'
 import '../../Owner.css'
@@ -43,6 +45,16 @@ export default function MenuItemsTab({
   const [currentPage, setCurrentPage] = useState(1)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const itemsPerPage = 12
+
+  // Quick Filters & Sort state for Blinkit-style mobile drawers & desktop integration
+  const [sortBy, setSortBy] = useState('relevance') // 'relevance', 'price-asc', 'price-desc', 'popular'
+  const [selectedTypes, setSelectedTypes] = useState([]) // e.g. ['veg', 'non-veg', 'burgers']
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState([]) // e.g. ['under-150', '150-300', 'above-300']
+  const [selectedTags, setSelectedTags] = useState([]) // e.g. ['Bestseller', 'Popular']
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false)
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
+  const [activeFilterModalTab, setActiveFilterModalTab] = useState('type') // 'type', 'price', 'availability', 'tags'
+  const [filterModalSearch, setFilterModalSearch] = useState('')
 
   // Selected item for detail modal (default to null - NO auto-select!)
   const [selectedItemId, setSelectedItemId] = useState(null)
@@ -177,19 +189,122 @@ export default function MenuItemsTab({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [selectedItemId])
 
+  // Multi-filter toggle helpers
+  const handleToggleType = (typeId) => {
+    setSelectedTypes((prev) =>
+      prev.includes(typeId) ? prev.filter((t) => t !== typeId) : [...prev, typeId]
+    )
+    setCurrentPage(1)
+  }
+
+  const handleTogglePriceRange = (rangeId) => {
+    setSelectedPriceRanges((prev) =>
+      prev.includes(rangeId) ? prev.filter((r) => r !== rangeId) : [...prev, rangeId]
+    )
+    setCurrentPage(1)
+  }
+
+  const handleToggleTag = (tag) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    )
+    setCurrentPage(1)
+  }
+
+  const handleClearFilters = () => {
+    setSelectedTypes([])
+    setSelectedPriceRanges([])
+    setSelectedTags([])
+    setFilterAvailability('all')
+    setFilterDietary('all')
+    setFilterModalSearch('')
+    setCurrentPage(1)
+  }
+
+  const openFiltersModal = (tab = 'type') => {
+    setActiveFilterModalTab(tab)
+    setFilterModalSearch('')
+    setIsFiltersModalOpen(true)
+  }
+
+  // Ensure all categories have images (fallback to high quality appetizing food photography)
+  const categoryListWithImages = useMemo(() => {
+    return categories.map((cat) => {
+      let img = cat.image
+      if (!img) {
+        if (cat.slug === 'all') {
+          img = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=120&auto=format&fit=crop&q=80'
+        } else {
+          img = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120&auto=format&fit=crop&q=80'
+        }
+      }
+      return { ...cat, displayImage: img }
+    })
+  }, [categories])
+
+  // Filter Drawer Type options with counts and icons
+  const filterTypeOptions = useMemo(() => {
+    return [
+      { id: 'veg', label: 'Pure Veg', count: items.filter((i) => i.itemType === 'veg').length, icon: '🥬' },
+      { id: 'non-veg', label: 'Non-Veg', count: items.filter((i) => i.itemType === 'non-veg').length, icon: '🍗' },
+      { id: 'egg', label: 'Contains Egg', count: items.filter((i) => i.itemType === 'egg').length, icon: '🥚' },
+      { id: 'beverages', label: 'Beverages', count: items.filter((i) => i.category?.toLowerCase() === 'beverages').length, icon: '☕' },
+      { id: 'burgers', label: 'Burgers', count: items.filter((i) => i.category?.toLowerCase() === 'burgers').length, icon: '🍔' },
+      { id: 'pizzas', label: 'Pizzas', count: items.filter((i) => i.category?.toLowerCase() === 'pizzas').length, icon: '🍕' },
+      { id: 'pasta', label: 'Pasta', count: items.filter((i) => i.category?.toLowerCase() === 'pasta').length, icon: '🍝' },
+      { id: 'sandwiches', label: 'Sandwiches', count: items.filter((i) => i.category?.toLowerCase() === 'sandwiches').length, icon: '🥪' },
+      { id: 'desserts', label: 'Desserts', count: items.filter((i) => i.category?.toLowerCase() === 'desserts').length, icon: '🍰' },
+      { id: 'starters', label: 'Starters', count: items.filter((i) => i.category?.toLowerCase() === 'starters').length, icon: '🥗' },
+    ]
+  }, [items])
+
+  // Filter Drawer Price options with counts
+  const filterPriceOptions = useMemo(() => {
+    return [
+      { id: 'under-150', label: 'Below ₹150', count: items.filter((i) => Number(i.price) < 150).length },
+      { id: '150-300', label: '₹150 – ₹300', count: items.filter((i) => Number(i.price) >= 150 && Number(i.price) <= 300).length },
+      { id: 'above-300', label: 'Above ₹300', count: items.filter((i) => Number(i.price) > 300).length },
+    ]
+  }, [items])
+
+  // Filter Drawer Availability options with counts
+  const filterAvailabilityOptions = useMemo(() => {
+    return [
+      { id: 'active', label: 'Active (In Stock)', count: items.filter((i) => i.active).length },
+      { id: 'inactive', label: 'Inactive (Out of Stock)', count: items.filter((i) => !i.active).length },
+    ]
+  }, [items])
+
+  // Filter Drawer Tags options with counts
+  const filterTagOptions = useMemo(() => {
+    return [
+      { id: 'Bestseller', label: 'Bestseller', count: items.filter((i) => i.tag === 'Bestseller').length },
+      { id: 'Popular', label: 'Popular', count: items.filter((i) => i.tag === 'Popular').length },
+      { id: 'Spicy', label: 'Spicy', count: items.filter((i) => i.tag === 'Spicy').length },
+      { id: 'New', label: 'New Arrival', count: items.filter((i) => i.tag === 'New').length },
+    ]
+  }, [items])
+
   // Count active filter pills
   const activeFilterCount = useMemo(() => {
     let count = 0
     if (filterAvailability !== 'all') count++
     if (filterDietary !== 'all') count++
+    count += selectedTypes.length
+    count += selectedPriceRanges.length
+    count += selectedTags.length
     return count
-  }, [filterAvailability, filterDietary])
+  }, [filterAvailability, filterDietary, selectedTypes, selectedPriceRanges, selectedTags])
 
   const hasActiveFilters =
     searchQuery.trim() !== '' ||
     filterAvailability !== 'all' ||
     filterDietary !== 'all' ||
-    selectedCategory !== 'all'
+    selectedCategory !== 'all' ||
+    selectedTypes.length > 0 ||
+    selectedPriceRanges.length > 0 ||
+    selectedTags.length > 0 ||
+    sortBy !== 'relevance'
 
   // Toggle active status of an item
   const handleToggleItemStatus = (e, itemId) => {
@@ -213,9 +328,9 @@ export default function MenuItemsTab({
     showToast(`Saved changes for ${editForm.name}!`)
   }
 
-  // Filtered items
+  // Filtered and Sorted items
   const filteredItems = useMemo(() => {
-    return items.filter((item) => {
+    let result = items.filter((item) => {
       // Category filter
       if (selectedCategory !== 'all') {
         const catObj = categories.find((c) => c.slug === selectedCategory)
@@ -231,6 +346,34 @@ export default function MenuItemsTab({
       // Dietary filter
       if (filterDietary !== 'all' && item.itemType !== filterDietary) return false
 
+      // Multi-select Type filter
+      if (selectedTypes.length > 0) {
+        const matchesType = selectedTypes.some((t) => {
+          if (t === 'veg' || t === 'non-veg' || t === 'egg') {
+            return item.itemType === t
+          }
+          return item.category?.toLowerCase() === t.toLowerCase()
+        })
+        if (!matchesType) return false
+      }
+
+      // Price filter
+      if (selectedPriceRanges.length > 0) {
+        const p = Number(item.price) || 0
+        const matchesPrice = selectedPriceRanges.some((range) => {
+          if (range === 'under-150') return p < 150
+          if (range === '150-300') return p >= 150 && p <= 300
+          if (range === 'above-300') return p > 300
+          return true
+        })
+        if (!matchesPrice) return false
+      }
+
+      // Tags filter
+      if (selectedTags.length > 0) {
+        if (!selectedTags.includes(item.tag)) return false
+      }
+
       // Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase()
@@ -242,7 +385,33 @@ export default function MenuItemsTab({
 
       return true
     })
-  }, [items, categories, selectedCategory, filterAvailability, filterDietary, searchQuery])
+
+    // Sort order
+    if (sortBy === 'price-asc') {
+      result = [...result].sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0))
+    } else if (sortBy === 'price-desc') {
+      result = [...result].sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0))
+    } else if (sortBy === 'popular') {
+      result = [...result].sort((a, b) => {
+        const scoreA = a.tag === 'Bestseller' ? 2 : a.tag === 'Popular' ? 1 : 0
+        const scoreB = b.tag === 'Bestseller' ? 2 : b.tag === 'Popular' ? 1 : 0
+        return scoreB - scoreA
+      })
+    }
+
+    return result
+  }, [
+    items,
+    categories,
+    selectedCategory,
+    filterAvailability,
+    filterDietary,
+    selectedTypes,
+    selectedPriceRanges,
+    selectedTags,
+    searchQuery,
+    sortBy,
+  ])
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))
@@ -254,95 +423,261 @@ export default function MenuItemsTab({
   // Import/Export Modal state
   const [isImportExportOpen, setIsImportExportOpen] = useState(false)
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+  // Smooth drag-to-scroll support for mobile filter chips
+  const filterStripRef = useRef(null)
+  useEffect(() => {
+    const el = filterStripRef.current
+    if (!el) return
+    let isDown = false
+    let startX = 0
+    let scrollLeft = 0
 
-      {/* Mobile Category Pills (Horizontal scroll on <= 768px screens) */}
-      <div className="owner-mobile-cat-pills">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            className={`owner-mobile-cat-pill ${
-              selectedCategory === cat.slug ? 'active' : ''
-            }`}
-            onClick={() => {
-              setSelectedCategory(cat.slug)
-              setCurrentPage(1)
-            }}
-          >
-            {cat.image ? (
-              <img
-                src={cat.image}
-                alt=""
-                style={{ width: 18, height: 18, borderRadius: 4, objectFit: 'cover' }}
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
-              />
-            ) : (
-              <LayoutGrid size={13} />
-            )}
-            <span>{cat.name}</span>
-            <span className="owner-cat-pill-count">{cat.count}</span>
-          </button>
-        ))}
-      </div>
+    const onMouseDown = (e) => {
+      isDown = true
+      startX = e.pageX - el.offsetLeft
+      scrollLeft = el.scrollLeft
+    }
+    const onMouseLeave = () => { isDown = false }
+    const onMouseUp = () => { isDown = false }
+    const onMouseMove = (e) => {
+      if (!isDown) return
+      e.preventDefault()
+      const x = e.pageX - el.offsetLeft
+      const walk = (x - startX) * 1.5
+      el.scrollLeft = scrollLeft - walk
+    }
+
+    el.addEventListener('mousedown', onMouseDown)
+    el.addEventListener('mouseleave', onMouseLeave)
+    el.addEventListener('mouseup', onMouseUp)
+    el.addEventListener('mousemove', onMouseMove)
+    return () => {
+      el.removeEventListener('mousedown', onMouseDown)
+      el.removeEventListener('mouseleave', onMouseLeave)
+      el.removeEventListener('mouseup', onMouseUp)
+      el.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [])
+
+  // Smooth drag-to-scroll support for mobile category rail
+  const catRailRef = useRef(null)
+  useEffect(() => {
+    const el = catRailRef.current
+    if (!el) return
+    let isDown = false
+    let startY = 0
+    let scrollTop = 0
+
+    const onMouseDown = (e) => {
+      isDown = true
+      startY = e.pageY - el.offsetTop
+      scrollTop = el.scrollTop
+    }
+    const onMouseLeave = () => { isDown = false }
+    const onMouseUp = () => { isDown = false }
+    const onMouseMove = (e) => {
+      if (!isDown) return
+      e.preventDefault()
+      const y = e.pageY - el.offsetTop
+      const walk = (y - startY) * 1.5
+      el.scrollTop = scrollTop - walk
+    }
+
+    el.addEventListener('mousedown', onMouseDown)
+    el.addEventListener('mouseleave', onMouseLeave)
+    el.addEventListener('mouseup', onMouseUp)
+    el.addEventListener('mousemove', onMouseMove)
+    return () => {
+      el.removeEventListener('mousedown', onMouseDown)
+      el.removeEventListener('mouseleave', onMouseLeave)
+      el.removeEventListener('mouseup', onMouseUp)
+      el.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [])
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', maxWidth: '100%', minWidth: 0 }}>
 
       {/* 2-Part Layout: Left Sticky Categories Panel | Right Items Grid */}
       <div className="owner-menu-workspace">
-        {/* LEFT: Categories Panel (Sticky & showing category images) */}
-        <div className="owner-categories-panel">
-          <div className="owner-categories-panel-header">
-            <h3 className="owner-categories-panel-title">Categories</h3>
-            <button
-              type="button"
-              className="owner-categories-add-btn"
-              title="Add Category"
-              onClick={() => showToast('Open Categories tab to add new category')}
-            >
-              <Plus size={14} />
-            </button>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-            {categories.map((cat) => (
+        {/* LEFT: Categories Panel (Desktop full panel + Mobile vertical rail matching Image 1) */}
+        <div ref={catRailRef} className="owner-categories-panel">
+          {/* Desktop Categories Panel View */}
+          <div className="owner-categories-desktop-view">
+            <div className="owner-categories-panel-header">
+              <h3 className="owner-categories-panel-title">Categories</h3>
               <button
-                key={cat.id}
                 type="button"
-                className={`owner-category-item-btn ${
-                  selectedCategory === cat.slug ? 'active' : ''
-                }`}
-                onClick={() => {
-                  setSelectedCategory(cat.slug)
-                  setCurrentPage(1)
-                }}
+                className="owner-categories-add-btn"
+                title="Add Category"
+                onClick={() => showToast('Open Categories tab to add new category')}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                  {cat.image ? (
-                    <img
-                      src={cat.image}
-                      alt={cat.name}
-                      className="owner-cat-mini-thumb"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none'
-                      }}
-                    />
-                  ) : (
-                    <div className="owner-cat-mini-placeholder">
+                <Plus size={14} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`owner-category-item-btn ${
+                    selectedCategory === cat.slug ? 'active' : ''
+                  }`}
+                  onClick={() => {
+                    setSelectedCategory(cat.slug)
+                    setCurrentPage(1)
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                    {cat.image ? (
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="owner-cat-mini-thumb"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                          const fallback = e.currentTarget.parentElement?.querySelector('.owner-cat-mini-placeholder')
+                          if (fallback) fallback.style.display = 'inline-flex'
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className="owner-cat-mini-placeholder"
+                      style={{ display: cat.image ? 'none' : 'inline-flex' }}
+                    >
                       <LayoutGrid size={13} />
                     </div>
-                  )}
-                  <span className="owner-cat-name-truncate">{cat.name}</span>
-                </div>
-                <span className="owner-category-count-badge">{cat.count}</span>
-              </button>
-            ))}
+                    <span className="owner-cat-name-truncate">{cat.name}</span>
+                  </div>
+                  <span className="owner-category-count-badge">{cat.count}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Categories Vertical Rail View (Blinkit style matching Image 1) */}
+          <div className="owner-categories-mobile-rail">
+            {categoryListWithImages.map((cat) => {
+              const isActive = selectedCategory === cat.slug
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`owner-cat-rail-btn ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedCategory(cat.slug)
+                    setCurrentPage(1)
+                  }}
+                >
+                  <div className="owner-cat-rail-avatar-box">
+                    <img
+                      src={cat.displayImage}
+                      alt={cat.name}
+                      className="owner-cat-rail-img"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120&auto=format&fit=crop&q=80'
+                      }}
+                    />
+                  </div>
+                  <span className="owner-cat-rail-label">
+                    {cat.slug === 'all' ? 'All' : cat.name}
+                  </span>
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {/* CENTER: Menu Items Workspace */}
         <div className="owner-menu-items-area">
+          {/* Mobile Compact Items Top Bar (Menu title + Search Box in 1 single line to eliminate empty space) */}
+          <div className="owner-mobile-items-top-bar">
+            <span className="owner-mobile-items-title">Menu</span>
+            <div className="owner-mobile-menu-search-wrap">
+              <Search size={13} />
+              <input
+                type="text"
+                placeholder="Search menu..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setCurrentPage(1)
+                }}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="owner-search-clear-btn"
+                  onClick={() => {
+                    setSearchQuery('')
+                    setCurrentPage(1)
+                  }}
+                  title="Clear"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Quick Filter Strip (Filters, Sort, Type, Price - horizontally scrollable with touch & mouse drag) */}
+          <div
+            ref={filterStripRef}
+            className="owner-mobile-quick-filter-strip"
+            role="region"
+            aria-label="Filter chips"
+          >
+            <button
+              type="button"
+              className={`owner-mobile-qf-chip ${activeFilterCount > 0 ? 'active' : ''}`}
+              onClick={() => openFiltersModal('type')}
+            >
+              <SlidersHorizontal size={11} />
+              <span>Filters</span>
+              <ChevronDown size={11} />
+              {activeFilterCount > 0 && (
+                <span className="owner-qf-badge">{activeFilterCount}</span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              className={`owner-mobile-qf-chip ${sortBy !== 'relevance' ? 'active' : ''}`}
+              onClick={() => setIsSortModalOpen(true)}
+            >
+              <ArrowUpDown size={11} />
+              <span>
+                {sortBy === 'price-asc'
+                  ? 'Price: Low'
+                  : sortBy === 'price-desc'
+                  ? 'Price: High'
+                  : sortBy === 'popular'
+                  ? 'Popular'
+                  : 'Sort'}
+              </span>
+              <ChevronDown size={11} />
+            </button>
+
+            <button
+              type="button"
+              className={`owner-mobile-qf-chip ${selectedTypes.length > 0 ? 'active' : ''}`}
+              onClick={() => openFiltersModal('type')}
+            >
+              <span>{selectedTypes.length > 0 ? `Type (${selectedTypes.length})` : 'Type'}</span>
+              <ChevronDown size={11} />
+            </button>
+
+            <button
+              type="button"
+              className={`owner-mobile-qf-chip ${selectedPriceRanges.length > 0 ? 'active' : ''}`}
+              onClick={() => openFiltersModal('price')}
+            >
+              <span>{selectedPriceRanges.length > 0 ? `Price (${selectedPriceRanges.length})` : 'Price'}</span>
+              <ChevronDown size={11} />
+            </button>
+          </div>
           {/* Filters Bar */}
           <div className="owner-menu-filter-bar">
             {/* Primary Row: Search input + Mobile Filter Toggle Button + View Mode Toggles */}
@@ -481,6 +816,9 @@ export default function MenuItemsTab({
                       alt={item.name}
                       className="owner-item-card-image"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop&q=80'
+                      }}
                     />
                     <button
                       type="button"
@@ -1747,12 +2085,12 @@ export default function MenuItemsTab({
         </div>
       )}
 
-      {/* Import / Export Dialog */}
+      {/* Export Menu CSV Dialog */}
       {isImportExportOpen && (
         <div className="owner-modal-overlay" onClick={() => setIsImportExportOpen(false)}>
           <div className="owner-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="owner-modal-header">
-              <h2 className="owner-modal-title">Import & Export Menu Items</h2>
+              <h2 className="owner-modal-title">Export Menu Data</h2>
               <button
                 type="button"
                 className="owner-modal-close-btn"
@@ -1766,7 +2104,7 @@ export default function MenuItemsTab({
                 <div style={{ padding: '14px', borderRadius: '8px', background: '#faf8f5', border: '1px solid #eee8df' }}>
                   <h4 style={{ margin: '0 0 6px 0', fontSize: '13.5px', fontWeight: 800 }}>Export Menu (CSV)</h4>
                   <p style={{ margin: 0, fontSize: '12px', color: '#7a6a5e' }}>
-                    Download current 48 menu items with price, category, status, and variants.
+                    Download current catalogue items with price, category, status, and variants.
                   </p>
                   <button
                     type="button"
@@ -1780,33 +2118,259 @@ export default function MenuItemsTab({
                     <Download size={14} /> Download CSV
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-                <div style={{ padding: '14px', borderRadius: '8px', background: '#faf8f5', border: '1px solid #eee8df' }}>
-                  <h4 style={{ margin: '0 0 6px 0', fontSize: '13.5px', fontWeight: 800 }}>Import Menu (CSV / Excel)</h4>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#7a6a5e' }}>
-                    Upload updated menu spreadsheet to bulk update prices or create new items.
-                  </p>
-                  <div
-                    style={{
-                      border: '2px dashed #ded6c9',
-                      padding: '16px',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                      marginTop: '10px',
-                      cursor: 'pointer',
-                    }}
+      {/* Sort by Bottom Sheet Drawer (Matching Blinkit Image 3) */}
+      {isSortModalOpen && (
+        <div className="owner-quick-modal-backdrop" onClick={() => setIsSortModalOpen(false)}>
+          <div className="owner-sort-sheet" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="owner-sheet-close-circle"
+              onClick={() => setIsSortModalOpen(false)}
+              aria-label="Close sort menu"
+            >
+              <X size={16} />
+            </button>
+
+            <h3 className="owner-sort-sheet-title">Sort by</h3>
+
+            <div className="owner-sort-options-list">
+              {[
+                { id: 'relevance', label: 'Relevance (default)' },
+                { id: 'price-asc', label: 'Price (low to high)' },
+                { id: 'price-desc', label: 'Price (high to low)' },
+                { id: 'popular', label: 'Discount / Popularity (Bestsellers first)' },
+              ].map((opt) => {
+                const isSelected = sortBy === opt.id
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    className={`owner-sort-option-row ${isSelected ? 'selected' : ''}`}
                     onClick={() => {
-                      showToast('Menu imported successfully!')
-                      setIsImportExportOpen(false)
+                      setSortBy(opt.id)
+                      setCurrentPage(1)
+                      setIsSortModalOpen(false)
                     }}
                   >
-                    <Upload size={20} color="#8c4a23" />
-                    <div style={{ fontSize: '12.5px', fontWeight: 700, marginTop: '4px' }}>
-                      Click to choose CSV file
+                    <div className={`owner-sort-radio-outer ${isSelected ? 'selected' : ''}`}>
+                      {isSelected && <div className="owner-sort-radio-inner" />}
                     </div>
-                  </div>
-                </div>
+                    <span className="owner-sort-option-label">{opt.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filters 2-Column Bottom Sheet Drawer (Matching Blinkit Images 2 & 4) */}
+      {isFiltersModalOpen && (
+        <div className="owner-quick-modal-backdrop" onClick={() => setIsFiltersModalOpen(false)}>
+          <div className="owner-filters-sheet" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="owner-sheet-close-circle"
+              onClick={() => setIsFiltersModalOpen(false)}
+              aria-label="Close filters menu"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="owner-filters-sheet-header">
+              <h3 className="owner-filters-sheet-title">Filters</h3>
+              <div className="owner-filters-search-wrap">
+                <Search size={15} />
+                <input
+                  type="text"
+                  placeholder="Search across filters..."
+                  value={filterModalSearch}
+                  onChange={(e) => setFilterModalSearch(e.target.value)}
+                />
+                {filterModalSearch && (
+                  <button
+                    type="button"
+                    className="owner-search-clear-btn"
+                    onClick={() => setFilterModalSearch('')}
+                  >
+                    <X size={13} />
+                  </button>
+                )}
               </div>
+            </div>
+
+            <div className="owner-filters-split-body">
+              {/* Left Column: Filter categories list */}
+              <div className="owner-filters-tabs-col">
+                {[
+                  { id: 'type', label: 'Type' },
+                  { id: 'price', label: 'Price' },
+                  { id: 'availability', label: 'Availability' },
+                  { id: 'tags', label: 'Dietary & Tags' },
+                ].map((tab) => {
+                  const isTabActive = activeFilterModalTab === tab.id
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      className={`owner-filters-tab-btn ${isTabActive ? 'active' : ''}`}
+                      onClick={() => setActiveFilterModalTab(tab.id)}
+                    >
+                      <span>{tab.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Right Column: Filter options with checkboxes and counts */}
+              <div className="owner-filters-options-col">
+                {activeFilterModalTab === 'type' && (
+                  <div className="owner-filters-options-list">
+                    {filterTypeOptions
+                      .filter((opt) =>
+                        filterModalSearch
+                          ? opt.label.toLowerCase().includes(filterModalSearch.toLowerCase())
+                          : true
+                      )
+                      .map((opt) => {
+                        const isChecked = selectedTypes.includes(opt.id)
+                        return (
+                          <div
+                            key={opt.id}
+                            className="owner-filter-option-row"
+                            onClick={() => handleToggleType(opt.id)}
+                          >
+                            <div className="owner-filter-option-left">
+                              <span className="owner-filter-type-emoji">{opt.icon}</span>
+                              <span className="owner-filter-option-text">
+                                {opt.label} <span className="owner-filter-count">({opt.count})</span>
+                              </span>
+                            </div>
+                            <div className={`owner-filter-checkbox ${isChecked ? 'checked' : ''}`}>
+                              {isChecked && <Check size={13} strokeWidth={3} />}
+                            </div>
+                          </div>
+                        )
+                      })}
+                  </div>
+                )}
+
+                {activeFilterModalTab === 'price' && (
+                  <div className="owner-filters-options-list">
+                    {filterPriceOptions
+                      .filter((opt) =>
+                        filterModalSearch
+                          ? opt.label.toLowerCase().includes(filterModalSearch.toLowerCase())
+                          : true
+                      )
+                      .map((opt) => {
+                        const isChecked = selectedPriceRanges.includes(opt.id)
+                        return (
+                          <div
+                            key={opt.id}
+                            className="owner-filter-option-row"
+                            onClick={() => handleTogglePriceRange(opt.id)}
+                          >
+                            <div className="owner-filter-option-left">
+                              <span className="owner-filter-option-text">
+                                {opt.label} <span className="owner-filter-count">({opt.count})</span>
+                              </span>
+                            </div>
+                            <div className={`owner-filter-checkbox ${isChecked ? 'checked' : ''}`}>
+                              {isChecked && <Check size={13} strokeWidth={3} />}
+                            </div>
+                          </div>
+                        )
+                      })}
+                  </div>
+                )}
+
+                {activeFilterModalTab === 'availability' && (
+                  <div className="owner-filters-options-list">
+                    {filterAvailabilityOptions
+                      .filter((opt) =>
+                        filterModalSearch
+                          ? opt.label.toLowerCase().includes(filterModalSearch.toLowerCase())
+                          : true
+                      )
+                      .map((opt) => {
+                        const isChecked = filterAvailability === opt.id
+                        return (
+                          <div
+                            key={opt.id}
+                            className="owner-filter-option-row"
+                            onClick={() => {
+                              setFilterAvailability((prev) => (prev === opt.id ? 'all' : opt.id))
+                              setCurrentPage(1)
+                            }}
+                          >
+                            <div className="owner-filter-option-left">
+                              <span className="owner-filter-option-text">
+                                {opt.label} <span className="owner-filter-count">({opt.count})</span>
+                              </span>
+                            </div>
+                            <div className={`owner-filter-checkbox ${isChecked ? 'checked' : ''}`}>
+                              {isChecked && <Check size={13} strokeWidth={3} />}
+                            </div>
+                          </div>
+                        )
+                      })}
+                  </div>
+                )}
+
+                {activeFilterModalTab === 'tags' && (
+                  <div className="owner-filters-options-list">
+                    {filterTagOptions
+                      .filter((opt) =>
+                        filterModalSearch
+                          ? opt.label.toLowerCase().includes(filterModalSearch.toLowerCase())
+                          : true
+                      )
+                      .map((opt) => {
+                        const isChecked = selectedTags.includes(opt.id)
+                        return (
+                          <div
+                            key={opt.id}
+                            className="owner-filter-option-row"
+                            onClick={() => handleToggleTag(opt.id)}
+                          >
+                            <div className="owner-filter-option-left">
+                              <span className="owner-filter-option-text">
+                                {opt.label} <span className="owner-filter-count">({opt.count})</span>
+                              </span>
+                            </div>
+                            <div className={`owner-filter-checkbox ${isChecked ? 'checked' : ''}`}>
+                              {isChecked && <Check size={13} strokeWidth={3} />}
+                            </div>
+                          </div>
+                        )
+                      })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="owner-filters-sheet-footer">
+              <button
+                type="button"
+                className="owner-filters-clear-btn"
+                onClick={handleClearFilters}
+              >
+                Clear Filter
+              </button>
+              <button
+                type="button"
+                className="owner-filters-apply-btn"
+                onClick={() => setIsFiltersModalOpen(false)}
+              >
+                Apply
+              </button>
             </div>
           </div>
         </div>

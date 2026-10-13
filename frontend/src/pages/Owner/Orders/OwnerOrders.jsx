@@ -40,6 +40,7 @@ export default function OwnerOrders() {
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState('All')
   const [dateRange, setDateRange] = useState('Today, Oct 1, 2026')
   const [isDateMenuOpen, setIsDateMenuOpen] = useState(false)
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -199,20 +200,20 @@ export default function OwnerOrders() {
       {/* ====================================================================
           PAGE HEADER: Title + Subtitle + Date Selector + Add Order Button
           ==================================================================== */}
-      <div className="owner-module-header">
+      <div className="owner-module-header owner-orders-module-header">
         <div className="owner-module-title-wrap">
           <h1 className="owner-module-title">Orders</h1>
-          <p className="owner-module-subtitle">
+          <p className="owner-module-subtitle owner-orders-header-subtitle">
             View and manage all customer orders for {selectedCafe?.name || 'The Daily Bean'}.
           </p>
         </div>
 
-        <div className="owner-module-actions">
+        <div className="owner-module-actions owner-orders-header-actions">
           {/* Interactive Date Range Button */}
           <div style={{ position: 'relative' }}>
             <button
               type="button"
-              className="owner-btn-secondary"
+              className="owner-btn-secondary owner-orders-date-btn"
               onClick={() => setIsDateMenuOpen(!isDateMenuOpen)}
               aria-expanded={isDateMenuOpen}
             >
@@ -243,11 +244,11 @@ export default function OwnerOrders() {
           {/* + Add Order Button */}
           <button
             type="button"
-            className="owner-btn-primary"
+            className="owner-btn-primary owner-orders-add-btn"
             onClick={() => setIsAddModalOpen(true)}
           >
             <Plus size={16} />
-            <span>+ Add Order</span>
+            <span>Add Order</span>
           </button>
         </div>
       </div>
@@ -309,94 +310,116 @@ export default function OwnerOrders() {
           FILTER BAR: Search, Table Dropdown, Payment Dropdown, More Filters
           ==================================================================== */}
       <div className="owner-orders-filter-bar">
-        <div className="owner-orders-search-input-wrap">
-          <Search size={16} color="#8c7b6f" />
-          <input
-            type="text"
-            className="owner-orders-search-input"
-            placeholder="Search order ID, customer, table..."
-            value={searchQuery}
+        {/* Primary Row: Search input + Mobile Filter Toggle Button */}
+        <div className="owner-orders-filter-primary-row">
+          <div className="owner-orders-search-input-wrap">
+            <Search size={16} color="#8c7b6f" />
+            <input
+              type="text"
+              className="owner-orders-search-input"
+              placeholder="Search order ID, customer, table..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8c7b6f', display: 'flex' }}
+                aria-label="Clear search"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            className={`owner-filter-toggle-btn owner-orders-mobile-filter-btn ${showMobileFilters ? 'active' : ''}`}
+            onClick={() => setShowMobileFilters((prev) => !prev)}
+            title="Toggle Filter Dropdowns"
+          >
+            <SlidersHorizontal size={14} />
+            <span>Filters</span>
+            {((selectedTable !== 'All' ? 1 : 0) + (selectedPaymentStatus !== 'All' ? 1 : 0)) > 0 && (
+              <span className="owner-filter-count-badge">
+                {(selectedTable !== 'All' ? 1 : 0) + (selectedPaymentStatus !== 'All' ? 1 : 0)}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Secondary Row: Table, Payment Status & Reset (Always visible on Desktop, collapsible on Mobile) */}
+        <div className={`owner-orders-filter-secondary-row ${showMobileFilters ? 'is-open' : ''}`}>
+          {/* Table Selector Dropdown */}
+          <select
+            className="owner-select-field"
+            value={selectedTable}
             onChange={(e) => {
-              setSearchQuery(e.target.value)
+              setSelectedTable(e.target.value)
               setCurrentPage(1)
             }}
-          />
-          {searchQuery && (
+            aria-label="Filter by Table"
+          >
+            <option value="All">Table (All)</option>
+            {['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8'].map((t) => (
+              <option key={t} value={t}>
+                Table {t}
+              </option>
+            ))}
+          </select>
+
+          {/* Payment Status Dropdown */}
+          <select
+            className="owner-select-field"
+            value={selectedPaymentStatus}
+            onChange={(e) => {
+              setSelectedPaymentStatus(e.target.value)
+              setCurrentPage(1)
+            }}
+            aria-label="Filter by Payment Status"
+          >
+            <option value="All">Payment Status (All)</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+          </select>
+
+          {/* Reset Filters button */}
+          {(selectedTable !== 'All' || selectedPaymentStatus !== 'All' || searchQuery) ? (
             <button
               type="button"
-              onClick={() => setSearchQuery('')}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8c7b6f', display: 'flex' }}
+              className="owner-btn-secondary"
+              onClick={() => {
+                setSelectedTable('All')
+                setSelectedPaymentStatus('All')
+                setSearchQuery('')
+                setCurrentPage(1)
+              }}
+              style={{ color: '#c47d2e', fontSize: '12px', padding: '6px 12px' }}
             >
               <X size={14} />
+              <span>Reset</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="owner-btn-secondary owner-orders-desktop-more-filters"
+              onClick={() => showToast('Filters are up to date.')}
+            >
+              <SlidersHorizontal size={14} color="#8c7b6f" />
+              <span>More Filters</span>
             </button>
           )}
         </div>
-
-        {/* Table Selector Dropdown */}
-        <select
-          className="owner-select-field"
-          value={selectedTable}
-          onChange={(e) => {
-            setSelectedTable(e.target.value)
-            setCurrentPage(1)
-          }}
-          aria-label="Filter by Table"
-        >
-          <option value="All">Table (All)</option>
-          {['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8'].map((t) => (
-            <option key={t} value={t}>
-              Table {t}
-            </option>
-          ))}
-        </select>
-
-        {/* Payment Status Dropdown */}
-        <select
-          className="owner-select-field"
-          value={selectedPaymentStatus}
-          onChange={(e) => {
-            setSelectedPaymentStatus(e.target.value)
-            setCurrentPage(1)
-          }}
-          aria-label="Filter by Payment Status"
-        >
-          <option value="All">Payment Status (All)</option>
-          <option value="Paid">Paid</option>
-          <option value="Pending">Pending</option>
-        </select>
-
-        {/* More Filters / Reset */}
-        {(selectedTable !== 'All' || selectedPaymentStatus !== 'All' || searchQuery) ? (
-          <button
-            type="button"
-            className="owner-btn-secondary"
-            onClick={() => {
-              setSelectedTable('All')
-              setSelectedPaymentStatus('All')
-              setSearchQuery('')
-              setCurrentPage(1)
-            }}
-            style={{ color: '#c47d2e', fontSize: '12px' }}
-          >
-            <X size={14} />
-            <span>Reset Filters</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="owner-btn-secondary"
-            onClick={() => showToast('Filters are up to date.')}
-          >
-            <SlidersHorizontal size={14} color="#8c7b6f" />
-            <span>More Filters</span>
-          </button>
-        )}
       </div>
 
       {/* ====================================================================
-          ORDERS 5 KPI CARDS
+          ORDERS 5 KPI CARDS (Horizontal Scrollable Ribbon on Mobile)
           ==================================================================== */}
-      <section className="owner-kpis-grid" aria-label="Orders Summary Metrics">
+      <section className="owner-kpis-grid owner-orders-kpis-track" aria-label="Orders Summary Metrics">
         {/* Total Orders */}
         <div className="owner-kpi-card">
           <div className="owner-kpi-card__top">

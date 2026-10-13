@@ -9,12 +9,12 @@ import {
   Package,
   Plus,
   Download,
-  Upload,
   CheckCircle,
   AlertCircle,
   Info,
   X,
-  FileSpreadsheet,
+  MoreHorizontal,
+  ChevronRight,
 } from 'lucide-react'
 import {
   OWNER_MENU_CATEGORIES,
@@ -153,10 +153,11 @@ export default function OwnerMenu() {
     }
   }, [activeTab])
 
-  // Import / Export state
-  const [showImportExportModal, setShowImportExportModal] = useState(false)
+  // State for mobile footer 'More' sheet
+  const [showMoreMenu, setShowMoreMenu] = useState(false)
 
-  const handleExportCSV = () => {
+  // Direct Menu Data Download (CSV)
+  const handleDownloadMenuData = () => {
     const csvContent =
       'data:text/csv;charset=utf-8,ID,Name,Category,Price,Type,Status\n' +
       items
@@ -170,12 +171,11 @@ export default function OwnerMenu() {
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
-    link.setAttribute('download', 'cafeflow_menu_items.csv')
+    link.setAttribute('download', 'cafeflow_menu_catalogue.csv')
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    setShowImportExportModal(false)
-    showToast('Menu items exported as CSV', 'success')
+    showToast('Menu data catalogue downloaded successfully', 'success')
   }
 
   return (
@@ -278,12 +278,12 @@ export default function OwnerMenu() {
                 <>
                   <button
                     type="button"
-                    className="owner-btn-secondary owner-import-export-btn"
-                    onClick={() => setShowImportExportModal(true)}
-                    title="Import or Export Menu Items"
+                    className="owner-btn-secondary owner-download-menu-btn"
+                    onClick={handleDownloadMenuData}
+                    title="Download Menu Catalogue CSV"
                   >
                     <Download size={15} />
-                    <span className="owner-btn-text-desktop">Import/Export</span>
+                    <span className="owner-btn-text-desktop">Download Menu Data</span>
                   </button>
                   <button
                     type="button"
@@ -408,109 +408,176 @@ export default function OwnerMenu() {
         </>
       )}
 
-      {/* Modal: Import / Export */}
-      {showImportExportModal && (
-        <div className="owner-modal-overlay">
-          <div className="owner-modal-card" style={{ maxWidth: 440 }}>
-            <div className="owner-modal-header">
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
-                Import / Export Menu Data
-              </h3>
-              <button
-                className="owner-modal-close-btn"
-                onClick={() => setShowImportExportModal(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
+      {/* Mobile Sticky Footer Navigation Bar */}
+      {activeTab !== 'add-item' && (
+        <>
+          <nav className="owner-menu-mobile-footer-bar" aria-label="Menu sections navigation">
+            {/* 1. Items */}
+            <button
+              type="button"
+              className={`owner-menu-mobile-footer-item ${activeTab === 'items' ? 'active' : ''}`}
+              onClick={() => {
+                setShowMoreMenu(false)
+                handleTabChange('items')
+              }}
+            >
+              <div className="owner-menu-mobile-footer-icon-wrap">
+                <LayoutGrid size={18} />
+              </div>
+              <span>Items</span>
+            </button>
+
+            {/* 2. Categories */}
+            <button
+              type="button"
+              className={`owner-menu-mobile-footer-item ${activeTab === 'categories' ? 'active' : ''}`}
+              onClick={() => {
+                setShowMoreMenu(false)
+                handleTabChange('categories')
+              }}
+            >
+              <div className="owner-menu-mobile-footer-icon-wrap">
+                <Layers size={18} />
+              </div>
+              <span>Categories</span>
+            </button>
+
+            {/* 3. Center Elevated Add Item with Plus Symbol */}
+            <button
+              type="button"
+              className="owner-menu-mobile-footer-center-btn"
+              onClick={() => {
+                setShowMoreMenu(false)
+                handleOpenAddItem()
+              }}
+              title="Add New Menu Item"
+              aria-label="Add New Menu Item"
+            >
+              <div className="owner-menu-mobile-footer-center-icon">
+                <Plus size={22} strokeWidth={2.6} />
+              </div>
+              <span className="owner-menu-mobile-footer-center-label">Add Item</span>
+            </button>
+
+            {/* 4. Variations */}
+            <button
+              type="button"
+              className={`owner-menu-mobile-footer-item ${activeTab === 'variations' ? 'active' : ''}`}
+              onClick={() => {
+                setShowMoreMenu(false)
+                handleTabChange('variations')
+              }}
+            >
+              <div className="owner-menu-mobile-footer-icon-wrap">
+                <Sliders size={18} />
+              </div>
+              <span>Variations</span>
+            </button>
+
+            {/* 5. More Option */}
+            <button
+              type="button"
+              className={`owner-menu-mobile-footer-item ${showMoreMenu || ['addons', 'combos'].includes(activeTab) ? 'active' : ''}`}
+              onClick={() => setShowMoreMenu((prev) => !prev)}
+              aria-expanded={showMoreMenu}
+              aria-label="More menu options"
+            >
+              <div className="owner-menu-mobile-footer-icon-wrap">
+                <MoreHorizontal size={18} />
+              </div>
+              <span>More</span>
+            </button>
+          </nav>
+
+          {/* More Options Bottom Sheet Drawer */}
+          {showMoreMenu && (
             <div
-              className="owner-modal-body"
-              style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
+              className="owner-menu-more-backdrop"
+              onClick={() => setShowMoreMenu(false)}
             >
               <div
-                style={{
-                  padding: 12,
-                  borderRadius: 8,
-                  background: '#faf8f5',
-                  border: '1px solid #ebdccb',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
+                className="owner-menu-more-sheet"
+                onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-label="More Menu Actions"
               >
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 13.5, color: '#33271e' }}>
-                    Export All Items (.csv)
-                  </div>
-                  <div style={{ fontSize: 11.5, color: '#8c7b6f' }}>
-                    Download current catalogue ({items.length} dishes & drinks)
-                  </div>
+                <div className="owner-menu-more-sheet-handle" />
+                <div className="owner-menu-more-sheet-header">
+                  <span className="owner-menu-more-sheet-title">More Options</span>
+                  <button
+                    type="button"
+                    className="owner-menu-more-close"
+                    onClick={() => setShowMoreMenu(false)}
+                    aria-label="Close"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="owner-btn-primary"
-                  style={{ background: '#8c4a23', fontSize: 12 }}
-                  onClick={handleExportCSV}
-                >
-                  <Download size={13} style={{ marginRight: 4 }} />
-                  Export
-                </button>
-              </div>
 
-              <div
-                style={{
-                  padding: 12,
-                  borderRadius: 8,
-                  background: '#faf8f5',
-                  border: '1px dashed #d5c8b5',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 8,
-                  textAlign: 'center',
-                }}
-              >
-                <FileSpreadsheet size={28} color="#8c4a23" />
-                <div style={{ fontWeight: 700, fontSize: 13 }}>
-                  Import Items from CSV
-                </div>
-                <div style={{ fontSize: 11.5, color: '#8c7b6f' }}>
-                  Select or drag a menu CSV file to batch upload items
-                </div>
-                <label
-                  className="owner-btn-secondary"
-                  style={{ cursor: 'pointer', fontSize: 12 }}
-                >
-                  <Upload size={13} style={{ marginRight: 4 }} />
-                  Browse File
-                  <input
-                    type="file"
-                    accept=".csv"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        setShowImportExportModal(false)
-                        showToast(
-                          `Imported items from ${e.target.files[0].name}`,
-                          'success'
-                        )
-                      }
+                <div className="owner-menu-more-sheet-items">
+                  {/* Add-ons */}
+                  <button
+                    type="button"
+                    className={`owner-menu-more-item ${activeTab === 'addons' ? 'active' : ''}`}
+                    onClick={() => {
+                      setShowMoreMenu(false)
+                      handleTabChange('addons')
                     }}
-                  />
-                </label>
+                  >
+                    <div className="owner-menu-more-item-icon">
+                      <ListPlus size={18} />
+                    </div>
+                    <div className="owner-menu-more-item-text">
+                      <span className="owner-menu-more-item-title">Add-ons</span>
+                      <span className="owner-menu-more-item-sub">Extra toppings, sides & custom add-ons</span>
+                    </div>
+                    <ChevronRight size={16} className="owner-menu-more-chevron" />
+                  </button>
+
+                  {/* Combos */}
+                  <button
+                    type="button"
+                    className={`owner-menu-more-item ${activeTab === 'combos' ? 'active' : ''}`}
+                    onClick={() => {
+                      setShowMoreMenu(false)
+                      handleTabChange('combos')
+                    }}
+                  >
+                    <div className="owner-menu-more-item-icon">
+                      <Package size={18} />
+                    </div>
+                    <div className="owner-menu-more-item-text">
+                      <span className="owner-menu-more-item-title">Combos</span>
+                      <span className="owner-menu-more-item-sub">Value meals & bundled combos</span>
+                    </div>
+                    <ChevronRight size={16} className="owner-menu-more-chevron" />
+                  </button>
+
+                  <div className="owner-menu-more-divider" />
+
+                  {/* Download Menu Data */}
+                  <button
+                    type="button"
+                    className="owner-menu-more-item"
+                    onClick={() => {
+                      setShowMoreMenu(false)
+                      handleDownloadMenuData()
+                    }}
+                  >
+                    <div className="owner-menu-more-item-icon" style={{ background: '#f5efe6', color: '#8c4a23' }}>
+                      <Download size={18} />
+                    </div>
+                    <div className="owner-menu-more-item-text">
+                      <span className="owner-menu-more-item-title">Download Menu Data</span>
+                      <span className="owner-menu-more-item-sub">Export catalogue items as CSV file</span>
+                    </div>
+                    <Download size={15} style={{ color: '#8c4a23' }} />
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="owner-modal-footer">
-              <button
-                type="button"
-                className="owner-btn-secondary"
-                onClick={() => setShowImportExportModal(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </div>
   )

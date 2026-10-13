@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   ChefHat,
   Volume2,
@@ -106,18 +106,75 @@ export default function OwnerKitchenDisplay() {
     showToast(`Order #${orderId.replace('K-', '')} flagged as Rush / Priority!`)
   }
 
-  // Toggle fullscreen mode
+  // Toggle fullscreen mode with native and full-bleed CSS fallbacks
   const handleToggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {})
+    if (!isFullscreen) {
+      // Enter Fullscreen: try native API, fallback to full-bleed CSS
+      const docEl = document.documentElement
+      const rfs =
+        docEl.requestFullscreen ||
+        docEl.webkitRequestFullscreen ||
+        docEl.mozRequestFullScreen ||
+        docEl.msRequestFullscreen
+      if (rfs) {
+        try {
+          rfs.call(docEl).catch(() => {})
+        } catch (e) {
+          // ignore error, CSS fullscreen will take over
+        }
+      }
       setIsFullscreen(true)
+      showToast('Entered Fullscreen Kitchen Display mode')
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {})
+      // Exit Fullscreen
+      const efs =
+        document.exitFullscreen ||
+        document.webkitExitFullscreen ||
+        document.mozCancelFullScreen ||
+        document.msExitFullscreen
+      if (efs && (document.fullscreenElement || document.webkitFullscreenElement)) {
+        try {
+          efs.call(document).catch(() => {})
+        } catch (e) {
+          // ignore
+        }
       }
       setIsFullscreen(false)
+      showToast('Exited Fullscreen mode')
     }
   }
+
+  // Keep state synchronized with native fullscreen events and Escape key
+  useEffect(() => {
+    const handleFsChange = () => {
+      const isNativeFs = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement
+      )
+      if (!isNativeFs && isFullscreen) {
+        setIsFullscreen(false)
+      }
+    }
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        handleToggleFullscreen()
+      }
+    }
+
+    document.addEventListener('fullscreenchange', handleFsChange)
+    document.addEventListener('webkitfullscreenchange', handleFsChange)
+    document.addEventListener('mozfullscreenchange', handleFsChange)
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange)
+      document.removeEventListener('webkitfullscreenchange', handleFsChange)
+      document.removeEventListener('mozfullscreenchange', handleFsChange)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isFullscreen])
 
   // Add demo order to queued
   const handleAddDemoOrder = () => {
@@ -154,7 +211,7 @@ export default function OwnerKitchenDisplay() {
   }
 
   return (
-    <div className="owner-module-container owner-kitchen-page">
+    <div className={`owner-module-container owner-kitchen-page ${isFullscreen ? 'owner-kitchen-page--fullscreen' : ''}`}>
       {/* Toast Alert */}
       {toastMessage && (
         <div className="owner-toast" role="status">
@@ -165,7 +222,7 @@ export default function OwnerKitchenDisplay() {
       {/* Top Header & Operational Controls */}
       <div className="owner-kitchen-top-bar">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <div
               style={{
                 width: '32px',
@@ -183,6 +240,11 @@ export default function OwnerKitchenDisplay() {
             <h1 className="owner-module-title" style={{ margin: 0 }}>
               Kitchen Display
             </h1>
+            {isFullscreen && (
+              <span className="owner-kitchen-fs-badge">
+                Fullscreen KDS • Esc to exit
+              </span>
+            )}
           </div>
           <p className="owner-module-subtitle" style={{ marginTop: '2px' }}>
             Live kitchen orders and preparation status.
@@ -226,9 +288,9 @@ export default function OwnerKitchenDisplay() {
           {/* Fullscreen toggle */}
           <button
             type="button"
-            className="owner-kitchen-icon-btn"
+            className={`owner-kitchen-icon-btn ${isFullscreen ? 'active' : ''}`}
             onClick={handleToggleFullscreen}
-            title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen KDS'}
+            title={isFullscreen ? 'Exit fullscreen KDS (Esc)' : 'Enter fullscreen KDS'}
             aria-label="Toggle Fullscreen"
           >
             {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
