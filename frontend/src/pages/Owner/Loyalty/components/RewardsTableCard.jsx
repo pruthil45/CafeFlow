@@ -55,6 +55,7 @@ export default function RewardsTableCard({
         </button>
       </div>
 
+      {/* Rewards Table View */}
       <div className="owner-loyalty-table-wrap">
         <table className="owner-loyalty-table">
           <thead>

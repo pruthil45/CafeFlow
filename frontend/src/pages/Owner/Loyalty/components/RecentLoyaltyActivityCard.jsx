@@ -39,6 +39,7 @@ export default function RecentLoyaltyActivityCard({
         </button>
       </div>
 
+      {/* Activity Table View */}
       <div className="owner-loyalty-table-wrap">
         <table className="owner-loyalty-table">
           <thead>

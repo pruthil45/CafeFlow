@@ -207,6 +207,7 @@
 .owner-loyalty-table-wrap {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid #f0eae1;
   border-radius: 10px;
   background: #ffffff;
@@ -214,6 +215,7 @@
 
 .owner-loyalty-table {
   width: 100%;
+  min-width: 680px;
   border-collapse: collapse;
   text-align: left;
   font-size: 13px;
@@ -394,6 +396,8 @@
 .owner-loyalty-detail-body {
   padding: 18px 20px;
   overflow-y: auto;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -467,15 +471,55 @@
   flex-shrink: 0;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1200px) {
+/* Drawer Overlay for tablet/mobile */
+.owner-loyalty-drawer-overlay {
+  display: none;
+}
+
+/* Mobile Customer Quick Access Button */
+.owner-loyalty-mobile-customer-btn {
+  display: none;
+  margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+
+/* Tablet & Mobile Screens: Slide-over Drawer for Customer Detail Panel */
+@media (max-width: 1199px) {
   .owner-loyalty-workspace {
-    flex-direction: column;
+    display: block;
   }
+
+  .owner-loyalty-mobile-customer-btn {
+    display: block;
+  }
+
+  .owner-loyalty-drawer-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 11, 7, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1040;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .owner-loyalty-detail-panel {
-    width: 100%;
-    position: static;
-    max-height: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 440px;
+    max-width: 95vw;
+    background: #ffffff;
+    z-index: 1050;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
   }
 }
 
@@ -492,15 +536,25 @@
   .owner-loyalty-page {
     padding: 12px 14px 48px 14px;
   }
-  .owner-points-rule-pill-wrap {
-    flex-direction: column;
-    align-items: flex-start !important;
-    gap: 12px !important;
+  .owner-loyalty-detail-panel {
+    width: 100vw;
+    max-width: 100vw;
+  }
+  .owner-points-rule-badge {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
   }
   .owner-loyalty-kpi-val {
     font-size: 24px;
   }
   .owner-loyalty-card {
-    padding: 16px;
+    padding: 14px;
+    border-radius: 12px;
+  }
+  .owner-loyalty-card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
   }
 }

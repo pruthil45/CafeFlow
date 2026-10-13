@@ -1,9 +1,17 @@
 import { Users, Coins, Gift } from 'lucide-react'
 
-export default function LoyaltySummaryCards({ summary }) {
-  const members = summary?.totalMembers?.toLocaleString('en-IN') || '1,248'
-  const points = summary?.pointsEarnedThisMonth?.toLocaleString('en-IN') || '8,540'
-  const redeemed = summary?.rewardsRedeemedThisMonth?.toLocaleString('en-IN') || '320'
+export default function LoyaltySummaryCards({
+  summary,
+  membersCount,
+  pointsEarned,
+  rewardsRedeemed,
+}) {
+  const members =
+    membersCount ?? summary?.totalMembers?.toLocaleString('en-IN') ?? '1.2k'
+  const points =
+    pointsEarned ?? summary?.pointsEarnedThisMonth?.toLocaleString('en-IN') ?? '8,420'
+  const redeemed =
+    rewardsRedeemed ?? summary?.rewardsRedeemedThisMonth?.toLocaleString('en-IN') ?? 320
 
   return (
     <div className="owner-loyalty-summary-grid">

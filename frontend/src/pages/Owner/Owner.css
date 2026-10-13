@@ -1089,9 +1089,29 @@
 .owner-chart-container {
   width: 100%;
   height: 250px;
+  min-height: 250px;
   margin-top: 6px;
   position: relative;
   min-width: 0;
+}
+
+.owner-chart-container .recharts-responsive-container {
+  min-height: 240px !important;
+  width: 100% !important;
+}
+
+.owner-card__header--sales {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.owner-card__header-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* Custom Tooltip for Area Chart matching reference */
@@ -1474,11 +1494,13 @@
 /* Recent Orders Table */
 .owner-orders-table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-top: 4px;
 }
 
 .owner-orders-table {
   width: 100%;
+  min-width: 540px;
   border-collapse: collapse;
   text-align: left;
   font-size: 12.5px;
@@ -1962,8 +1984,8 @@
   }
 
   .owner-dashboard {
-    padding: 16px;
-    gap: 16px;
+    padding: 14px 12px;
+    gap: 14px;
   }
 
   .owner-dashboard__title {
@@ -1971,20 +1993,91 @@
   }
 
   .owner-kpis-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .owner-kpis-grid > .owner-kpi-card:last-child {
+    grid-column: span 2;
+  }
+
+  .owner-kpi-card {
+    padding: 11px 13px;
+    min-height: auto;
+    border-radius: 12px;
+  }
+
+  .owner-kpi-card__top {
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .owner-kpi-card__icon-box {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+
+  .owner-kpi-card__title {
+    font-size: 11.5px;
+    line-height: 1.15;
+  }
+
+  .owner-kpi-card__value {
+    font-size: 19px;
+    margin-bottom: 2px;
+    letter-spacing: -0.3px;
+  }
+
+  .owner-kpi-card__bottom {
+    margin-top: 2px;
+  }
+
+  .owner-kpi-card__trend {
+    font-size: 10.5px;
+    gap: 3px;
+  }
+
+  .owner-kpi-card__sparkbar {
+    display: none;
   }
 
   .owner-tables-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .owner-table-chip {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .owner-table-chip__name {
+    font-size: 12px;
+  }
+
+  .owner-table-chip__meta {
+    font-size: 10.5px;
   }
 
   .owner-donut-wrap {
     flex-direction: column;
     align-items: center;
+    gap: 16px;
+    padding: 6px 0;
+  }
+
+  .owner-donut-chart-box {
+    margin: 0 auto;
   }
 
   .owner-donut-legend {
     width: 100%;
+    gap: 8px;
+  }
+
+  .owner-donut-legend__item {
+    font-size: 12px;
   }
 }
 
@@ -2031,12 +2124,22 @@
   }
 
   .owner-dashboard {
-    padding: 12px;
+    padding: 12px 10px;
+    gap: 12px;
   }
 
   .owner-dashboard__header-row {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+  }
+
+  .owner-dashboard__title {
+    font-size: 20px;
+  }
+
+  .owner-dashboard__subtitle {
+    font-size: 12px;
   }
 
   .owner-dashboard__date-wrap {
@@ -2046,10 +2149,38 @@
   .owner-dashboard__date-btn {
     width: 100%;
     justify-content: space-between;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .owner-kpis-grid {
+    gap: 8px;
+  }
+
+  .owner-kpi-card {
+    padding: 10px 11px;
+  }
+
+  .owner-kpi-card__value {
+    font-size: 18px;
+  }
+
+  .owner-kpi-card__title {
+    font-size: 11px;
   }
 
   .owner-card {
-    padding: 14px 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  .owner-card__title {
+    font-size: 15px;
+  }
+
+  .owner-card__period-btn {
+    font-size: 11.5px;
+    padding: 4px 8px;
   }
 
   .owner-sales-tabs {
@@ -2060,14 +2191,28 @@
 
   .owner-sales-tab {
     flex: 1;
-    padding: 5px 8px;
+    padding: 5px 6px;
+    font-size: 11.5px;
     text-align: center;
   }
 
   .owner-orders-table th,
   .owner-orders-table td {
-    padding: 8px 6px;
+    padding: 7px 8px;
     font-size: 11.5px;
+  }
+
+  .owner-operational-alert {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .owner-operational-alert__title {
+    font-size: 12px;
+  }
+
+  .owner-operational-alert__time {
+    font-size: 11px;
   }
 }
 
@@ -2547,6 +2692,10 @@
   cursor: not-allowed;
 }
 
+.owner-pagination-bar--mobile {
+  display: none;
+}
+
 /* Mobile Orders Card View (Displayed on <= 768px) */
 .owner-mobile-orders-list {
   display: none;
@@ -2927,8 +3076,8 @@
 
 @media (max-width: 768px) {
   .owner-module-container {
-    padding: 16px;
-    gap: 16px;
+    padding: 14px 12px 36px 12px;
+    gap: 14px;
   }
 
   .owner-module-title {
@@ -2936,7 +3085,63 @@
   }
 
   .owner-analytics-kpis-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* Status Tabs Bar - smooth horizontal swipe */
+  .owner-orders-tabs-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+  }
+
+  .owner-orders-tabs-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .owner-orders-tab {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  /* Filter Bar - clean 2-column mobile grid */
+  .owner-orders-filter-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .owner-orders-search-input-wrap {
+    grid-column: 1 / -1;
+    min-width: 0;
+    width: 100%;
+    padding: 6px 10px;
+  }
+
+  .owner-orders-search-input {
+    font-size: 12px;
+  }
+
+  .owner-orders-filter-bar .owner-select-field {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 11.5px;
+  }
+
+  .owner-orders-filter-bar > .owner-btn-secondary {
+    grid-column: 1 / -1;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 11.5px;
   }
 
   /* Switch desktop orders table to mobile cards */
@@ -2946,12 +3151,95 @@
 
   .owner-mobile-orders-list {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .owner-mobile-order-card {
+    padding: 12px 14px;
+    border-radius: 12px;
+    gap: 8px;
+  }
+
+  .owner-mobile-order-card__top {
+    padding-bottom: 6px;
+  }
+
+  .owner-mobile-order-card__img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .owner-mobile-order-card__customer {
+    font-size: 12.5px;
+  }
+
+  .owner-mobile-order-card__items {
+    font-size: 11.5px;
+  }
+
+  .owner-pagination-bar--mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid var(--owner-card-border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: var(--owner-shadow-card);
+    margin-top: 4px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .owner-pagination-bar--mobile .owner-pagination-text {
+    font-size: 11.5px;
+  }
+
+  .owner-pagination-bar--mobile .owner-pagination-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 11.5px;
   }
 }
 
 @media (max-width: 480px) {
   .owner-module-container {
-    padding: 12px;
+    padding: 12px 10px 28px 10px;
+    gap: 12px;
+  }
+
+  .owner-module-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .owner-module-title {
+    font-size: 20px;
+  }
+
+  .owner-module-subtitle {
+    font-size: 12px;
+  }
+
+  .owner-module-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .owner-module-actions > div {
+    flex: 1;
+  }
+
+  .owner-module-actions .owner-btn-secondary,
+  .owner-module-actions .owner-btn-primary {
+    width: 100%;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 11.5px;
   }
 
   .owner-date-range-box {
@@ -2959,16 +3247,28 @@
     justify-content: space-between;
   }
 
-  .owner-module-actions {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
+  .owner-modal-card {
+    max-width: 100%;
+    margin: 8px;
+    border-radius: 14px;
+    max-height: 92vh;
   }
 
-  .owner-btn-primary,
-  .owner-btn-secondary {
-    width: 100%;
-    justify-content: center;
+  .owner-modal-header {
+    padding: 12px 14px;
+  }
+
+  .owner-modal-title {
+    font-size: 15px;
+  }
+
+  .owner-modal-body {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .owner-modal-footer {
+    padding: 10px 14px;
   }
 }
 

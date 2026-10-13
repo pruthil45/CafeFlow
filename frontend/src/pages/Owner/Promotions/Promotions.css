@@ -217,8 +217,15 @@
   overflow: hidden;
 }
 
+.owner-promotions-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .owner-promotions-table {
   width: 100%;
+  min-width: 780px;
   border-collapse: collapse;
   text-align: left;
   font-size: 13px;
@@ -457,15 +464,45 @@
   gap: 10px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1200px) {
+/* Panel Overlay for tablet/mobile */
+.owner-promo-panel-overlay {
+  display: none;
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+
+/* Tablet & Mobile Screens: Slide-over Drawer for Create/Edit Panel */
+@media (max-width: 1199px) {
   .owner-promotions-workspace {
-    flex-direction: column;
+    display: block;
   }
+
+  .owner-promo-panel-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 11, 7, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1040;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .owner-promotion-side-panel {
-    width: 100%;
-    position: static;
-    max-height: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 460px;
+    max-width: 95vw;
+    background: #ffffff;
+    z-index: 1050;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
   }
 }
 
@@ -479,6 +516,10 @@
   .owner-promotions-page {
     padding: 12px 14px 48px 14px;
   }
+  .owner-promotion-side-panel {
+    width: 100vw;
+    max-width: 100vw;
+  }
   .owner-promotions-summary-grid {
     grid-template-columns: 1fr;
   }
@@ -490,7 +531,15 @@
   .owner-promotions-tabs-nav {
     overflow-x: auto;
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
+    padding: 4px;
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .owner-promotions-tab-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 6px 12px;
   }
   .owner-promotions-filters-right {
     width: 100%;

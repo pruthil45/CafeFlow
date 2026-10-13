@@ -27,8 +27,13 @@ export default function OwnerPromotions() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState('ALL') // 'ALL', 'Discount', 'Buy X Get Y', 'Free Item', 'Combo Offer', 'Time Based'
 
-  // 3. Side Panel State (defaults to open with Create Promotion matching screenshot)
-  const [isSidePanelOpen, setIsSidePanelOpen] = useState(true)
+  // 3. Side Panel State (defaults to open on desktop matching screenshot, closed on mobile)
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1200
+    }
+    return true
+  })
   const [promotionToEdit, setPromotionToEdit] = useState(null)
 
   // 4. Modals State

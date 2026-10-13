@@ -1,8 +1,13 @@
 import { Coins, Edit2 } from 'lucide-react'
 
-export default function PointsRuleCard({ rule, onEditRule }) {
-  const spend = rule?.spendAmount || 100
-  const points = rule?.pointsEarned || 10
+export default function PointsRuleCard({
+  rule,
+  spendAmount,
+  pointsEarned,
+  onEditRule,
+}) {
+  const spend = spendAmount ?? rule?.spendAmount ?? 100
+  const points = pointsEarned ?? rule?.pointsEarned ?? 10
 
   return (
     <div className="owner-loyalty-card">

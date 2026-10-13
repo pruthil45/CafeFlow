@@ -138,7 +138,8 @@ export default function PromotionTable({
 
       {/* 4.4 Promotions Table Card */}
       <div className="owner-promotions-table-card">
-        <div style={{ overflowX: 'auto' }}>
+        {/* Responsive Table View */}
+        <div className="owner-promotions-table-wrap">
           <table className="owner-promotions-table">
             <thead>
               <tr>

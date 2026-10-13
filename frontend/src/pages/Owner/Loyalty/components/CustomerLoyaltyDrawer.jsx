@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ArrowLeft,
   X,
@@ -30,8 +30,24 @@ export default function CustomerLoyaltyDrawer({
   const pointsToNext = Math.max(0, targetPoints - currentPoints)
   const progressPercent = Math.min(100, Math.round((currentPoints / targetPoints) * 100))
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1200) {
+      const prev = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prev
+      }
+    }
+  }, [])
+
   return (
-    <aside className="owner-loyalty-detail-panel animate-fade-in" aria-label="Customer Loyalty Details">
+    <>
+      <div
+        className="owner-loyalty-drawer-overlay"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside className="owner-loyalty-detail-panel open animate-fade-in" aria-label="Customer Loyalty Details">
       {/* Header */}
       <div className="owner-loyalty-detail-header">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -417,5 +433,6 @@ export default function CustomerLoyaltyDrawer({
         )}
       </div>
     </aside>
+    </>
   )
 }

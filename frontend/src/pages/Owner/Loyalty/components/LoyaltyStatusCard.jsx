@@ -1,6 +1,14 @@
 import { Award } from 'lucide-react'
 
-export default function LoyaltyStatusCard({ isEnabled, onToggle }) {
+export default function LoyaltyStatusCard({ isEnabled, onToggle, onToggleStatus }) {
+  const handleToggle = (e) => {
+    if (onToggleStatus) {
+      onToggleStatus()
+    } else if (onToggle) {
+      onToggle(e.target.checked)
+    }
+  }
+
   return (
     <div className="owner-loyalty-card">
       <div className="owner-loyalty-card-header" style={{ marginBottom: 0 }}>
@@ -21,7 +29,7 @@ export default function LoyaltyStatusCard({ isEnabled, onToggle }) {
             <input
               type="checkbox"
               checked={isEnabled}
-              onChange={(e) => onToggle(e.target.checked)}
+              onChange={handleToggle}
               aria-label="Toggle loyalty program"
             />
             <span className="owner-toggle-slider" />

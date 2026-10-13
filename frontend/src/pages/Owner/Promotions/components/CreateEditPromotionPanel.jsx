@@ -108,6 +108,16 @@ export default function CreateEditPromotionPanel({
     setErrors({})
   }, [promotionToEdit, isOpen])
 
+  useEffect(() => {
+    if (isOpen && typeof window !== 'undefined' && window.innerWidth < 1200) {
+      const prev = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prev
+      }
+    }
+  }, [isOpen])
+
   if (!isOpen) return null
 
   // Validate form before submission
@@ -231,7 +241,13 @@ export default function CreateEditPromotionPanel({
   }
 
   return (
-    <aside className="owner-promotion-side-panel animate-fade-in" aria-label="Promotion Form">
+    <>
+      <div
+        className="owner-promo-panel-overlay"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside className="owner-promotion-side-panel open animate-fade-in" aria-label="Promotion Form">
       {/* Header */}
       <div className="owner-promotion-panel-header">
         <h2 className="owner-promotion-panel-title">
@@ -641,5 +657,6 @@ export default function CreateEditPromotionPanel({
         </div>
       </form>
     </aside>
+    </>
   )
 }

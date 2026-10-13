@@ -780,68 +780,136 @@ export default function OwnerOrders() {
           MOBILE ORDERS VIEW (Reflows into clean cards matching screenshot!)
           ==================================================================== */}
       <div className="owner-mobile-orders-list">
-        {displayedOrders.map((order) => (
-          <div
-            key={order.id}
-            className="owner-mobile-order-card"
-            onClick={() => setSelectedOrderDetail(order)}
-          >
-            <div className="owner-mobile-order-card__top">
-              <div className="owner-mobile-order-card__id-time">
-                <span>{order.id}</span>
-                <span style={{ color: '#8c7b6f', fontWeight: 500, fontSize: '12px' }}>
-                  {order.time}
+        {displayedOrders.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '36px 16px', background: '#ffffff', borderRadius: '12px', border: '1px solid #ede8e1', color: '#8c7b6f', fontSize: '13px' }}>
+            No orders match your current filters.
+          </div>
+        ) : (
+          displayedOrders.map((order) => (
+            <div
+              key={order.id}
+              className="owner-mobile-order-card"
+              onClick={() => setSelectedOrderDetail(order)}
+            >
+              <div className="owner-mobile-order-card__top">
+                <div className="owner-mobile-order-card__id-time">
+                  <span>{order.id}</span>
+                  <span style={{ color: '#8c7b6f', fontWeight: 500, fontSize: '12px' }}>
+                    {order.time}
+                  </span>
+                  <span className="owner-table-tag-badge">{order.table}</span>
+                </div>
+                <div className="owner-mobile-order-card__amount">
+                  {order.formattedAmount}
+                </div>
+              </div>
+
+              <div className="owner-mobile-order-card__body">
+                {order.items[0]?.image && (
+                  <img
+                    src={order.items[0].image}
+                    alt={order.customer.name}
+                    className="owner-mobile-order-card__img"
+                  />
+                )}
+                <div className="owner-mobile-order-card__details">
+                  <div className="owner-mobile-order-card__customer">
+                    {order.customer.name}
+                  </div>
+                  <div className="owner-mobile-order-card__items">
+                    {order.itemsSummary}
+                  </div>
+                </div>
+              </div>
+
+              <div className="owner-mobile-order-card__bottom">
+                <span
+                  className={`owner-status-badge ${
+                    order.orderStatus === 'Completed'
+                      ? 'owner-status-badge--completed'
+                      : order.orderStatus === 'In Progress'
+                      ? 'owner-status-badge--inprogress'
+                      : 'owner-status-badge--queued'
+                  }`}
+                >
+                  {order.orderStatus}
                 </span>
-                <span className="owner-table-tag-badge">{order.table}</span>
-              </div>
-              <div className="owner-mobile-order-card__amount">
-                {order.formattedAmount}
-              </div>
-            </div>
 
-            <div className="owner-mobile-order-card__body">
-              {order.items[0]?.image && (
-                <img
-                  src={order.items[0].image}
-                  alt={order.customer.name}
-                  className="owner-mobile-order-card__img"
-                />
-              )}
-              <div className="owner-mobile-order-card__details">
-                <div className="owner-mobile-order-card__customer">
-                  {order.customer.name}
-                </div>
-                <div className="owner-mobile-order-card__items">
-                  {order.itemsSummary}
-                </div>
+                <span
+                  className={`owner-payment-badge ${
+                    order.paymentStatus === 'Paid'
+                      ? 'owner-payment-badge--paid'
+                      : 'owner-payment-badge--pending'
+                  }`}
+                >
+                  {order.paymentStatus}
+                </span>
               </div>
             </div>
+          ))
+        )}
 
-            <div className="owner-mobile-order-card__bottom">
-              <span
-                className={`owner-status-badge ${
-                  order.orderStatus === 'Completed'
-                    ? 'owner-status-badge--completed'
-                    : order.orderStatus === 'In Progress'
-                    ? 'owner-status-badge--inprogress'
-                    : 'owner-status-badge--queued'
-                }`}
-              >
-                {order.orderStatus}
-              </span>
+        {/* Mobile Pagination Bar */}
+        {filteredOrders.length > 0 && (
+          <div className="owner-pagination-bar owner-pagination-bar--mobile">
+            <span className="owner-pagination-text">
+              Showing {filteredOrders.length === 0 ? 0 : (currentPage - 1) * pageSize + 1}–
+              {Math.min(currentPage * pageSize, filteredOrders.length)} of {filteredOrders.length}
+            </span>
 
-              <span
-                className={`owner-payment-badge ${
-                  order.paymentStatus === 'Paid'
-                    ? 'owner-payment-badge--paid'
-                    : 'owner-payment-badge--pending'
-                }`}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <select
+                className="owner-select-field"
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+                aria-label="Orders per page"
+                style={{ padding: '4px 8px', fontSize: '11.5px' }}
               >
-                {order.paymentStatus}
-              </span>
+                <option value={5}>5 / pg</option>
+                <option value={10}>10 / pg</option>
+                <option value={20}>20 / pg</option>
+              </select>
+
+              <div className="owner-pagination-nav">
+                <button
+                  type="button"
+                  className="owner-pagination-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft size={14} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+                  <button
+                    key={pg}
+                    type="button"
+                    className={`owner-pagination-btn ${
+                      currentPage === pg ? 'active' : ''
+                    }`}
+                    onClick={() => setCurrentPage(pg)}
+                  >
+                    {pg}
+                  </button>
+                ))}
+
+                <button
+                  type="button"
+                  className="owner-pagination-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  aria-label="Next page"
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
             </div>
           </div>
-        ))}
+        )}
       </div>
 
       {/* ====================================================================

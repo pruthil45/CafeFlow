@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import {
   Calendar,
@@ -52,6 +52,33 @@ export default function OwnerDashboard({ selectedCafe: propCafe }) {
   const [salesPeriod, setSalesPeriod] = useState('Today')
   const [statusPeriod, setStatusPeriod] = useState('Today')
   const [itemsPeriod, setItemsPeriod] = useState('Today')
+
+  // Responsive chart measurement to guarantee rendering without ResponsiveContainer issues
+  const chartContainerRef = useRef(null)
+  const [chartWidth, setChartWidth] = useState(340)
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (chartContainerRef.current) {
+        const w = chartContainerRef.current.clientWidth || chartContainerRef.current.getBoundingClientRect().width
+        if (w > 0) setChartWidth(Math.floor(w))
+      }
+    }
+    updateWidth()
+    const t = setTimeout(updateWidth, 100)
+
+    let ro = null
+    if (typeof ResizeObserver !== 'undefined' && chartContainerRef.current) {
+      ro = new ResizeObserver(() => updateWidth())
+      ro.observe(chartContainerRef.current)
+    }
+    window.addEventListener('resize', updateWidth)
+    return () => {
+      clearTimeout(t)
+      if (ro) ro.disconnect()
+      window.removeEventListener('resize', updateWidth)
+    }
+  }, [])
 
   // Available date filters
   const dateOptions = [
@@ -313,89 +340,91 @@ export default function OwnerDashboard({ selectedCafe: propCafe }) {
       <section className="owner-middle-grid">
         {/* Sales Overview Card */}
         <div className="owner-card">
-          <div className="owner-card__header">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+          <div className="owner-card__header owner-card__header--sales">
+            <div className="owner-card__header-main">
               <h2 className="owner-card__title">Sales Overview</h2>
-
-              {/* Functional Switch Tabs */}
-              <div className="owner-sales-tabs">
-                <button
-                  type="button"
-                  className={`owner-sales-tab ${salesTab === 'revenue' ? 'active' : ''}`}
-                  onClick={() => setSalesTab('revenue')}
-                >
-                  Revenue
-                </button>
-                <button
-                  type="button"
-                  className={`owner-sales-tab ${salesTab === 'orders' ? 'active' : ''}`}
-                  onClick={() => setSalesTab('orders')}
-                >
-                  Orders
-                </button>
-                <button
-                  type="button"
-                  className={`owner-sales-tab ${salesTab === 'customers' ? 'active' : ''}`}
-                  onClick={() => setSalesTab('customers')}
-                >
-                  Customers
-                </button>
-              </div>
+              <button
+                type="button"
+                className="owner-card__period-btn"
+                onClick={() => setSalesPeriod(salesPeriod === 'Today' ? '7 Days' : 'Today')}
+              >
+                <span>{salesPeriod}</span>
+                <ChevronDown size={13} />
+              </button>
             </div>
 
-            <button
-              type="button"
-              className="owner-card__period-btn"
-              onClick={() => setSalesPeriod(salesPeriod === 'Today' ? '7 Days' : 'Today')}
-            >
-              <span>{salesPeriod}</span>
-              <ChevronDown size={13} />
-            </button>
+            {/* Functional Switch Tabs */}
+            <div className="owner-sales-tabs">
+              <button
+                type="button"
+                className={`owner-sales-tab ${salesTab === 'revenue' ? 'active' : ''}`}
+                onClick={() => setSalesTab('revenue')}
+              >
+                Revenue
+              </button>
+              <button
+                type="button"
+                className={`owner-sales-tab ${salesTab === 'orders' ? 'active' : ''}`}
+                onClick={() => setSalesTab('orders')}
+              >
+                Orders
+              </button>
+              <button
+                type="button"
+                className={`owner-sales-tab ${salesTab === 'customers' ? 'active' : ''}`}
+                onClick={() => setSalesTab('customers')}
+              >
+                Customers
+              </button>
+            </div>
           </div>
 
           {/* Recharts Area Chart */}
-          <div className="owner-chart-container">
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart
-                data={chartData}
-                margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="ownerSalesFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#c47d2e" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#c47d2e" stopOpacity={0.02} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
-                <XAxis
-                  dataKey="time"
-                  tick={{ fontSize: 11, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={{ stroke: '#e8e2d8' }}
-                />
-                <YAxis
-                  tick={{ fontSize: 11, fill: '#8c7b6f' }}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(val) => {
-                    if (salesTab === 'revenue') {
-                      return val >= 1000 ? `₹ ${(val / 1000).toFixed(0)}K` : `₹ ${val}`
-                    }
-                    return val
-                  }}
-                />
-                <Tooltip content={<CustomChartTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#c47d2e"
-                  strokeWidth={2.4}
-                  fillOpacity={1}
-                  fill="url(#ownerSalesFill)"
-                  activeDot={{ r: 6, fill: '#8c4a23', stroke: '#fff', strokeWidth: 2 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div ref={chartContainerRef} className="owner-chart-container">
+            <AreaChart
+              width={chartWidth}
+              height={240}
+              data={chartData}
+              margin={{ top: 12, right: 8, left: -14, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="ownerSalesFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#c47d2e" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#c47d2e" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ede8e1" />
+              <XAxis
+                dataKey="time"
+                interval="preserveStartEnd"
+                minTickGap={15}
+                tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e8e2d8' }}
+              />
+              <YAxis
+                width={38}
+                tick={{ fontSize: 10.5, fill: '#8c7b6f' }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(val) => {
+                  if (salesTab === 'revenue') {
+                    return val >= 1000 ? `₹ ${(val / 1000).toFixed(0)}K` : `₹ ${val}`
+                  }
+                  return val
+                }}
+              />
+              <Tooltip content={<CustomChartTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#c47d2e"
+                strokeWidth={2.4}
+                fillOpacity={1}
+                fill="url(#ownerSalesFill)"
+                activeDot={{ r: 5, fill: '#8c4a23', stroke: '#fff', strokeWidth: 2 }}
+              />
+            </AreaChart>
           </div>
         </div>
 
@@ -416,21 +445,21 @@ export default function OwnerDashboard({ selectedCafe: propCafe }) {
           {/* Donut Chart + Legend */}
           <div className="owner-donut-wrap">
             <div className="owner-donut-chart-box">
-              <ResponsiveContainer width="100%" height={170}>
-                <PieChart>
-                  <Pie
-                    data={ORDER_STATUS_BREAKDOWN.segments}
-                    innerRadius={50}
-                    outerRadius={74}
-                    paddingAngle={3}
-                    dataKey="value"
-                  >
-                    {ORDER_STATUS_BREAKDOWN.segments.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              <PieChart width={170} height={170}>
+                <Pie
+                  data={ORDER_STATUS_BREAKDOWN.segments}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={74}
+                  paddingAngle={3}
+                  dataKey="value"
+                >
+                  {ORDER_STATUS_BREAKDOWN.segments.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
 
               {/* Centered Total Count */}
               <div className="owner-donut-center-text">

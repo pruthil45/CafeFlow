@@ -15,7 +15,7 @@ import EditPointsRuleModal from './components/EditPointsRuleModal'
 import CreateEditRewardModal from './components/CreateEditRewardModal'
 import RedeemRewardModal from './components/RedeemRewardModal'
 import LoyaltyHistoryModal from './components/LoyaltyHistoryModal'
-import { CheckCircle2, AlertTriangle, X } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, X, User } from 'lucide-react'
 import './Loyalty.css'
 import '../Owner.css'
 
@@ -89,7 +89,12 @@ export default function OwnerLoyalty() {
   const [selectedCustomerId, setSelectedCustomerId] = useState(() => {
     return customers[0]?.id || 'CUST-001'
   })
-  const [isCustomerDrawerOpen, setIsCustomerDrawerOpen] = useState(true)
+  const [isCustomerDrawerOpen, setIsCustomerDrawerOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1200
+    }
+    return true
+  })
 
   // 6. Modals
   const [isEditRuleModalOpen, setIsEditRuleModalOpen] = useState(false)
@@ -349,6 +354,38 @@ export default function OwnerLoyalty() {
                 Reward your customers for every visit and keep them coming back.
               </p>
             </div>
+          </div>
+
+          {/* Mobile Customer Loyalty Quick-Access Trigger */}
+          <div className="owner-loyalty-mobile-customer-btn">
+            <button
+              type="button"
+              className="owner-btn-secondary"
+              style={{
+                width: '100%',
+                padding: '11px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: '#ffffff',
+                border: '1px solid #ede5da',
+                borderRadius: 10,
+                fontWeight: 700,
+                color: '#2a1911',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.03)',
+              }}
+              onClick={() => setIsCustomerDrawerOpen(true)}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <User size={16} color="#8c4a23" />
+                <span style={{ fontSize: '13px' }}>
+                  Customer Loyalty: <strong style={{ color: '#8c4a23' }}>{currentSelectedCustomer?.name || 'Rahul Mehta'}</strong>
+                </span>
+              </div>
+              <span style={{ fontSize: '12px', color: '#8c4a23', fontWeight: 800 }}>
+                {currentSelectedCustomer?.loyaltyPoints || 320} pts →
+              </span>
+            </button>
           </div>
 
           {/* 3.1 Loyalty Summary Cards */}
