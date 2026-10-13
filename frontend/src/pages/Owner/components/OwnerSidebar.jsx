@@ -12,18 +12,11 @@ import {
   BarChart2,
   TrendingUp,
   Settings,
-  Store,
-  Palette,
-  Printer,
-  Bell,
   LogOut,
   ChevronDown,
   Check,
   Coffee,
   X,
-  SlidersHorizontal,
-  Percent,
-  Database,
 } from 'lucide-react'
 import { OWNER_CAFES } from '../data/ownerMockData'
 
@@ -148,9 +141,8 @@ export default function OwnerSidebar({
                 <button
                   key={cafe.id}
                   type="button"
-                  className={`owner-sidebar__cafe-menu-item ${
-                    selectedCafe?.id === cafe.id ? 'active' : ''
-                  }`}
+                  className={`owner-sidebar__cafe-menu-item ${selectedCafe?.id === cafe.id ? 'active' : ''
+                    }`}
                   onClick={() => {
                     onSelectCafe(cafe)
                     setIsCafeDropdownOpen(false)
@@ -329,110 +321,7 @@ export default function OwnerSidebar({
               <span>Settings</span>
             </NavLink>
 
-            {/* Nested sub-links when inside Settings module (matching Screenshot 2) */}
-            {location.pathname.startsWith('/owner/settings') && (
-              <div className="owner-sidebar__sublinks">
-                <NavLink
-                  to="/owner/settings/profile"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <Store size={14} />
-                  </span>
-                  <span>Restaurant Profile</span>
-                </NavLink>
-
-                <NavLink
-                  to="/owner/settings/appearance"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <Palette size={14} />
-                  </span>
-                  <span>Appearance</span>
-                </NavLink>
-
-                <NavLink
-                  to="/owner/settings/operations"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <SlidersHorizontal size={14} />
-                  </span>
-                  <span>Operations</span>
-                </NavLink>
-
-                <NavLink
-                  to="/owner/settings/staff"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <Users size={14} />
-                  </span>
-                  <span>Staff</span>
-                </NavLink>
-
-                <NavLink
-                  to="/owner/settings/taxation"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <Percent size={14} />
-                  </span>
-                  <span>Taxation</span>
-                </NavLink>
-
-                <NavLink
-                  to="/owner/settings/notifications"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <Bell size={14} />
-                  </span>
-                  <span>Notifications</span>
-                </NavLink>
-
-                <NavLink
-                  to="/owner/settings/printers"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${
-                      isActive || location.pathname.startsWith('/owner/settings/printers')
-                        ? 'active'
-                        : ''
-                    }`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <Printer size={14} />
-                  </span>
-                  <span>Printer & Templates</span>
-                </NavLink>
-
-                <NavLink
-                  to="/owner/settings/data-management"
-                  className={({ isActive }) =>
-                    `owner-sidebar__sublink ${isActive ? 'active' : ''}`
-                  }
-                >
-                  <span className="owner-sidebar__sublink-icon">
-                    <Database size={14} />
-                  </span>
-                  <span>Data Management</span>
-                </NavLink>
-              </div>
-            )}
+            {/* Sublinks removed: all Settings sub-pages are managed within the Settings module */}
           </div>
         </nav>
 

@@ -123,14 +123,14 @@ export const PRESET_SIDEBAR_COLORS = [
 export const INITIAL_STAFF_MEMBERS = [
   {
     id: 'staff-1',
-    name: 'Rahul Mehta',
+    name: 'Aarav Sharma',
     mobile: '+91 98765 43210',
-    email: 'rahul.mehta@example.com',
+    email: 'aarav.sharma@example.com',
     role: 'Waiter',
     status: 'Active',
     joined: '12 Sep 2026',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-    initials: 'RM',
+    initials: 'AS',
     activitySummary: {
       ordersHandled: 248,
       ordersEdited: 32,

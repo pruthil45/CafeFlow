@@ -145,6 +145,7 @@ export default function TaxationSettingsTab({ onShowToast }) {
       status: 'Active',
     })
     setFormErrors({})
+    setIsAddPanelOpen(false)
   }
 
   // Multi-select toggle for Categories in Tax Form
@@ -355,35 +356,23 @@ export default function TaxationSettingsTab({ onShowToast }) {
         {/* LEFT COLUMN: TAX SETTINGS, TAX RATES, TAX APPLICATION         */}
         {/* ============================================================== */}
         <div className="owner-taxation-main-col">
-          {/* Card 1: Tax Settings (Enable / Disable Toggle) */}
-          <div className="owner-tax-card">
-            <div className="owner-tax-card-header">
-              <div className="owner-tax-card-icon-box">
-                <Percent size={18} />
-              </div>
-              <div>
-                <h2 className="owner-tax-card-title">Tax Settings</h2>
-                <p className="owner-tax-card-desc">
-                  Enable or disable taxation for your restaurant.
-                </p>
-              </div>
-            </div>
-
-            <div className="owner-tax-toggle-row">
+          {/* Card 1: Enable Taxation Switch Card */}
+          <div className="owner-tax-card owner-tax-toggle-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div className="owner-tax-toggle-icon">
-                  <Percent size={16} />
+                <div className="owner-tax-card-icon-box">
+                  <Percent size={18} />
                 </div>
                 <div>
-                  <div className="owner-tax-toggle-label">Enable Taxation</div>
-                  <div className="owner-tax-toggle-sub">
+                  <h2 className="owner-tax-card-title">Enable Taxation</h2>
+                  <p className="owner-tax-card-desc">
                     Automatically apply configured taxes to all bills.
-                  </div>
+                  </p>
                 </div>
               </div>
 
               {/* Custom Switch Control */}
-              <label className="owner-switch-wrap">
+              <label className="owner-switch-wrap" style={{ flexShrink: 0 }}>
                 <input
                   type="checkbox"
                   checked={taxConfig.isEnabled}
@@ -594,30 +583,29 @@ export default function TaxationSettingsTab({ onShowToast }) {
         {/* RIGHT COLUMN: ADD TAX FORM & BILL CALCULATION EXAMPLE         */}
         {/* ============================================================== */}
         <div className="owner-taxation-side-col">
-          {/* Add / Edit Tax Panel */}
-          <div className="owner-tax-side-card" ref={formCardRef}>
-            <div className="owner-tax-side-header">
-              <div>
-                <h3 className="owner-tax-side-title">
-                  {editingTax ? 'Edit Tax' : 'Add Tax'}
-                </h3>
-                <p className="owner-tax-side-desc">
-                  {editingTax
-                    ? 'Update tax rate parameters and applicable items.'
-                    : 'Create a new tax rate for your restaurant.'}
-                </p>
-              </div>
-              {editingTax && (
+          {/* Add / Edit Tax Panel - Only appears when Add Tax or Edit is clicked */}
+          {isAddPanelOpen && (
+            <div className="owner-tax-side-card animate-fade-in" ref={formCardRef}>
+              <div className="owner-tax-side-header">
+                <div>
+                  <h3 className="owner-tax-side-title">
+                    {editingTax ? 'Edit Tax' : 'Add Tax'}
+                  </h3>
+                  <p className="owner-tax-side-desc">
+                    {editingTax
+                      ? 'Update tax rate parameters and applicable items.'
+                      : 'Create a new tax rate for your restaurant.'}
+                  </p>
+                </div>
                 <button
                   type="button"
                   className="owner-modal-close-btn"
                   onClick={handleCancelForm}
-                  title="Cancel editing"
+                  title="Cancel and close"
                 >
                   <X size={16} />
                 </button>
-              )}
-            </div>
+              </div>
 
             <form onSubmit={handleSaveTaxForm} className="owner-tax-form">
               {/* Tax Name */}
@@ -868,6 +856,7 @@ export default function TaxationSettingsTab({ onShowToast }) {
               </div>
             </form>
           </div>
+          )}
 
           {/* Bill Calculation Example Card (matching Screenshot 4) */}
           <div className="owner-bill-example-card">

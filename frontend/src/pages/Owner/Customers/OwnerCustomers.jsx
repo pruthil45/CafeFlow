@@ -216,6 +216,8 @@ export default function OwnerCustomers() {
                 <tr
                   key={customer.id}
                   className={selectedCustomer?.id === customer.id && isDrawerOpen ? 'selected' : ''}
+                  onClick={() => handleOpenDrawer(customer)}
+                  style={{ cursor: 'pointer' }}
                 >
                   <td className="owner-customers-name-cell">{customer.name}</td>
                   <td style={{ color: '#55473d' }}>{customer.phone}</td>
@@ -326,7 +328,12 @@ export default function OwnerCustomers() {
       {/* Mobile Customer Cards (visible on mobile screens <= 768px) */}
       <div className="owner-mobile-customer-cards">
         {paginatedCustomers.map((customer) => (
-          <div key={customer.id} className="owner-mobile-customer-card">
+          <div
+            key={customer.id}
+            className="owner-mobile-customer-card"
+            onClick={() => handleOpenDrawer(customer)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="owner-mobile-customer-top">
               <div>
                 <div className="owner-mobile-customer-name">{customer.name}</div>
@@ -404,7 +411,14 @@ export default function OwnerCustomers() {
           <>
             {/* Drawer Header */}
             <div className="owner-customer-drawer-header">
-              <div>
+              <div className="owner-customer-drawer-header-left">
+                <button
+                  type="button"
+                  className="owner-customer-mobile-back-btn"
+                  onClick={handleCloseDrawer}
+                >
+                  ← Back to Customers
+                </button>
                 <h2 className="owner-customer-drawer-title">{selectedCustomer.name}</h2>
                 <div className="owner-customer-drawer-subtitle">
                   Customer since {selectedCustomer.memberSince || 'Jan 2026'}

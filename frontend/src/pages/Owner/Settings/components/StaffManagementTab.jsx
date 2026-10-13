@@ -32,7 +32,12 @@ export default function StaffManagementTab({ onShowToast }) {
     const saved = localStorage.getItem('cafeflow_staff_members')
     if (saved) {
       try {
-        return JSON.parse(saved)
+        const parsed = JSON.parse(saved)
+        return parsed.map((s) =>
+          s.id === 'staff-1' && s.name === 'Rahul Mehta'
+            ? { ...s, name: 'Aarav Sharma', initials: 'AS', email: 'aarav.sharma@example.com' }
+            : s
+        )
       } catch (e) {
         /* fallback */
       }
@@ -40,8 +45,8 @@ export default function StaffManagementTab({ onShowToast }) {
     return INITIAL_STAFF_MEMBERS
   })
 
-  // Selected staff for details panel (default to first staff member, matching Screenshot 3)
-  const [selectedStaffId, setSelectedStaffId] = useState(INITIAL_STAFF_MEMBERS[0]?.id || null)
+  // Selected staff for details drawer (null by default; only opens when clicked)
+  const [selectedStaffId, setSelectedStaffId] = useState(null)
 
   // Drawer states
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -559,11 +564,30 @@ export default function StaffManagementTab({ onShowToast }) {
         </div>
       </div>
 
-      {/* Selected Staff Details Panel (matching Screenshot 3) */}
+      {/* Slide-in Staff Details Preview Drawer */}
       {selectedStaff && (
-        <div className="owner-staff-details-panel">
-          {/* Header */}
-          <div className="owner-staff-details-header">
+        <>
+          <div
+            className="owner-drawer-overlay open"
+            onClick={() => setSelectedStaffId(null)}
+            aria-hidden="true"
+          />
+
+          <aside className="owner-drawer-panel owner-staff-preview-drawer open" aria-label="Staff Details Preview">
+            <div className="owner-staff-details-panel">
+              {/* Mobile Back Header Bar */}
+              <div className="owner-staff-drawer-mobile-bar">
+                <button
+                  type="button"
+                  className="owner-customer-mobile-back-btn"
+                  onClick={() => setSelectedStaffId(null)}
+                >
+                  ← Back to Staff
+                </button>
+              </div>
+
+              {/* Header */}
+              <div className="owner-staff-details-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               {selectedStaff.avatar ? (
                 <img
@@ -788,7 +812,9 @@ export default function StaffManagementTab({ onShowToast }) {
               </button>
             </div>
           )}
-        </div>
+            </div>
+          </aside>
+        </>
       )}
 
       {/* ============================================================== */}
