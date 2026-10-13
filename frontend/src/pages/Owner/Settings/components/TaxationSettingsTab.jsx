@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   Percent,
   Coins,
-  Sliders,
   Receipt,
   Plus,
   MoreVertical,
@@ -40,9 +39,10 @@ export default function TaxationSettingsTab({ onShowToast }) {
   // Has unsaved changes indicator
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
-  // Drawer state for Add / Edit Tax
+  // Drawer / Side panel state for Add / Edit Tax
   const [isAddPanelOpen, setIsAddPanelOpen] = useState(false)
   const [editingTax, setEditingTax] = useState(null)
+  const formCardRef = useRef(null)
 
   // More menu per row
   const [openMenuId, setOpenMenuId] = useState(null)
@@ -92,24 +92,6 @@ export default function TaxationSettingsTab({ onShowToast }) {
     }
   }
 
-  // Set Global Application Scope
-  const handleSelectScope = (scope) => {
-    setTaxConfig((prev) => ({ ...prev, applicationScope: scope }))
-    setHasUnsavedChanges(true)
-  }
-
-  // Toggle category in global application
-  const handleToggleGlobalCategory = (cat) => {
-    setTaxConfig((prev) => {
-      const exists = prev.selectedCategories?.includes(cat)
-      const nextCategories = exists
-        ? prev.selectedCategories.filter((c) => c !== cat)
-        : [...(prev.selectedCategories || []), cat]
-      setHasUnsavedChanges(true)
-      return { ...prev, selectedCategories: nextCategories }
-    })
-  }
-
   // Open Add panel
   const handleOpenAddPanel = () => {
     setEditingTax(null)
@@ -117,12 +99,17 @@ export default function TaxationSettingsTab({ onShowToast }) {
       name: '',
       rate: '',
       applyTo: 'All Menu Items',
-      categories: ['Beverages'],
-      items: ['Cappuccino'],
+      categories: ['Beverages', 'Snacks'],
+      items: ['Cappuccino', 'Classic Burger'],
       status: 'Active',
     })
     setFormErrors({})
     setIsAddPanelOpen(true)
+    setTimeout(() => {
+      if (formCardRef.current) {
+        formCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    }, 50)
   }
 
   // Open Edit panel
@@ -132,13 +119,60 @@ export default function TaxationSettingsTab({ onShowToast }) {
       name: tax.name,
       rate: tax.rate.toString(),
       applyTo: tax.applyTo || 'All Menu Items',
-      categories: tax.categories || ['Beverages'],
-      items: tax.items || ['Cappuccino'],
+      categories: tax.categories && tax.categories.length > 0 ? tax.categories : ['Beverages'],
+      items: tax.items && tax.items.length > 0 ? tax.items : ['Cappuccino'],
       status: tax.status || 'Active',
     })
     setFormErrors({})
     setIsAddPanelOpen(true)
     setOpenMenuId(null)
+    setTimeout(() => {
+      if (formCardRef.current) {
+        formCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    }, 50)
+  }
+
+  // Cancel form
+  const handleCancelForm = () => {
+    setEditingTax(null)
+    setFormData({
+      name: '',
+      rate: '',
+      applyTo: 'All Menu Items',
+      categories: ['Beverages', 'Snacks'],
+      items: ['Cappuccino', 'Classic Burger'],
+      status: 'Active',
+    })
+    setFormErrors({})
+  }
+
+  // Multi-select toggle for Categories in Tax Form
+  const handleToggleFormCategory = (cat) => {
+    setFormData((prev) => {
+      const current = prev.categories || []
+      const next = current.includes(cat)
+        ? current.filter((c) => c !== cat)
+        : [...current, cat]
+      return { ...prev, categories: next }
+    })
+    if (formErrors.categories) {
+      setFormErrors((prev) => ({ ...prev, categories: null }))
+    }
+  }
+
+  // Multi-select toggle for Items in Tax Form
+  const handleToggleFormItem = (itemName) => {
+    setFormData((prev) => {
+      const current = prev.items || []
+      const next = current.includes(itemName)
+        ? current.filter((i) => i !== itemName)
+        : [...current, itemName]
+      return { ...prev, items: next }
+    })
+    if (formErrors.items) {
+      setFormErrors((prev) => ({ ...prev, items: null }))
+    }
   }
 
   // Validate Tax Form
@@ -153,6 +187,14 @@ export default function TaxationSettingsTab({ onShowToast }) {
       errors.rate = 'Tax rate is required'
     } else if (rateNum < 0 || rateNum > 100) {
       errors.rate = 'Rate must be between 0% and 100%'
+    }
+
+    if (formData.applyTo === 'Selected Categories' && (!formData.categories || formData.categories.length === 0)) {
+      errors.categories = 'Please select at least one category'
+    }
+
+    if (formData.applyTo === 'Selected Items' && (!formData.items || formData.items.length === 0)) {
+      errors.items = 'Please select at least one menu item'
     }
 
     setFormErrors(errors)
@@ -177,8 +219,9 @@ export default function TaxationSettingsTab({ onShowToast }) {
                 name: formData.name.trim(),
                 rate: rateNum,
                 applyTo: formData.applyTo,
-                categories: formData.categories,
-                items: formData.items,
+                categories: formData.applyTo === 'Selected Categories' ? formData.categories : undefined,
+                items: formData.applyTo === 'Selected Items' ? formData.items : undefined,
+                itemsCount: formData.applyTo === 'Selected Items' ? formData.items.length : undefined,
                 status: formData.status,
               }
             : t
@@ -192,8 +235,9 @@ export default function TaxationSettingsTab({ onShowToast }) {
         name: formData.name.trim(),
         rate: rateNum,
         applyTo: formData.applyTo,
-        categories: formData.categories,
-        items: formData.items,
+        categories: formData.applyTo === 'Selected Categories' ? formData.categories : undefined,
+        items: formData.applyTo === 'Selected Items' ? formData.items : undefined,
+        itemsCount: formData.applyTo === 'Selected Items' ? formData.items.length : undefined,
         status: formData.status,
       }
       setTaxConfig((prev) => ({
@@ -407,14 +451,14 @@ export default function TaxationSettingsTab({ onShowToast }) {
                           <div style={{ color: '#2a1911', fontWeight: 600, fontSize: '13px' }}>
                             {tax.applyTo}
                           </div>
-                          {tax.categories && tax.categories.length > 0 && (
-                            <div style={{ fontSize: '11.5px', color: '#8c7b6f', marginTop: 2 }}>
+                          {tax.applyTo === 'Selected Categories' && tax.categories && tax.categories.length > 0 && (
+                            <div style={{ fontSize: '11.5px', color: '#8c7b6f', marginTop: 2, maxWidth: '240px', lineHeight: 1.35 }}>
                               {tax.categories.join(', ')}
                             </div>
                           )}
-                          {tax.itemsCount && (
-                            <div style={{ fontSize: '11.5px', color: '#8c7b6f', marginTop: 2 }}>
-                              {tax.itemsCount} items
+                          {tax.applyTo === 'Selected Items' && tax.items && tax.items.length > 0 && (
+                            <div style={{ fontSize: '11.5px', color: '#8c7b6f', marginTop: 2, maxWidth: '240px', lineHeight: 1.35 }}>
+                              <span style={{ fontWeight: 600 }}>{tax.items.length} {tax.items.length === 1 ? 'item' : 'items'}:</span> {tax.items.join(', ')}
                             </div>
                           )}
                         </td>
@@ -502,7 +546,16 @@ export default function TaxationSettingsTab({ onShowToast }) {
 
                   <div className="owner-tax-mobile-scope">
                     <strong>Apply To:</strong> {tax.applyTo}
-                    {tax.categories && <span> ({tax.categories.join(', ')})</span>}
+                    {tax.applyTo === 'Selected Categories' && tax.categories && tax.categories.length > 0 && (
+                      <div style={{ fontSize: '11.5px', color: '#7a6a5e', marginTop: 3 }}>
+                        {tax.categories.join(', ')}
+                      </div>
+                    )}
+                    {tax.applyTo === 'Selected Items' && tax.items && tax.items.length > 0 && (
+                      <div style={{ fontSize: '11.5px', color: '#7a6a5e', marginTop: 3 }}>
+                        {tax.items.length} {tax.items.length === 1 ? 'item' : 'items'}: {tax.items.join(', ')}
+                      </div>
+                    )}
                   </div>
 
                   <div className="owner-tax-mobile-actions">
@@ -535,128 +588,30 @@ export default function TaxationSettingsTab({ onShowToast }) {
               ))}
             </div>
           </div>
-
-          {/* Card 3: Tax Application Options */}
-          <div className="owner-tax-card">
-            <div className="owner-tax-card-header">
-              <div className="owner-tax-card-icon-box">
-                <Sliders size={18} />
-              </div>
-              <div>
-                <h2 className="owner-tax-card-title">Tax Application</h2>
-                <p className="owner-tax-card-desc">
-                  Choose how taxes should be applied to menu items.
-                </p>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 14 }}>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#2a1911', marginBottom: 10 }}>
-                Apply taxes to:
-              </div>
-
-              {/* 3 Radio Options Grid (matching Screenshot 4) */}
-              <div className="owner-tax-scope-grid">
-                {/* Option 1: All Menu Items */}
-                <div
-                  className={`owner-tax-scope-card ${taxConfig.applicationScope === 'all' ? 'selected' : ''}`}
-                  onClick={() => handleSelectScope('all')}
-                >
-                  <div className="owner-tax-scope-radio-row">
-                    <span className={`owner-tax-scope-dot ${taxConfig.applicationScope === 'all' ? 'active' : ''}`} />
-                    <span className="owner-tax-scope-card-title">All Menu Items</span>
-                  </div>
-                  <p className="owner-tax-scope-card-desc">
-                    Apply configured taxes to all items in the menu.
-                  </p>
-                </div>
-
-                {/* Option 2: Selected Items */}
-                <div
-                  className={`owner-tax-scope-card ${taxConfig.applicationScope === 'selected_items' ? 'selected' : ''}`}
-                  onClick={() => handleSelectScope('selected_items')}
-                >
-                  <div className="owner-tax-scope-radio-row">
-                    <span className={`owner-tax-scope-dot ${taxConfig.applicationScope === 'selected_items' ? 'active' : ''}`} />
-                    <span className="owner-tax-scope-card-title">Selected Items</span>
-                  </div>
-                  <p className="owner-tax-scope-card-desc">
-                    Choose specific menu items to apply taxes.
-                  </p>
-                </div>
-
-                {/* Option 3: Selected Categories */}
-                <div
-                  className={`owner-tax-scope-card ${taxConfig.applicationScope === 'selected_categories' ? 'selected' : ''}`}
-                  onClick={() => handleSelectScope('selected_categories')}
-                >
-                  <div className="owner-tax-scope-radio-row">
-                    <span className={`owner-tax-scope-dot ${taxConfig.applicationScope === 'selected_categories' ? 'active' : ''}`} />
-                    <span className="owner-tax-scope-card-title">Selected Categories</span>
-                  </div>
-                  <p className="owner-tax-scope-card-desc">
-                    Apply taxes to specific menu categories.
-                  </p>
-                </div>
-              </div>
-
-              {/* Interactive Category Selector when Selected Categories is active */}
-              {taxConfig.applicationScope === 'selected_categories' && (
-                <div className="owner-tax-categories-picker animate-fade-in">
-                  <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#2a1911', marginBottom: 8 }}>
-                    Select Eligible Categories:
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {AVAILABLE_TAX_CATEGORIES.map((cat) => {
-                      const isChecked = taxConfig.selectedCategories?.includes(cat)
-                      return (
-                        <button
-                          key={cat}
-                          type="button"
-                          className={`owner-tax-cat-chip ${isChecked ? 'active' : ''}`}
-                          onClick={() => handleToggleGlobalCategory(cat)}
-                        >
-                          {isChecked && <Check size={13} />} {cat}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* ============================================================== */}
         {/* RIGHT COLUMN: ADD TAX FORM & BILL CALCULATION EXAMPLE         */}
         {/* ============================================================== */}
         <div className="owner-taxation-side-col">
-          {/* Add / Edit Tax Panel (matching Screenshot 4) */}
-          <div className="owner-tax-side-card">
+          {/* Add / Edit Tax Panel */}
+          <div className="owner-tax-side-card" ref={formCardRef}>
             <div className="owner-tax-side-header">
               <div>
                 <h3 className="owner-tax-side-title">
                   {editingTax ? 'Edit Tax' : 'Add Tax'}
                 </h3>
                 <p className="owner-tax-side-desc">
-                  Create a new tax rate for your restaurant.
+                  {editingTax
+                    ? 'Update tax rate parameters and applicable items.'
+                    : 'Create a new tax rate for your restaurant.'}
                 </p>
               </div>
               {editingTax && (
                 <button
                   type="button"
                   className="owner-modal-close-btn"
-                  onClick={() => {
-                    setEditingTax(null)
-                    setFormData({
-                      name: '',
-                      rate: '',
-                      applyTo: 'All Menu Items',
-                      categories: [],
-                      items: [],
-                      status: 'Active',
-                    })
-                  }}
+                  onClick={handleCancelForm}
                   title="Cancel editing"
                 >
                   <X size={16} />
@@ -729,7 +684,23 @@ export default function TaxationSettingsTab({ onShowToast }) {
                     className="owner-staff-role-select"
                     style={{ width: '100%' }}
                     value={formData.applyTo}
-                    onChange={(e) => setFormData({ ...formData, applyTo: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setFormData((prev) => ({
+                        ...prev,
+                        applyTo: val,
+                        categories:
+                          val === 'Selected Categories' && (!prev.categories || prev.categories.length === 0)
+                            ? ['Beverages', 'Snacks']
+                            : (prev.categories || []),
+                        items:
+                          val === 'Selected Items' && (!prev.items || prev.items.length === 0)
+                            ? ['Cappuccino', 'Classic Burger']
+                            : (prev.items || []),
+                      }))
+                      if (formErrors.categories) setFormErrors((errs) => ({ ...errs, categories: null }))
+                      if (formErrors.items) setFormErrors((errs) => ({ ...errs, items: null }))
+                    }}
                   >
                     <option value="All Menu Items">All Menu Items</option>
                     <option value="Selected Categories">Selected Categories</option>
@@ -738,6 +709,123 @@ export default function TaxationSettingsTab({ onShowToast }) {
                   <ChevronDown size={14} className="owner-staff-select-chevron" />
                 </div>
               </div>
+
+              {/* Multi-Select Categories Picker */}
+              {formData.applyTo === 'Selected Categories' && (
+                <div className="owner-form-group owner-tax-multiselect-group animate-fade-in">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label className="owner-form-label" style={{ marginBottom: 0 }}>
+                      Select Categories <span style={{ color: '#dc2626' }}>*</span>
+                      <span style={{ fontSize: '11.5px', color: '#8c7b6f', fontWeight: 500, marginLeft: 6 }}>
+                        ({formData.categories?.length || 0} selected)
+                      </span>
+                    </label>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        type="button"
+                        className="owner-tax-mini-btn"
+                        onClick={() => {
+                          setFormData((prev) => ({ ...prev, categories: [...AVAILABLE_TAX_CATEGORIES] }))
+                          setFormErrors((errs) => ({ ...errs, categories: null }))
+                        }}
+                      >
+                        Select All
+                      </button>
+                      <button
+                        type="button"
+                        className="owner-tax-mini-btn"
+                        onClick={() => setFormData((prev) => ({ ...prev, categories: [] }))}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="owner-tax-chips-container">
+                    {AVAILABLE_TAX_CATEGORIES.map((cat) => {
+                      const isSelected = formData.categories?.includes(cat)
+                      return (
+                        <button
+                          key={cat}
+                          type="button"
+                          className={`owner-tax-chip-btn ${isSelected ? 'active' : ''}`}
+                          onClick={() => handleToggleFormCategory(cat)}
+                        >
+                          <span className={`owner-tax-chip-checkbox ${isSelected ? 'checked' : ''}`}>
+                            {isSelected && <Check size={11} />}
+                          </span>
+                          <span>{cat}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {formErrors.categories && (
+                    <span className="owner-input-error-msg">{formErrors.categories}</span>
+                  )}
+                </div>
+              )}
+
+              {/* Multi-Select Items Picker */}
+              {formData.applyTo === 'Selected Items' && (
+                <div className="owner-form-group owner-tax-multiselect-group animate-fade-in">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label className="owner-form-label" style={{ marginBottom: 0 }}>
+                      Select Items <span style={{ color: '#dc2626' }}>*</span>
+                      <span style={{ fontSize: '11.5px', color: '#8c7b6f', fontWeight: 500, marginLeft: 6 }}>
+                        ({formData.items?.length || 0} selected)
+                      </span>
+                    </label>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        type="button"
+                        className="owner-tax-mini-btn"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            items: AVAILABLE_TAX_ITEMS.map((it) => it.name),
+                          }))
+                          setFormErrors((errs) => ({ ...errs, items: null }))
+                        }}
+                      >
+                        Select All
+                      </button>
+                      <button
+                        type="button"
+                        className="owner-tax-mini-btn"
+                        onClick={() => setFormData((prev) => ({ ...prev, items: [] }))}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="owner-tax-items-list-box">
+                    {AVAILABLE_TAX_ITEMS.map((item) => {
+                      const isSelected = formData.items?.includes(item.name)
+                      return (
+                        <div
+                          key={item.id}
+                          className={`owner-tax-item-row ${isSelected ? 'selected' : ''}`}
+                          onClick={() => handleToggleFormItem(item.name)}
+                        >
+                          <div className={`owner-tax-item-checkbox ${isSelected ? 'checked' : ''}`}>
+                            {isSelected && <Check size={12} />}
+                          </div>
+                          <div className="owner-tax-item-info">
+                            <span className="owner-tax-item-name">{item.name}</span>
+                            <span className="owner-tax-item-meta">
+                              {item.category} • ₹{item.price}
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  {formErrors.items && (
+                    <span className="owner-input-error-msg">{formErrors.items}</span>
+                  )}
+                </div>
+              )}
 
               {/* Status */}
               <div className="owner-form-group">
@@ -770,18 +858,7 @@ export default function TaxationSettingsTab({ onShowToast }) {
                   type="button"
                   className="owner-btn-secondary"
                   style={{ flex: 1 }}
-                  onClick={() => {
-                    setEditingTax(null)
-                    setFormData({
-                      name: '',
-                      rate: '',
-                      applyTo: 'All Menu Items',
-                      categories: [],
-                      items: [],
-                      status: 'Active',
-                    })
-                    setFormErrors({})
-                  }}
+                  onClick={handleCancelForm}
                 >
                   Cancel
                 </button>

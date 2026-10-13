@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link2, ChevronDown, X, Check, ArrowRight } from 'lucide-react'
+import { Link2, ChevronDown, X, Check } from 'lucide-react'
 import { CUISINE_OPTIONS, PHONE_CODES } from '../../data/restaurantProfileMockData'
 
-export default function BasicInformationSection({ data, onSave, onDataChange, onNext }) {
+export default function BasicInformationSection({ data, onSave, onDataChange }) {
   const [formData, setFormData] = useState(data)
   const [errors, setErrors] = useState({})
   const [isCuisineDropdownOpen, setIsCuisineDropdownOpen] = useState(false)
@@ -262,24 +262,11 @@ export default function BasicInformationSection({ data, onSave, onDataChange, on
         </div>
       </div>
 
-      {/* Save & Step Navigation Action Bar */}
-      <div className="rp-form-actions rp-form-actions--between">
-        <div className="rp-form-actions-left" />
-        <div className="rp-form-actions-right">
-          {onNext && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onNext}
-            >
-              <span>Next: Address</span>
-              <ArrowRight size={15} />
-            </button>
-          )}
-          <button type="submit" className="rp-btn-save">
-            Save Changes
-          </button>
-        </div>
+      {/* Save Action Bar */}
+      <div className="rp-form-actions">
+        <button type="submit" className="rp-btn-save">
+          Save Changes
+        </button>
       </div>
     </form>
   )

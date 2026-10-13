@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Copy, Info, Check, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Copy, Info, Check } from 'lucide-react'
 import { TIME_SLOTS } from '../../data/restaurantProfileMockData'
 
-export default function OpeningHoursSection({ data, onSave, onDataChange, onShowToast, onPrev, onNext }) {
+export default function OpeningHoursSection({ data, onSave, onDataChange, onShowToast }) {
   const [schedule, setSchedule] = useState(data.schedule || [])
 
   useEffect(() => {
@@ -310,17 +310,6 @@ export default function OpeningHoursSection({ data, onSave, onDataChange, onShow
       {/* Bottom Actions Bar */}
       <div className="rp-hours-bottom-bar">
         <div className="rp-hours-actions-left">
-          {onPrev && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onPrev}
-            >
-              <ArrowLeft size={15} />
-              <span>Back: Address</span>
-            </button>
-          )}
-
           <button
             type="button"
             className="rp-btn-outline"
@@ -332,17 +321,6 @@ export default function OpeningHoursSection({ data, onSave, onDataChange, onShow
         </div>
 
         <div className="rp-hours-actions-right">
-          {onNext && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onNext}
-            >
-              <span>Next: Locale</span>
-              <ArrowRight size={15} />
-            </button>
-          )}
-
           <button type="submit" className="rp-btn-save">
             Save Hours
           </button>

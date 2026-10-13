@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
 import {
   CURRENCY_OPTIONS,
   DATE_FORMAT_OPTIONS,
@@ -8,7 +7,7 @@ import {
   LANGUAGE_OPTIONS,
 } from '../../data/restaurantProfileMockData'
 
-export default function LocaleSection({ data, onSave, onDataChange, onPrev, onNext }) {
+export default function LocaleSection({ data, onSave, onDataChange }) {
   const [formData, setFormData] = useState(data)
 
   useEffect(() => {
@@ -144,35 +143,11 @@ export default function LocaleSection({ data, onSave, onDataChange, onPrev, onNe
         </div>
       </div>
 
-      {/* Save & Step Navigation Action Bar */}
-      <div className="rp-form-actions rp-form-actions--between">
-        <div className="rp-form-actions-left">
-          {onPrev && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onPrev}
-            >
-              <ArrowLeft size={15} />
-              <span>Back: Hours</span>
-            </button>
-          )}
-        </div>
-        <div className="rp-form-actions-right">
-          {onNext && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onNext}
-            >
-              <span>Next: Legal</span>
-              <ArrowRight size={15} />
-            </button>
-          )}
-          <button type="submit" className="rp-btn-save">
-            Save Changes
-          </button>
-        </div>
+      {/* Save Action Bar */}
+      <div className="rp-form-actions">
+        <button type="submit" className="rp-btn-save">
+          Save Changes
+        </button>
       </div>
     </form>
   )

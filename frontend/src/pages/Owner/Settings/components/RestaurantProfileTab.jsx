@@ -6,10 +6,6 @@ import {
   Clock,
   Globe,
   FileText,
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
-  ArrowLeft,
 } from 'lucide-react'
 import BasicInformationSection from './RestaurantProfile/BasicInformationSection'
 import AddressSection from './RestaurantProfile/AddressSection'
@@ -20,11 +16,11 @@ import { DEFAULT_RESTAURANT_PROFILE } from '../data/restaurantProfileMockData'
 import './RestaurantProfile.css'
 
 const TABS = [
-  { id: 'basic', label: 'Basic Information', shortLabel: 'Basic Info', icon: Store, step: 1 },
-  { id: 'address', label: 'Address', shortLabel: 'Address', icon: MapPin, step: 2 },
-  { id: 'hours', label: 'Opening Hours', shortLabel: 'Hours', icon: Clock, step: 3 },
-  { id: 'locale', label: 'Locale', shortLabel: 'Locale', icon: Globe, step: 4 },
-  { id: 'legal', label: 'Legal', shortLabel: 'Legal', icon: FileText, step: 5 },
+  { id: 'basic', label: 'Basic Information', icon: Store },
+  { id: 'address', label: 'Address', icon: MapPin },
+  { id: 'hours', label: 'Opening Hours', icon: Clock },
+  { id: 'locale', label: 'Locale', icon: Globe },
+  { id: 'legal', label: 'Legal', icon: FileText },
 ]
 
 export default function RestaurantProfileTab({ onShowToast }) {
@@ -64,7 +60,7 @@ export default function RestaurantProfileTab({ onShowToast }) {
     }
   }, [searchParams])
 
-  // Automatically scroll active tab into view when active tab changes
+  // Automatically scroll active tab into view when active tab changes on mobile
   useEffect(() => {
     if (tabsStripRef.current) {
       const activeBtn = tabsStripRef.current.querySelector('.rp-tab-btn.active')
@@ -83,27 +79,6 @@ export default function RestaurantProfileTab({ onShowToast }) {
     setSearchParams({ tab: tabId }, { replace: true })
   }
 
-  const handleScrollTabs = (offset) => {
-    if (tabsStripRef.current) {
-      tabsStripRef.current.scrollBy({ left: offset, behavior: 'smooth' })
-    }
-  }
-
-  const currentTabIndex = TABS.findIndex((t) => t.id === activeTab)
-  const currentTab = TABS[currentTabIndex] || TABS[0]
-
-  const goToNextTab = () => {
-    if (currentTabIndex < TABS.length - 1) {
-      handleTabChange(TABS[currentTabIndex + 1].id)
-    }
-  }
-
-  const goToPrevTab = () => {
-    if (currentTabIndex > 0) {
-      handleTabChange(TABS[currentTabIndex - 1].id)
-    }
-  }
-
   // Live in-memory change when typing (prevents loss on tab switch)
   const handleDataChange = (sectionKey, sectionData) => {
     setProfileData((prev) => ({
@@ -113,7 +88,7 @@ export default function RestaurantProfileTab({ onShowToast }) {
   }
 
   // Persistent save to LocalStorage
-  const handleSaveSection = (sectionKey, sectionData, navigateToNext = false) => {
+  const handleSaveSection = (sectionKey, sectionData) => {
     const updated = {
       ...profileData,
       [sectionKey]: sectionData,
@@ -131,10 +106,6 @@ export default function RestaurantProfileTab({ onShowToast }) {
     const label = sectionLabels[sectionKey] || 'Settings'
     if (onShowToast) {
       onShowToast(`${label} saved successfully!`)
-    }
-
-    if (navigateToNext && currentTabIndex < TABS.length - 1) {
-      goToNextTab()
     }
   }
 
@@ -154,75 +125,14 @@ export default function RestaurantProfileTab({ onShowToast }) {
           <span className="owner-breadcrumb-current">Restaurant Profile</span>
         </nav>
 
-        <div className="rp-header-title-row">
-          <div>
-            <h1 className="owner-settings-main-title">Restaurant Profile</h1>
-            <p className="owner-settings-main-subtitle">
-              Manage your restaurant's details, hours and legal information.
-            </p>
-          </div>
-        </div>
+        <h1 className="owner-settings-main-title">Restaurant Profile</h1>
+        <p className="owner-settings-main-subtitle">
+          Manage your restaurant's details, hours and legal information.
+        </p>
       </div>
 
-      {/* Mobile Step Progress Indicator (Displayed on smaller screens) */}
-      <div className="rp-mobile-step-card" aria-label={`Step ${currentTab.step} of 5: ${currentTab.label}`}>
-        <div className="rp-mobile-step-header">
-          <div className="rp-mobile-step-info">
-            <span className="rp-mobile-step-badge">Step {currentTab.step} of 5</span>
-            <span className="rp-mobile-step-name">{currentTab.label}</span>
-          </div>
-
-          <div className="rp-mobile-step-arrows">
-            <button
-              type="button"
-              className="rp-mobile-arrow-btn"
-              onClick={goToPrevTab}
-              disabled={currentTabIndex === 0}
-              aria-label="Previous step"
-              title="Previous step"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              type="button"
-              className="rp-mobile-arrow-btn"
-              onClick={goToNextTab}
-              disabled={currentTabIndex === TABS.length - 1}
-              aria-label="Next step"
-              title="Next step"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-
-        {/* Step Progress Dots */}
-        <div className="rp-step-dots-bar">
-          {TABS.map((t, idx) => (
-            <button
-              key={t.id}
-              type="button"
-              className={`rp-step-dot ${idx === currentTabIndex ? 'active' : ''} ${idx < currentTabIndex ? 'completed' : ''}`}
-              onClick={() => handleTabChange(t.id)}
-              aria-label={`Jump to step ${t.step}: ${t.label}`}
-              title={`${t.step}. ${t.label}`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* 5-Tab Navigation Strip with Scroll Arrows */}
+      {/* 5-Tab Navigation Strip */}
       <div className="rp-tabs-container" role="tablist" aria-label="Restaurant Profile Tabs">
-        <button
-          type="button"
-          className="rp-tabs-scroll-btn rp-tabs-scroll-btn--left"
-          onClick={() => handleScrollTabs(-180)}
-          aria-label="Scroll tabs left"
-          title="Scroll tabs left"
-        >
-          <ChevronLeft size={18} />
-        </button>
-
         <div className="rp-tabs-strip" ref={tabsStripRef}>
           {TABS.map((tab) => {
             const IconComp = tab.icon
@@ -245,26 +155,15 @@ export default function RestaurantProfileTab({ onShowToast }) {
             )
           })}
         </div>
-
-        <button
-          type="button"
-          className="rp-tabs-scroll-btn rp-tabs-scroll-btn--right"
-          onClick={() => handleScrollTabs(180)}
-          aria-label="Scroll tabs right"
-          title="Scroll tabs right"
-        >
-          <ChevronRight size={18} />
-        </button>
       </div>
 
-      {/* Tab Panels with Step Navigation */}
+      {/* Tab Panels */}
       <div className="rp-panel-content" id={`rp-panel-${activeTab}`} role="tabpanel">
         {activeTab === 'basic' && (
           <BasicInformationSection
             data={profileData.basic}
             onSave={handleSaveSection}
             onDataChange={handleDataChange}
-            onNext={goToNextTab}
           />
         )}
 
@@ -274,8 +173,6 @@ export default function RestaurantProfileTab({ onShowToast }) {
             restaurantName={profileData.basic?.restaurantName}
             onSave={handleSaveSection}
             onDataChange={handleDataChange}
-            onPrev={goToPrevTab}
-            onNext={goToNextTab}
           />
         )}
 
@@ -285,8 +182,6 @@ export default function RestaurantProfileTab({ onShowToast }) {
             onSave={handleSaveSection}
             onDataChange={handleDataChange}
             onShowToast={onShowToast}
-            onPrev={goToPrevTab}
-            onNext={goToNextTab}
           />
         )}
 
@@ -295,8 +190,6 @@ export default function RestaurantProfileTab({ onShowToast }) {
             data={profileData.locale}
             onSave={handleSaveSection}
             onDataChange={handleDataChange}
-            onPrev={goToPrevTab}
-            onNext={goToNextTab}
           />
         )}
 
@@ -305,7 +198,6 @@ export default function RestaurantProfileTab({ onShowToast }) {
             data={profileData.legal}
             onSave={handleSaveSection}
             onDataChange={handleDataChange}
-            onPrev={goToPrevTab}
           />
         )}
       </div>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { ArrowLeft } from 'lucide-react'
 import {
   PHONE_CODES,
   COUNTRY_OPTIONS,
@@ -7,7 +6,7 @@ import {
   BUSINESS_TYPES,
 } from '../../data/restaurantProfileMockData'
 
-export default function LegalSection({ data, onSave, onDataChange, onPrev }) {
+export default function LegalSection({ data, onSave, onDataChange }) {
   const [formData, setFormData] = useState(data)
   const [errors, setErrors] = useState({})
 
@@ -309,25 +308,11 @@ export default function LegalSection({ data, onSave, onDataChange, onPrev }) {
         </div>
       </div>
 
-      {/* Save & Step Navigation Action Bar */}
-      <div className="rp-form-actions rp-form-actions--between">
-        <div className="rp-form-actions-left">
-          {onPrev && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onPrev}
-            >
-              <ArrowLeft size={15} />
-              <span>Back: Locale</span>
-            </button>
-          )}
-        </div>
-        <div className="rp-form-actions-right">
-          <button type="submit" className="rp-btn-save">
-            Save Changes
-          </button>
-        </div>
+      {/* Save Action Bar */}
+      <div className="rp-form-actions">
+        <button type="submit" className="rp-btn-save">
+          Save Changes
+        </button>
       </div>
     </form>
   )

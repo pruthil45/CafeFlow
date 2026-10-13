@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, Plus, Minus, Crosshair, Info, MapPin, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Search, Plus, Minus, Crosshair, Info, MapPin } from 'lucide-react'
 import {
   COUNTRY_OPTIONS,
   STATE_CITY_MAP,
   MOCK_LOCATION_SUGGESTIONS,
 } from '../../data/restaurantProfileMockData'
 
-export default function AddressSection({ data, restaurantName, onSave, onDataChange, onPrev, onNext }) {
+export default function AddressSection({ data, restaurantName, onSave, onDataChange }) {
   const [formData, setFormData] = useState(data)
   const [errors, setErrors] = useState({})
   const [searchQuery, setSearchQuery] = useState(data.searchLocation || '')
@@ -504,35 +504,11 @@ export default function AddressSection({ data, restaurantName, onSave, onDataCha
         </div>
       </div>
 
-      {/* Save & Step Navigation Action Bar */}
-      <div className="rp-form-actions rp-form-actions--between">
-        <div className="rp-form-actions-left">
-          {onPrev && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onPrev}
-            >
-              <ArrowLeft size={15} />
-              <span>Back: Basic Info</span>
-            </button>
-          )}
-        </div>
-        <div className="rp-form-actions-right">
-          {onNext && (
-            <button
-              type="button"
-              className="rp-btn-step-nav"
-              onClick={onNext}
-            >
-              <span>Next: Hours</span>
-              <ArrowRight size={15} />
-            </button>
-          )}
-          <button type="submit" className="rp-btn-save">
-            Save Changes
-          </button>
-        </div>
+      {/* Save Action Bar */}
+      <div className="rp-form-actions">
+        <button type="submit" className="rp-btn-save">
+          Save Changes
+        </button>
       </div>
     </form>
   )
